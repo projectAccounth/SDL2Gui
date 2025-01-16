@@ -133,7 +133,6 @@ public:
 
 class CheckBox : public TextButton {
 private:
-    SDL_Color boxColor;
     char boxSymbol;
 public:
     bool isChecked;
@@ -141,10 +140,10 @@ public:
     CheckBox();
     CheckBox(
         TTF_Font* textFont,
-        int x = 0, int y = 0, int w = 10, int h = 10,
         SDL_Color boxColor,
         SDL_Color textColor,
-        char symbol
+        int x = 0, int y = 0, int w = 10, int h = 10,
+        char symbol = 'X'
     );
 
     void changeSymbol(char symbol);

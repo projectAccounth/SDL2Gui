@@ -1,11 +1,14 @@
 #include "button.h"
 
-CheckBox::CheckBox() {}
+CheckBox::CheckBox() :
+    TextButton(),
+    boxSymbol('X')
+{}
 CheckBox::CheckBox(
     TTF_Font* textFont,
-    int x = 0, int y = 0, int w = 10, int h = 10,
     SDL_Color boxColor,
     SDL_Color textColor,
+    int x, int y, int w, int h,
     char symbol
 ):
     TextButton(
@@ -19,7 +22,8 @@ CheckBox::CheckBox(
             (unsigned char)(boxColor.b - 122), 255 
         },
         textFont
-    )
+    ),
+    boxSymbol(symbol)
 {}
 
 void CheckBox::changeSymbol(char symbol) {
