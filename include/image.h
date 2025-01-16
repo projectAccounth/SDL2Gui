@@ -4,37 +4,24 @@
 #define IMAGE_H
 
 #include "types.h"
+#include "guiobject.h"
 
 // Images.
-class Image {
+class Image : public GuiObject {
 private:
 	SDL_Surface* imageSurface;
 	SDL_Texture* imageTexture;
-	SDL_Rect imageRect;
 public:
-	
-	bool visible;
 	const char* filePath;
 	const char* prevFilePath;
 
-	Image(const char* filePath, int width, int height, int locX, int locY):
-		imageSurface(nullptr),
-		imageTexture(nullptr),
-		imageRect{locX, locY, width, height},
-		visible(true),
-		filePath(filePath),
-		prevFilePath(filePath)
-	{}
+	Image(const char* filePath, int width, int height, int locX, int locY);
 
 	void initialize(SDL_Renderer* renderer);
 
 	void render(SDL_Renderer* renderer);
 
 	void updatePath(std::string filePath);
-
-	void resize(int w, int h);
-
-	void move(int x, int y);
 
 	bool isVisible() const;
 };

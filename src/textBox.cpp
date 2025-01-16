@@ -48,17 +48,17 @@ std::vector<std::string> TextBox::splitTextIntoLines(std::string& str, int maxWi
 
 void TextBox::render(SDL_Renderer* renderer) {
     int padding = 5;
-    int maxWidth = textBoxRect.w - padding * 2;
+    int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
-    int startY = textBoxRect.y;
+    int startY = objRect.y;
 
     if (!isVisible()) {
         return;
     }
 
     SDL_SetRenderDrawColor(renderer, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
-    SDL_RenderFillRect(renderer, &textBoxRect);
+    SDL_RenderFillRect(renderer, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
     if (text.empty()) {
@@ -70,13 +70,13 @@ void TextBox::render(SDL_Renderer* renderer) {
     // LEFT = up, CENTER = center; RIGHT = down.
     switch (yAlign) {
     case LEFT:
-        startY = textBoxRect.y + padding;
+        startY = objRect.y + padding;
         break;
     case CENTER:
-        startY = textBoxRect.y + (textBoxRect.h - totalHeight) / 2;
+        startY = objRect.y + (objRect.h - totalHeight) / 2;
         break;
     case RIGHT:
-        startY = textBoxRect.y + (textBoxRect.h - totalHeight) - padding;
+        startY = objRect.y + (objRect.h - totalHeight) - padding;
         break;
     }
 
@@ -86,16 +86,16 @@ void TextBox::render(SDL_Renderer* renderer) {
         int textWidth = 0, textHeight = 0;
         TTF_SizeText(textFont, line.c_str(), &textWidth, &textHeight);
 
-        int startX = textBoxRect.x;
+        int startX = objRect.x;
         switch (xAlign) {
         case LEFT:
-            startX = textBoxRect.x + padding;
+            startX = objRect.x + padding;
             break;
         case CENTER:
-            startX = textBoxRect.x + (maxWidth - textWidth) / 2;
+            startX = objRect.x + (maxWidth - textWidth) / 2;
             break;
         case RIGHT:
-            startX = textBoxRect.x + maxWidth - textWidth - padding;
+            startX = objRect.x + maxWidth - textWidth - padding;
             break;
         }
         textSurface = TTF_RenderUTF8_Blended(textFont, line.c_str(), textColor);
@@ -135,14 +135,13 @@ void TextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
 TextBox::TextBox(SDL_Rect br, SDL_Color bc, std::string t,
     SDL_Color tc, TTF_Font* tf,
     TextAlign alignX, TextAlign alignY) :
+    GuiObject(br.x, br.y, br.w, br.h, true, true),
     textTexture(nullptr),
     textSurface(nullptr),
-    textBoxRect(br),
     boxColor(bc),
     text(t),
     textColor(tc),
     textFont(tf),
-    visible(true),
     xAlign(alignX),
     yAlign(alignY) {}
 

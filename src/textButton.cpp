@@ -33,7 +33,7 @@ void TextButton::render(SDL_Renderer* renderer) {
         drawColor = hoverColor;
     }
     SDL_SetRenderDrawColor(renderer, drawColor.r, drawColor.g, drawColor.b, drawColor.a);
-    SDL_RenderFillRect(renderer, &buttonRect);
+    SDL_RenderFillRect(renderer, &objRect);
     if (textTexture != nullptr) {
         int textWidth, textHeight;
         // querying the texture to attempt to align the text
@@ -49,25 +49,25 @@ void TextButton::render(SDL_Renderer* renderer) {
         // align the text
         switch (xAlign) {
         case LEFT:
-            textRect.x = buttonRect.x + 5;
+            textRect.x = objRect.x + 5;
             break;
         case CENTER:
-            textRect.x = buttonRect.x + (buttonRect.w - textWidth) / 2;
+            textRect.x = objRect.x + (objRect.w - textWidth) / 2;
             break;
         case RIGHT:
-            textRect.x = buttonRect.x + (buttonRect.w - textWidth) - 5;
+            textRect.x = objRect.x + (objRect.w - textWidth) - 5;
             break;
         }
         // LEFT = up, CENTER = center; RIGHT = down.
         switch (yAlign) {
         case LEFT:
-            textRect.y = buttonRect.y + 5;
+            textRect.y = objRect.y + 5;
             break;
         case CENTER:
-            textRect.y = buttonRect.y + (buttonRect.h - textHeight) / 2;
+            textRect.y = objRect.y + (objRect.h - textHeight) / 2;
             break;
         case RIGHT:
-            textRect.y = buttonRect.y + (buttonRect.h - textHeight) - 5;
+            textRect.y = objRect.y + (objRect.h - textHeight) - 5;
             break;
         }
 
@@ -86,10 +86,10 @@ void TextButton::setHoverAction(std::function<void()> actionFunction) {
 }
 
 bool TextButton::isClicked(int x, int y) {
-    return (x > buttonRect.x &&
-        x < (buttonRect.x + buttonRect.w) &&
-        y > buttonRect.y &&
-        y < (buttonRect.y + buttonRect.h));
+    return (x > objRect.x &&
+        x < (objRect.x + objRect.w) &&
+        y > objRect.y &&
+        y < (objRect.y + objRect.h));
 }
 
 void TextButton::checkHover(int mouseX, int mouseY) {
@@ -107,8 +107,8 @@ void TextButton::handleEvents(SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
     if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN && active && visible) {
-        if (x > buttonRect.x && x < (buttonRect.x + buttonRect.w) &&
-            y > buttonRect.y && y < (buttonRect.y + buttonRect.h)) {
+        if (x > objRect.x && x < (objRect.x + objRect.w) &&
+            y > objRect.y && y < (objRect.y + objRect.h)) {
             hovered = true;
             if (hoverAction) {
                 hoverAction();
@@ -131,16 +131,6 @@ void TextButton::handleEvents(SDL_Event& e) {
 
 void TextButton::toggleActive(bool value) {
     active = value;
-}
-
-void TextButton::move(int x, int y) {
-    buttonRect.x = x;
-    buttonRect.y = y;
-}
-
-void TextButton::resize(int w, int h) {
-    buttonRect.w = w;
-    buttonRect.h = h;
 }
 
 int TextButton::getId() const {
@@ -172,7 +162,8 @@ TextButton::TextButton(int x, int y, int w, int h,
     SDL_Color buttonColor, std::string text,
     SDL_Color textColor, SDL_Color hoverColor, TTF_Font* textFont,
     TextAlign alignX, TextAlign alignY)
-    : buttonRect{ x, y, w, h },
+    :
+    GuiObject(x, y, w, h, true, true),
     buttonColor(buttonColor),
     textColor(textColor),
     textFont(textFont),
@@ -182,8 +173,20 @@ TextButton::TextButton(int x, int y, int w, int h,
     textTexture(nullptr),
     hovered(false),
     hoverColor(hoverColor),
-    visible(true),
-    active(true),
+    id(nextId++)
+{}
+
+TextButton::TextButton():
+    GuiObject(),
+    buttonColor(SDL_Color()),
+    textColor(SDL_Color()),
+    textFont(nullptr),
+    text(""),
+    xAlign(CENTER),
+    yAlign(CENTER),
+    textTexture(nullptr),
+    hovered(false),
+    hoverColor(SDL_Color()),
     id(nextId++)
 {}
 

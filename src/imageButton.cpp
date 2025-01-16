@@ -31,7 +31,7 @@ void ImageButton::render(SDL_Renderer* renderer) {
     }
     SDL_Texture* finalTexture = hovered ? hoverTexture : buttonTexture;
 
-    SDL_RenderCopy(renderer, finalTexture, nullptr, &buttonRect);
+    SDL_RenderCopy(renderer, finalTexture, nullptr, &objRect);
 
     SDL_DestroyTexture(finalTexture);
 }
@@ -46,10 +46,10 @@ void ImageButton::setHoverAction(std::function<void()> actionFunction) {
 
 bool ImageButton::isClicked(int x, int y) {
     return (
-        x > buttonRect.x &&
-        x < (buttonRect.x + buttonRect.w) &&
-        y > buttonRect.y &&
-        y < (buttonRect.y + buttonRect.h)
+        x > objRect.x &&
+        x < (objRect.x + objRect.w) &&
+        y > objRect.y &&
+        y < (objRect.y + objRect.h)
     );
 }
 // too lazy to remove these foos
@@ -69,8 +69,8 @@ void ImageButton::handleEvents(SDL_Event& e) {
     SDL_GetMouseState(&x, &y);
 
     if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN && active && visible) {
-        if (x > buttonRect.x && x < (buttonRect.x + buttonRect.w) &&
-            y > buttonRect.y && y < (buttonRect.y + buttonRect.h)) {
+        if (x > objRect.x && x < (objRect.x + objRect.w) &&
+            y > objRect.y && y < (objRect.y + objRect.h)) {
             hovered = true;
             if (hoverAction) {
                 hoverAction();
@@ -107,29 +107,28 @@ void ImageButton::updateHoverImgPath(const char* path, SDL_Renderer* renderer) {
     initialize(renderer);
 }
 
-void ImageButton::move(int x, int y) {
-    buttonRect.x = x;
-    buttonRect.y = y;
-}
-
-void ImageButton::resize(int w, int h) {
-    buttonRect.w = w;
-    buttonRect.h = h;
-}
-
 int ImageButton::getId() const {
     return id;
 }
 
 ImageButton::ImageButton(int x, int y, int w, int h, std::string defaultImageFilePath, std::string hoverImageFilePath)
-    : buttonRect{ x, y, w, h },
+    :
+    GuiObject( x, y, w, h, true, true ),
     hovered(false),
-    buttonTexture(NULL),
-    hoverTexture(NULL),
-    visible(true),
-    active(true),
+    buttonTexture(nullptr),
+    hoverTexture(nullptr),
     defaultImgPath(defaultImageFilePath),
     hoverImgPath(hoverImageFilePath),
+    id(nextId++)
+{}
+
+ImageButton::ImageButton():
+    GuiObject(),
+    hovered(false),
+    buttonTexture(nullptr),
+    hoverTexture(nullptr),
+    defaultImgPath(""),
+    hoverImgPath(""),
     id(nextId++)
 {}
 

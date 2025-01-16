@@ -6,17 +6,17 @@
 #include "types.h"
 #include "button.h"
 
-using buttonType = std::variant<TextButton, ImageButton>;
+using ButtonType = std::variant<TextButton, ImageButton>;
 
 class ButtonManager {
 public:
-	std::vector<buttonType> buttons;
+	std::vector<ButtonType> buttons;
 
-	void add(buttonType btn);
+	void add(const ButtonType& btn);
 
 	void renderAll(SDL_Renderer *renderer);
 
-	void handleAllEvent(SDL_Event e);
+	void handleAllEvent(SDL_Event& e);
 
 	void initializeAll(SDL_Renderer *renderer);
 };

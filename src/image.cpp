@@ -1,5 +1,13 @@
 #include "image.h"
 
+Image::Image(const char* filePath, int width, int height, int locX, int locY) :
+	GuiObject(locX, locY, width, height, true, true),
+	imageSurface(nullptr),
+	imageTexture(nullptr),
+	filePath(filePath),
+	prevFilePath(filePath)
+{}
+
 void Image::initialize(SDL_Renderer* renderer) {
 	imageSurface = IMG_Load(filePath);
 	if (imageSurface == nullptr) {
@@ -21,21 +29,11 @@ void Image::render(SDL_Renderer* renderer) {
 		prevFilePath = filePath;
 	}
 
-	SDL_RenderCopy(renderer, imageTexture, NULL, &imageRect);
+	SDL_RenderCopy(renderer, imageTexture, NULL, &objRect);
 }
 
 void Image::updatePath(std::string str) {
 	filePath = str.c_str();
-}
-
-void Image::resize(int w, int h) {
-	imageRect.w = w;
-	imageRect.h = h;
-}
-
-void Image::move(int x, int y) {
-	imageRect.x = x;
-	imageRect.y = y;
 }
 
 bool Image::isVisible() const { return visible; }

@@ -9,3 +9,4 @@
 #include "image.h"
 #include "textBox.h"
 #include "types.h"
+#include "guiobject.h"

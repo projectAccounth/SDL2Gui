@@ -33,6 +33,9 @@
     <ClInclude Include="include\lfmain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\guiobject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\buttonManager.cpp">
@@ -51,6 +54,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\textButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\guiobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\checkbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,17 +2,17 @@
 
 void EditableTextBox::render(SDL_Renderer* renderer) {
     int padding = 5;
-    int maxWidth = textBoxRect.w - padding * 2;
+    int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
-    int startY = textBoxRect.y;
+    int startY = objRect.y;
 
     if (!isVisible()) {
         return;
     }
 
     SDL_SetRenderDrawColor(renderer, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
-    SDL_RenderFillRect(renderer, &textBoxRect);
+    SDL_RenderFillRect(renderer, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
     if (text.empty()) {
@@ -22,29 +22,17 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
     lines = splitTextIntoLines(text, maxWidth);
 
     // LEFT = up, CENTER = center; RIGHT = down.
-    switch (yAlign) {
-    case LEFT:
-        startY = textBoxRect.y + padding;
-        break;
-    case CENTER:
-        startY = textBoxRect.y + (textBoxRect.h - totalHeight) / 2;
-        break;
-    case RIGHT:
-        startY = textBoxRect.y + (textBoxRect.h - totalHeight) - padding;
-        break;
-    }
-
     int offsetY = 0;
 
     switch (yAlign) {
     case LEFT:
-        startY = textBoxRect.y + padding;
+        startY = objRect.y + padding;
         break;
     case CENTER:
-        startY = textBoxRect.y + (textBoxRect.h - totalHeight) / 2;
+        startY = objRect.y + (objRect.h - totalHeight) / 2;
         break;
     case RIGHT:
-        startY = textBoxRect.y + (textBoxRect.h - totalHeight) - padding;
+        startY = objRect.y + (objRect.h - totalHeight) - padding;
         break;
     }
 
@@ -52,16 +40,16 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
         int textWidth = 0, textHeight = 0;
         TTF_SizeText(textFont, line.c_str(), &textWidth, &textHeight);
 
-        int startX = textBoxRect.x;
+        int startX = objRect.x;
         switch (xAlign) {
         case LEFT:
-            startX = textBoxRect.x + padding;
+            startX = objRect.x + padding;
             break;
         case CENTER:
-            startX = textBoxRect.x + (maxWidth - textWidth) / 2;
+            startX = objRect.x + (maxWidth - textWidth) / 2;
             break;
         case RIGHT:
-            startX = textBoxRect.x + maxWidth - textWidth - padding;
+            startX = objRect.x + maxWidth - textWidth - padding;
             break;
         }
 
@@ -149,6 +137,7 @@ EditableTextBox::EditableTextBox(SDL_Rect buttonRect, SDL_Color backgroundColor,
     keyActions[SDLK_LEFT] = [this]() { moveCursorLeft(); };
     keyActions[SDLK_RIGHT] = [this]() { moveCursorRight(); };
     keyActions[SDLK_DELETE] = [this]() { handleDelete(); };
+    keyActions[SDLK_RETURN] = [this]() { insertCharacter('\n'); };
 }
 
 EditableTextBox::~EditableTextBox() {

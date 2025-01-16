@@ -4,16 +4,15 @@
 #define TEXTBOX_H
 
 #include "types.h"
+#include "guiobject.h"
 
-class TextBox {
+class TextBox : public GuiObject {
 protected:
     TTF_Font* textFont;
     SDL_Surface* textSurface;
     SDL_Texture* textTexture;
-    bool visible;
     TextAlign xAlign;
     TextAlign yAlign;
-    SDL_Rect textBoxRect;
     SDL_Color boxColor;
     SDL_Color textColor;
 
@@ -60,7 +59,7 @@ public:
     bool editable;
     EditableTextBox(SDL_Rect buttonRect, SDL_Color backgroundColor,
         SDL_Color textColor, TTF_Font* textFont,
-        TextAlign alignX, TextAlign alignY, bool editable);
+        TextAlign alignX = CENTER, TextAlign alignY = CENTER, bool editable = false);
 
     void render(SDL_Renderer* renderer);
 

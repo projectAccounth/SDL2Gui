@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="include\button.h" />
     <ClInclude Include="include\buttonManager.h" />
+    <ClInclude Include="include\guiobject.h" />
     <ClInclude Include="include\image.h" />
     <ClInclude Include="include\lfmain.h" />
     <ClInclude Include="include\types.h" />
@@ -166,7 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\buttonManager.cpp" />
+    <ClCompile Include="src\checkbox.cpp" />
     <ClCompile Include="src\editableTextBox.cpp" />
+    <ClCompile Include="src\guiobject.cpp" />
     <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\imageButton.cpp" />
     <ClCompile Include="src\textBox.cpp" />

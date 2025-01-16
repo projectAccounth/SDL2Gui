@@ -1,6 +1,6 @@
 #include "buttonManager.h"
 
-void ButtonManager::add(buttonType btn) {
+void ButtonManager::add(const ButtonType& btn) {
 	buttons.push_back(btn);
 }
 
@@ -10,7 +10,7 @@ void ButtonManager::renderAll(SDL_Renderer *renderer) {
 	}
 }
 
-void ButtonManager::handleAllEvent(SDL_Event e) {
+void ButtonManager::handleAllEvent(SDL_Event& e) {
 	for (auto& button : buttons) {
 		std::visit([&](auto& btn) { btn.handleEvents(e); }, button);
 	}

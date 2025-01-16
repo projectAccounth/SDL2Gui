@@ -4,17 +4,16 @@
 #define BUTTON_H
 
 #include "types.h"
+#include "guiobject.h"
 
-class TextButton {
-private:
+class TextButton : public GuiObject {
+protected:
     static int nextId;
 
     bool isClicked(int x, int y);
 
     void checkHover(int mouseX, int mouseY);
 
-    // dimension, size, position and initial RGB color for the button
-    SDL_Rect buttonRect;
     SDL_Color buttonColor;
 
     SDL_Color textColor; // color for TextButton
@@ -33,8 +32,8 @@ private:
     int id;
 public:
     std::string text; // text for the TextButton
-    bool visible, active;
 
+    TextButton();
     TextButton(int x, int y, int w, int h,
         SDL_Color buttonColor, std::string text,
         SDL_Color textColor, SDL_Color hoverColor, TTF_Font* textFont,
@@ -74,15 +73,11 @@ public:
 
     void changeFont(TTF_Font* font, SDL_Renderer* renderer);
 
-    void move(int x, int y);
-
-    void resize(int w, int h);
-
     ~TextButton() {}
 };
 
-class ImageButton {
-private:
+class ImageButton : public GuiObject {
+protected:
     SDL_Texture* buttonTexture;
     SDL_Texture* hoverTexture; // texture for hovering, set hoverTexture to buttonTexture if you don't want hover.
     static int nextId;
@@ -90,7 +85,6 @@ private:
     bool isClicked(int x, int y);
 
     void checkHover(int mouseX, int mouseY);
-    SDL_Rect buttonRect;
     int id;
 
     bool hovered;
@@ -102,8 +96,7 @@ private:
     std::string hoverImgPath;
 public:
 
-    bool visible, active;
-
+    ImageButton();
     ImageButton(int x, int y, int w, int h, std::string defaultImageFilePath, std::string hoverImageFilePath);
 
     void initialize(SDL_Renderer* renderer);
@@ -135,11 +128,28 @@ public:
 
     void updateDefaultImgPath(const char* updatedPath, SDL_Renderer* renderer);
 
-    void move(int x, int y);
-
-    void resize(int w, int h);
-
     ~ImageButton();
+};
+
+class CheckBox : public TextButton {
+private:
+    SDL_Color boxColor;
+    char boxSymbol;
+public:
+    bool isChecked;
+
+    CheckBox();
+    CheckBox(
+        TTF_Font* textFont,
+        int x = 0, int y = 0, int w = 10, int h = 10,
+        SDL_Color boxColor,
+        SDL_Color textColor,
+        char symbol
+    );
+
+    void changeSymbol(char symbol);
+
+    void handleEvents(SDL_Event& event);
 };
 
 
