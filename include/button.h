@@ -141,9 +141,9 @@ public:
     CheckBox();
     CheckBox(
         TTF_Font* textFont,
-        int x = 0, int y = 0, int w = 10, int h = 10,
         SDL_Color boxColor,
         SDL_Color textColor,
+        int x = 0, int y = 0, int w = 10, int h = 10,
         char symbol
     );
 
