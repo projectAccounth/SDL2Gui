@@ -15,15 +15,22 @@ SDL_Rect GuiObject::getSize() const {
 }
 
 GuiObject::GuiObject():
+	size(UIUnit()),
+	position(UIUnit()),
 	objRect{ 0, 0, 0, 0 },
 	visible(false),
 	active(false)
 {}
 GuiObject::GuiObject(
-	int x, int y, int w, int h,
+	UIUnit size, UIUnit position,
 	bool isVisible, bool isActive
-):
-	objRect{x, y, w, h},
+) :
+	position(position),
+	size(size),
 	visible(isVisible),
 	active(isActive)
-{}
+{
+	objRect = SDL_Rect();
+
+	objRect.x = position.isUsingScale ? position.sizeX
+}

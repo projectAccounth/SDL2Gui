@@ -1,6 +1,6 @@
 #include "image.h"
 
-Image::Image(const char* filePath, int width, int height, int locX, int locY) :
+Image::Image(const char* filePath, int width, int height, int locX, int locY, SDL_Renderer* renderer) :
 	GuiObject(locX, locY, width, height, true, true),
 	imageSurface(nullptr),
 	imageTexture(nullptr),
@@ -9,7 +9,7 @@ Image::Image(const char* filePath, int width, int height, int locX, int locY) :
 {}
 
 void Image::initialize(SDL_Renderer* renderer) {
-	imageSurface = IMG_Load(filePath);
+	imageSurface = IMG_Load(filePath.c_str());
 	if (imageSurface == nullptr) {
 		std::cout << "A problem occurred when trying to create image. Error: " << SDL_GetError() << '\n';
 		return;
@@ -21,19 +21,22 @@ void Image::initialize(SDL_Renderer* renderer) {
 void Image::render(SDL_Renderer* renderer) {
 	if (!isVisible()) return;
 
-	if (filePath != prevFilePath) {
-		SDL_DestroyTexture(imageTexture);
-		imageSurface = IMG_Load(filePath);
-		imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
-		SDL_FreeSurface(imageSurface);
-		prevFilePath = filePath;
-	}
-
 	SDL_RenderCopy(renderer, imageTexture, NULL, &objRect);
 }
 
-void Image::updatePath(std::string str) {
-	filePath = str.c_str();
+void Image::updatePath(const std::string& str, SDL_Renderer* renderer) {
+	prevFilePath = filePath;
+	filePath = str;
+
+	initialize(renderer);
+}
+
+std::string Image::getFilePath() const {
+	return filePath;
+}
+
+std::string Image::previousFilePath() const {
+	return prevFilePath;
 }
 
 bool Image::isVisible() const { return visible; }

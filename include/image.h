@@ -11,17 +11,21 @@ class Image : public GuiObject {
 private:
 	SDL_Surface* imageSurface;
 	SDL_Texture* imageTexture;
+	std::string filePath;
+	std::string prevFilePath;
 public:
-	const char* filePath;
-	const char* prevFilePath;
 
-	Image(const char* filePath, int width, int height, int locX, int locY);
+	Image(const char* filePath, int width, int height, int locX, int locY, SDL_Renderer* renderer);
 
 	void initialize(SDL_Renderer* renderer);
 
 	void render(SDL_Renderer* renderer);
 
-	void updatePath(std::string filePath);
+	void updatePath(const std::string& filePath, SDL_Renderer* renderer);
+
+	std::string previousFilePath() const;
+
+	std::string getFilePath() const;
 
 	bool isVisible() const;
 };

@@ -2,16 +2,26 @@
 
 #include "types.h"
 
+typedef struct UIUnit {
+	int sizeX, sizeY;
+	bool isUsingScale;
+} UIUnit;
+
 class GuiObject {
 protected:
 	SDL_Rect objRect;
 public:
 
+	UIUnit position;
+	UIUnit size;
+	
+	std::variant<SDL_Window*, GuiObject&> parent;
+
 	bool visible, active;
 
 	GuiObject();
 	GuiObject(
-		int x, int y, int w, int h,
+		UIUnit size, UIUnit position,
 		bool isVisible, bool isActive
 	);
 
