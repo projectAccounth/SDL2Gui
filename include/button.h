@@ -34,10 +34,19 @@ public:
     std::string text; // text for the TextButton
 
     TextButton();
-    TextButton(int x, int y, int w, int h,
-        SDL_Color buttonColor, std::string text,
-        SDL_Color textColor, SDL_Color hoverColor, TTF_Font* textFont,
-        TextAlign alignX = CENTER, TextAlign alignY = CENTER);
+    TextButton(
+        UIUnit size,
+        UIUnit position,
+        std::optional<GuiObject*> parent,
+        SDL_Renderer* renderer,
+        SDL_Color buttonColor,
+        SDL_Color hoverColor,
+        SDL_Color textColor = {0, 0, 0, 255},
+        std::string text = "",
+        TTF_Font* textFont = nullptr,
+        TextAlign alignX = CENTER,
+        TextAlign alignY = CENTER
+    );
 
     // Preloading text (must be called before rendering)
     void loadText(SDL_Renderer* renderer);
@@ -97,7 +106,14 @@ protected:
 public:
 
     ImageButton();
-    ImageButton(int x, int y, int w, int h, std::string defaultImageFilePath, std::string hoverImageFilePath);
+    ImageButton(
+        UIUnit size,
+        UIUnit position,
+        std::optional<GuiObject*> parent,
+        SDL_Renderer* renderer,
+        std::string defaultImageFilePath,
+        std::string hoverImageFilePath
+    );
 
     void initialize(SDL_Renderer* renderer);
 
@@ -142,7 +158,9 @@ public:
         TTF_Font* textFont,
         SDL_Color boxColor,
         SDL_Color textColor,
-        int x = 0, int y = 0, int w = 10, int h = 10,
+        std::optional<GuiObject*> parent,
+        SDL_Renderer* renderer,
+        UIUnit position = { 0, 0, false }, UIUnit size = { 10, 10, false },
         char symbol = 'X'
     );
 

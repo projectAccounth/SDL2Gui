@@ -2,28 +2,35 @@
 
 CheckBox::CheckBox() :
     TextButton(),
-    boxSymbol('X')
+    boxSymbol('X'),
+    isChecked(false)
 {}
 CheckBox::CheckBox(
     TTF_Font* textFont,
     SDL_Color boxColor,
     SDL_Color textColor,
-    int x, int y, int w, int h,
+    std::optional<GuiObject*> parent,
+    SDL_Renderer* renderer,
+    UIUnit position, UIUnit size,
     char symbol
 ):
     TextButton(
-        x, y, w, h,
+        size,
+        position,
+        parent,
+        renderer,
         boxColor,
-        "",
-        textColor,
-        SDL_Color{ 
+        SDL_Color{
             (unsigned char)(boxColor.r - 122),
             (unsigned char)(boxColor.g - 122),
-            (unsigned char)(boxColor.b - 122), 255 
+            (unsigned char)(boxColor.b - 122), 255
         },
+        textColor,
+        "",
         textFont
     ),
-    boxSymbol(symbol)
+    boxSymbol(symbol),
+    isChecked(false)
 {}
 
 void CheckBox::changeSymbol(char symbol) {

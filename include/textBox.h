@@ -25,9 +25,18 @@ protected:
 public:
     std::string text;
 
-    TextBox(SDL_Rect br, SDL_Color bc, std::string t,
-        SDL_Color tc, TTF_Font* tf,
-        TextAlign alignX, TextAlign alignY);
+    TextBox(
+        UIUnit size,
+        UIUnit position,
+        std::optional<GuiObject*> parent,
+        SDL_Renderer* renderer,
+        SDL_Color boxColor,
+        std::string text = "",
+        SDL_Color textColor = { 0, 0, 0, 255 },
+        TTF_Font* textFont = nullptr,
+        TextAlign alignX = CENTER,
+        TextAlign alignY = CENTER
+    );
 
     void render(SDL_Renderer* renderer);
 
@@ -57,9 +66,18 @@ private:
     std::unordered_map<SDL_Keycode, std::function<void()>> keyActions;
 public:
     bool editable;
-    EditableTextBox(SDL_Rect buttonRect, SDL_Color backgroundColor,
-        SDL_Color textColor, TTF_Font* textFont,
-        TextAlign alignX = CENTER, TextAlign alignY = CENTER, bool editable = false);
+    EditableTextBox(
+        UIUnit size,
+        UIUnit position,
+        std::optional<GuiObject*> parent,
+        SDL_Renderer* renderer,
+        SDL_Color backgroundColor,
+        SDL_Color textColor = { 0, 0, 0, 255 },
+        TTF_Font* textFont = nullptr,
+        TextAlign alignX = CENTER,
+        TextAlign alignY = CENTER,
+        bool editable = false
+    );
 
     void render(SDL_Renderer* renderer);
 

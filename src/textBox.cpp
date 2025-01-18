@@ -132,16 +132,25 @@ void TextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
     xAlign = align;
 }
 
-TextBox::TextBox(SDL_Rect br, SDL_Color bc, std::string t,
-    SDL_Color tc, TTF_Font* tf,
-    TextAlign alignX, TextAlign alignY) :
-    GuiObject(br.x, br.y, br.w, br.h, true, true),
+TextBox::TextBox(
+    UIUnit size,
+    UIUnit position,
+    std::optional<GuiObject*> parent,
+    SDL_Renderer* renderer,
+    SDL_Color boxColor,
+    std::string text,
+    SDL_Color textColor,
+    TTF_Font* textFont,
+    TextAlign alignX,
+    TextAlign alignY
+) :
+    GuiObject(size, position, parent, renderer),
     textTexture(nullptr),
     textSurface(nullptr),
-    boxColor(bc),
-    text(t),
-    textColor(tc),
-    textFont(tf),
+    boxColor(boxColor),
+    text(text),
+    textColor(textColor),
+    textFont(textFont),
     xAlign(alignX),
     yAlign(alignY) {}
 

@@ -15,7 +15,11 @@ private:
 	std::string prevFilePath;
 public:
 
-	Image(const char* filePath, int width, int height, int locX, int locY, SDL_Renderer* renderer);
+	Image(const char* filePath,
+		std::optional<GuiObject*> parent,
+		SDL_Renderer* renderer,
+		UIUnit position, UIUnit size
+	);
 
 	void initialize(SDL_Renderer* renderer);
 

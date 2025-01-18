@@ -10,14 +10,18 @@ void ImageButton::initialize(SDL_Renderer* renderer) {
     SDL_Surface* hoverSurf = IMG_Load(hoverImgPath.c_str());
 
     if (imgSurf == nullptr || hoverSurf == nullptr) {
-        std::cout << "A problem occurred when creating one or more surface for image button, ID: " << id << ".Error: " << SDL_GetError() << '\n';
+        std::cout << "A problem occurred when creating one or more surface for image button, ID: "
+            << id << ". Error: "
+            << SDL_GetError() << '\n';
         exit(1);
     }
     hoverTexture = SDL_CreateTextureFromSurface(renderer, hoverSurf);
     buttonTexture = SDL_CreateTextureFromSurface(renderer, imgSurf);
 
     if (hoverTexture == nullptr || buttonTexture == nullptr) {
-        std::cout << "A problem occurred when creating one or more texture for image button, ID: " << id << ".Error: " << SDL_GetError() << '\n';
+        std::cout << "A problem occurred when creating one or more texture for image button, ID: "
+            << id << ". Error: "
+            << SDL_GetError() << '\n';
         exit(1);
     }
 
@@ -111,9 +115,16 @@ int ImageButton::getId() const {
     return id;
 }
 
-ImageButton::ImageButton(int x, int y, int w, int h, std::string defaultImageFilePath, std::string hoverImageFilePath)
+ImageButton::ImageButton(
+    UIUnit size,
+    UIUnit position,
+    std::optional<GuiObject*> parent,
+    SDL_Renderer* renderer,
+    std::string defaultImageFilePath,
+    std::string hoverImageFilePath
+)
     :
-    GuiObject( x, y, w, h, true, true ),
+    GuiObject( size, position, parent, renderer ),
     hovered(false),
     buttonTexture(nullptr),
     hoverTexture(nullptr),

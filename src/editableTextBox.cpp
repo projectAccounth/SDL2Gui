@@ -126,10 +126,19 @@ void EditableTextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
     xAlign = align;
 }
 
-EditableTextBox::EditableTextBox(SDL_Rect buttonRect, SDL_Color backgroundColor,
-    SDL_Color textColor, TTF_Font* textFont,
-    TextAlign alignX, TextAlign alignY, bool editable) :
-    TextBox(buttonRect, backgroundColor, "", textColor, textFont, alignX, alignY),
+EditableTextBox::EditableTextBox(
+    UIUnit size,
+    UIUnit position,
+    std::optional<GuiObject*> parent,
+    SDL_Renderer* renderer,
+    SDL_Color backgroundColor,
+    SDL_Color textColor,
+    TTF_Font* textFont,
+    TextAlign alignX,
+    TextAlign alignY,
+    bool editable
+):
+    TextBox(size, position, parent, renderer, backgroundColor, "", textColor, textFont, alignX, alignY),
     editable(editable),
     text(""), cursorPosition(0) {
     // Define actions for specific keys

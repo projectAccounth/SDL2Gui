@@ -22,6 +22,7 @@
 #include <variant>
 #include <type_traits>
 #include <unordered_map>
+#include <optional>
 
 enum TextAlign {
     LEFT,

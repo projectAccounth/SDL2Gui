@@ -3,7 +3,7 @@
 #include "types.h"
 
 typedef struct UIUnit {
-	int sizeX, sizeY;
+	double sizeX, sizeY;
 	bool isUsingScale;
 } UIUnit;
 
@@ -16,16 +16,18 @@ public:
 	UIUnit position;
 	UIUnit size;
 	
-	std::variant<SDL_Renderer*, GuiObject&> parent;
+	std::optional<GuiObject*> parent;
 
 	bool visible, active;
 
 	GuiObject();
 	GuiObject(
-		UIUnit size, UIUnit position,
-		std::variant<SDL_Renderer*, GuiObject&> parent,
+		UIUnit size,
+		UIUnit position,
+		std::optional<GuiObject*> parent,
 		SDL_Renderer* renderer,
-		bool isVisible = true, bool isActive = true
+		bool isVisible = true,
+		bool isActive = true
 	);
 
 	SDL_Rect getSize() const;
@@ -42,8 +44,10 @@ public:
 	Frame();
 	Frame(
 		UIUnit size, UIUnit position,
-		std::variant<SDL_Renderer*, GuiObject&> parent,
+		std::optional<GuiObject*> parent,
 		SDL_Renderer* renderer, SDL_Color frameColor = SDL_Color(),
 		bool isVisible = true, bool isActive = true
 	);
+
+	void render(SDL_Renderer* renderer);
 };

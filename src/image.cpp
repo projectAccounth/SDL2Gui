@@ -1,7 +1,12 @@
 #include "image.h"
 
-Image::Image(const char* filePath, int width, int height, int locX, int locY, SDL_Renderer* renderer) :
-	GuiObject(locX, locY, width, height, true, true),
+Image::Image(
+	const char* filePath,
+	std::optional<GuiObject*> parent,
+	SDL_Renderer* renderer,
+	UIUnit position, UIUnit size
+) :
+	GuiObject(size, position, parent, renderer),
 	imageSurface(nullptr),
 	imageTexture(nullptr),
 	filePath(filePath),
