@@ -10,24 +10,27 @@ typedef struct UIUnit {
 class GuiObject {
 protected:
 	SDL_Rect objRect;
+	void updateSize(SDL_Renderer* renderer);
 public:
 
 	UIUnit position;
 	UIUnit size;
 	
-	std::variant<SDL_Window*, GuiObject&> parent;
+	std::variant<SDL_Renderer*, GuiObject&> parent;
 
 	bool visible, active;
 
 	GuiObject();
 	GuiObject(
 		UIUnit size, UIUnit position,
-		bool isVisible, bool isActive
+		std::variant<SDL_Renderer*, GuiObject&> parent,
+		SDL_Renderer* renderer,
+		bool isVisible = true, bool isActive = true
 	);
 
 	SDL_Rect getSize() const;
 
-	void move(int x, int y);
+	void move(const UIUnit& newPos, SDL_Renderer* renderer);
 
-	void resize(int x, int y);
+	void resize(const UIUnit& newSize, SDL_Renderer* renderer);
 };
