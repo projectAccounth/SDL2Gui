@@ -34,3 +34,16 @@ public:
 
 	void resize(const UIUnit& newSize, SDL_Renderer* renderer);
 };
+
+class Frame : public GuiObject {
+private:
+	SDL_Color frameColor;
+public:
+	Frame();
+	Frame(
+		UIUnit size, UIUnit position,
+		std::variant<SDL_Renderer*, GuiObject&> parent,
+		SDL_Renderer* renderer, SDL_Color frameColor = SDL_Color(),
+		bool isVisible = true, bool isActive = true
+	);
+};

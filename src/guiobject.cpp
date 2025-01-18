@@ -74,3 +74,14 @@ GuiObject::GuiObject(
 {
 	updateSize(renderer);
 }
+
+Frame::Frame(): GuiObject(), frameColor(SDL_Color()) {}
+Frame::Frame(
+	UIUnit size, UIUnit position,
+	std::variant<SDL_Renderer*, GuiObject&> parent,
+	SDL_Renderer* renderer, SDL_Color frameColor = SDL_Color(),
+	bool isVisible = true, bool isActive = true
+):
+	GuiObject(size, position, parent, renderer, isVisible, isActive),
+	frameColor(frameColor)
+{}
