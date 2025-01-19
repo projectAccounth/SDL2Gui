@@ -44,19 +44,19 @@ void CheckBox::handleEvents(SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
-    if ((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && (active && visible)) {
-        if (x > objRect.x && x < (objRect.x + objRect.w) &&
-            y > objRect.y && y < (objRect.y + objRect.h)) {
-            hovered = true;
-            if (hoverAction) hoverAction();
-        }
-        else {
-            hovered = false;
-        }
-        if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
-            if (buttonAction) buttonAction(); // optional
-            isChecked = !isChecked;
-            text = isChecked ? std::string(1, boxSymbol) : "";
-        }
+    if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && (active && visible))) {
+        return;
+    }
+    if (x > objRect.x && x < (objRect.x + objRect.w) &&
+        y > objRect.y && y < (objRect.y + objRect.h)) {
+        hovered = true;
+    }
+    else {
+        hovered = false;
+    }
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+        isChecked = !isChecked;
+        text = isChecked ? std::string(1, boxSymbol) : "";
+        loadText(ref);
     }
 }

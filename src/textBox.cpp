@@ -52,7 +52,6 @@ void TextBox::render(SDL_Renderer* renderer) {
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
     int startY = objRect.y;
-
     if (!isVisible()) {
         return;
     }
@@ -61,7 +60,7 @@ void TextBox::render(SDL_Renderer* renderer) {
     SDL_RenderFillRect(renderer, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
-    if (text.empty()) {
+    if (text.empty() || !textFont || !textTexture) {
         return;
     }
     
@@ -114,14 +113,6 @@ void TextBox::render(SDL_Renderer* renderer) {
 void TextBox::update(SDL_Renderer* renderer, const char* textToUpdate) {
     text = textToUpdate;
     render(renderer);
-}
-
-bool TextBox::isVisible() const {
-    return visible;
-}
-
-void TextBox::toggleVisibility(bool value) {
-    visible = value;
 }
 
 void TextBox::adjustTextAlignment(bool isVertical, TextAlign align) {

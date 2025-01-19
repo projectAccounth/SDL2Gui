@@ -32,6 +32,8 @@ public:
 	std::string getFilePath() const;
 
 	bool isVisible() const;
+
+	~Image();
 };
 
 class ImageManager {

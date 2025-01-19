@@ -10,7 +10,8 @@ typedef struct UIUnit {
 class GuiObject {
 protected:
 	SDL_Rect objRect;
-	void updateSize(SDL_Renderer* renderer);
+	void update(SDL_Renderer* renderer);
+	SDL_Renderer*& ref;
 public:
 
 	UIUnit position;
@@ -35,6 +36,12 @@ public:
 	void move(const UIUnit& newPos, SDL_Renderer* renderer);
 
 	void resize(const UIUnit& newSize, SDL_Renderer* renderer);
+
+	bool isVisible() const;
+
+	bool isActive() const;
+
+	void toggleVisiblility(bool value);
 };
 
 class Frame : public GuiObject {

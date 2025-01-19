@@ -11,8 +11,10 @@ Image::Image(
 	imageTexture(nullptr),
 	filePath(filePath),
 	prevFilePath(filePath)
-{}
-
+{
+	initialize(renderer);
+}
+	
 void Image::initialize(SDL_Renderer* renderer) {
 	imageSurface = IMG_Load(filePath.c_str());
 	if (imageSurface == nullptr) {
@@ -24,7 +26,7 @@ void Image::initialize(SDL_Renderer* renderer) {
 }
 
 void Image::render(SDL_Renderer* renderer) {
-	if (!isVisible()) return;
+	if (!isVisible() || (parent && !parent.value()->visible)) return;
 
 	SDL_RenderCopy(renderer, imageTexture, NULL, &objRect);
 }
@@ -42,6 +44,11 @@ std::string Image::getFilePath() const {
 
 std::string Image::previousFilePath() const {
 	return prevFilePath;
+}
+
+Image::~Image() {
+	SDL_DestroyTexture(imageTexture);
+	SDL_FreeSurface(imageSurface);
 }
 
 bool Image::isVisible() const { return visible; }

@@ -60,12 +60,6 @@ public:
     // Setting the function responsible for hovering.
     void setHoverAction(std::function<void()> actionFunction);
 
-    // Returns the visibility of the button.
-    bool isVisible() const;
-
-    // Alternative to button.visible = value : bool;
-    void toggleVisiblility(bool value);
-
     // Handle all clicking and hovering events. Put in the PollEvent loop.
     void handleEvents(SDL_Event& event);
 
@@ -82,7 +76,7 @@ public:
 
     void changeFont(TTF_Font* font, SDL_Renderer* renderer);
 
-    ~TextButton() {}
+    ~TextButton();
 };
 
 class ImageButton : public GuiObject {
@@ -126,17 +120,8 @@ public:
     // Setting the function responsible for hovering.
     void setHoverAction(std::function<void()> actionFunction);
 
-    // Returns the visibility.
-    bool isVisible() const;
-
-    // Alternative to directly assigning button.visible.
-    void toggleVisiblility(bool value);
-
     // Handles clicking and hovering. Put in the PollEvent loop.
     void handleEvents(SDL_Event& event);
-
-    // Alternative to directly assigning button.active.
-    void toggleActive(bool value);
 
     int getId() const;
 
@@ -163,6 +148,10 @@ public:
         UIUnit position = { 0, 0, false }, UIUnit size = { 10, 10, false },
         char symbol = 'X'
     );
+
+    void setAction(std::function<void()> buttonAction) = delete;
+
+    void setHoverAction(std::function<void()> buttonAction) = delete;
 
     void changeSymbol(char symbol);
 

@@ -4,8 +4,12 @@
 int TextButton::nextId = 0;
 
 void TextButton::loadText(SDL_Renderer* renderer) {
+    if ((text.empty() || !textFont) && !textTexture) {
+        textTexture = nullptr;
+        return;
+    }
     if (textTexture != nullptr)
-        SDL_DestroyTexture(textTexture); // destroy the texture to create a new one
+        SDL_DestroyTexture(textTexture);
 
     SDL_Surface* textSurface = TTF_RenderUTF8_Blended(textFont, text.c_str(), textColor);
     if (textSurface == nullptr) {
@@ -13,8 +17,8 @@ void TextButton::loadText(SDL_Renderer* renderer) {
         return;
     }
 
-    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface); // creating the text texture that can be rendered
-    SDL_FreeSurface(textSurface); // we don't want to make a thousand duplicates of a same surface and cause a memory leak, right?
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_FreeSurface(textSurface);
 
     if (textTexture == nullptr) {
         std::cerr << "Cannot create text. Error: " << TTF_GetError() << "\n";
@@ -23,7 +27,7 @@ void TextButton::loadText(SDL_Renderer* renderer) {
 }
 
 void TextButton::render(SDL_Renderer* renderer) {
-    if (!isVisible()) {
+    if (!isVisible() || (parent && !parent.value()->visible)) {
         return;
     }
     // set the color to draw for the button and also set the settings to render the button
@@ -34,16 +38,11 @@ void TextButton::render(SDL_Renderer* renderer) {
     }
     SDL_SetRenderDrawColor(renderer, drawColor.r, drawColor.g, drawColor.b, drawColor.a);
     SDL_RenderFillRect(renderer, &objRect);
-    if (textTexture != nullptr) {
-        int textWidth, textHeight;
-        // querying the texture to attempt to align the text
-        if (textTexture == nullptr) {
-            std::cout << "Error: Texture is nullptr!" << std::endl;
-        }
-        else {
-            SDL_QueryTexture(textTexture, nullptr, nullptr, &textWidth, &textHeight);
-        }
-        // now create a rect for the text
+    if (textTexture && textFont) {
+        int textWidth = 0, textHeight = 0;
+
+        SDL_QueryTexture(textTexture, nullptr, nullptr, &textWidth, &textHeight);
+
         SDL_Rect textRect;
 
         // align the text
@@ -96,36 +95,24 @@ void TextButton::checkHover(int mouseX, int mouseY) {
     hovered = isClicked(mouseX, mouseY);
 }
 
-bool TextButton::isVisible() const {
-    return visible;
-}
-void TextButton::toggleVisiblility(bool value) {
-    visible = value;
-}
 void TextButton::handleEvents(SDL_Event& e) {
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
-    if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN && active && visible) {
-        if (x > objRect.x && x < (objRect.x + objRect.w) &&
-            y > objRect.y && y < (objRect.y + objRect.h)) {
-            hovered = true;
-            if (hoverAction) {
-                hoverAction();
-            }
-        }
-        else {
-            hovered = false;
-        }
-        if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
-            if (buttonAction) {
-                std::cout << "Button clicked!" << std::endl;
-                buttonAction();
-            }
-            else {
-                std::cout << "No action assigned!" << std::endl;
-            }
-        }
+
+    if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
+        return;
+    }
+    if (x > objRect.x && x < (objRect.x + objRect.w) &&
+        y > objRect.y && y < (objRect.y + objRect.h)) {
+        hovered = true;
+        if (hoverAction) hoverAction();
+    }
+    else {
+        hovered = false;
+    }
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+        if (buttonAction) buttonAction();
     }
 }
 
@@ -183,7 +170,9 @@ TextButton::TextButton(
     hovered(false),
     hoverColor(hoverColor),
     id(nextId++)
-{}
+{
+    loadText(renderer);
+}
 
 TextButton::TextButton():
     GuiObject(),
@@ -198,5 +187,10 @@ TextButton::TextButton():
     hoverColor(SDL_Color()),
     id(nextId++)
 {}
+
+TextButton::~TextButton() {
+    SDL_DestroyTexture(textTexture);
+}
+
 
 

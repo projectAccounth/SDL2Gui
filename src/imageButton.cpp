@@ -30,7 +30,7 @@ void ImageButton::initialize(SDL_Renderer* renderer) {
 }
 
 void ImageButton::render(SDL_Renderer* renderer) {
-    if (!isVisible()) {
+    if (!isVisible() || (parent && !parent.value()->visible)) {
         return;
     }
     SDL_Texture* finalTexture = hovered ? hoverTexture : buttonTexture;
@@ -61,44 +61,25 @@ void ImageButton::checkHover(int mouseX, int mouseY) {
     hovered = isClicked(mouseX, mouseY);
 }
 
-bool ImageButton::isVisible() const {
-    return visible;
-}
-void ImageButton::toggleVisiblility(bool value) {
-    visible = value;
-}
 void ImageButton::handleEvents(SDL_Event& e) {
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
-    if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN && active && visible) {
-        if (x > objRect.x && x < (objRect.x + objRect.w) &&
-            y > objRect.y && y < (objRect.y + objRect.h)) {
-            hovered = true;
-            if (hoverAction) {
-                hoverAction();
-            }
-        }
-        else {
-            hovered = false;
-        }
-
-        // if mouse is clicked while hovering, those couts are safe to remove
-        if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
-            if (buttonAction) {
-                std::cout << "Button clicked!" << std::endl;
-                buttonAction();
-            }
-            else {
-                std::cout << "No action assigned!" << std::endl;
-            }
-        }
+    if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
+        return;
     }
-}
-
-void ImageButton::toggleActive(bool value) {
-    active = value;
+    if (x > objRect.x && x < (objRect.x + objRect.w) &&
+        y > objRect.y && y < (objRect.y + objRect.h)) {
+        hovered = true;
+        if (hoverAction) hoverAction();
+    }
+    else {
+        hovered = false;
+    }
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+        if (buttonAction) buttonAction();
+    }
 }
 
 void ImageButton::updateDefaultImgPath(const char* path, SDL_Renderer* renderer) {
@@ -131,7 +112,9 @@ ImageButton::ImageButton(
     defaultImgPath(defaultImageFilePath),
     hoverImgPath(hoverImageFilePath),
     id(nextId++)
-{}
+{
+    initialize(renderer);
+}
 
 ImageButton::ImageButton():
     GuiObject(),

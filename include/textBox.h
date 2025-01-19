@@ -44,10 +44,6 @@ public:
 
     void adjustTextAlignment(bool isVertical, TextAlign align);
 
-    bool isVisible() const;
-
-    void toggleVisibility(bool value);
-
     ~TextBox();
 };
 

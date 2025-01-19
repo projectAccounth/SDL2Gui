@@ -7,7 +7,7 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
     int startY = objRect.y;
 
-    if (!isVisible()) {
+    if (!isVisible() || (parent && !parent.value()->visible)) {
         return;
     }
 
