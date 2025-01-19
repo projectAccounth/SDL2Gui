@@ -158,12 +158,21 @@ void TextButton::changeFont(TTF_Font* font, SDL_Renderer* renderer) {
     loadText(renderer);
 }
 
-TextButton::TextButton(int x, int y, int w, int h,
-    SDL_Color buttonColor, std::string text,
-    SDL_Color textColor, SDL_Color hoverColor, TTF_Font* textFont,
-    TextAlign alignX, TextAlign alignY)
+TextButton::TextButton(
+    UIUnit size,
+    UIUnit position,
+    std::optional<GuiObject*> parent,
+    SDL_Renderer* renderer,
+    SDL_Color buttonColor,
+    SDL_Color hoverColor,
+    SDL_Color textColor,
+    std::string text,
+    TTF_Font* textFont,
+    TextAlign alignX,
+    TextAlign alignY
+)
     :
-    GuiObject(x, y, w, h, true, true),
+    GuiObject(size, position, parent, renderer),
     buttonColor(buttonColor),
     textColor(textColor),
     textFont(textFont),
