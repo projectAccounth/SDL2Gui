@@ -10,7 +10,7 @@ CheckBox::CheckBox(
     SDL_Color boxColor,
     SDL_Color textColor,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     UIUnit position, UIUnit size,
     char symbol
 ):

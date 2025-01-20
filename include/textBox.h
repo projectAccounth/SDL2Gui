@@ -29,7 +29,7 @@ public:
         UIUnit size,
         UIUnit position,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         SDL_Color boxColor,
         std::string text = "",
         SDL_Color textColor = { 0, 0, 0, 255 },
@@ -38,7 +38,7 @@ public:
         TextAlign alignY = CENTER
     );
 
-    void render(SDL_Renderer* renderer);
+    void render(SDL_Renderer* renderer) override;
 
     void update(SDL_Renderer* renderer, const char* textToUpdate);
 
@@ -66,7 +66,7 @@ public:
         UIUnit size,
         UIUnit position,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         SDL_Color backgroundColor,
         SDL_Color textColor = { 0, 0, 0, 255 },
         TTF_Font* textFont = nullptr,
@@ -75,7 +75,7 @@ public:
         bool editable = false
     );
 
-    void render(SDL_Renderer* renderer);
+    void render(SDL_Renderer* renderer) override;
 
     void reset();
 

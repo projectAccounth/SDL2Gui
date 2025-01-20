@@ -14,6 +14,10 @@ int main(int argc, char* argv[]) {
 	mainWindow = SDL_CreateWindow("Program", 80, 80, 640, 480, 0);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
+	/*GuiManager manager;
+
+	manager.initialize();*/
+
 	TTF_Font* mainFont = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 25);
 
 	if (!mainFont) {
@@ -47,6 +51,16 @@ int main(int argc, char* argv[]) {
 		'X'
 	);
 
+	/*auto frame3 = manager.addObject("Frame", mainRenderer);
+	auto frame4 = manager.addObject("Frame", mainRenderer);
+	auto checkBox2 = manager.addObject("CheckBox", mainRenderer);
+
+	frame3.get()->move({0.75, 0.75, true});
+	frame3.get()->resize({ 0.25, 0.25, true });
+	frame3.get()->canBeDragged = true;*/
+
+	frame1.canBeDragged = true;
+
 	while (isRunning) {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
@@ -57,12 +71,16 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			checkBox1.handleEvents(e);
+			frame1.handleEvent(e);
+			frame2.handleEvent(e);
+			// frame3.get()->handleEvent(e);
 		}
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
 
 		frame1.render(mainRenderer);
 		frame2.render(mainRenderer);
+		// manager.renderAll(mainRenderer);
 		checkBox1.render(mainRenderer);
 
 		SDL_RenderPresent(mainRenderer);

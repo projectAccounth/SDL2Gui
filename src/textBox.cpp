@@ -127,7 +127,7 @@ TextBox::TextBox(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     SDL_Color boxColor,
     std::string text,
     SDL_Color textColor,

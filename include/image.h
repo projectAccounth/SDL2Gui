@@ -17,13 +17,13 @@ public:
 
 	Image(const char* filePath,
 		std::optional<GuiObject*> parent,
-		SDL_Renderer* renderer,
+		SDL_Renderer*& renderer,
 		UIUnit position, UIUnit size
 	);
 
 	void initialize(SDL_Renderer* renderer);
 
-	void render(SDL_Renderer* renderer);
+	void render(SDL_Renderer* renderer) override;
 
 	void updatePath(const std::string& filePath, SDL_Renderer* renderer);
 

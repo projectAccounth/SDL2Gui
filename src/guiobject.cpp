@@ -8,18 +8,19 @@ std::pair<UIUnit, UIUnit> calculateChild(
 	const int& windowHeight
 ) {
 	// Base case: If no parent exists, calculate relative to the window
+	const auto [objSize, objPos] = std::pair<UIUnit, UIUnit>{ obj.getSize(), obj.getPosition() };
 	if (!obj.parent) {
 		UIUnit outPos, outSize;
 
 		outSize.sizeX = static_cast<int>(
-			obj.size.isUsingScale ? windowWidth * obj.size.sizeX : obj.size.sizeX);
+			objSize.isUsingScale ? windowWidth * objSize.sizeX : objSize.sizeX);
 		outSize.sizeY = static_cast<int>(
-			obj.size.isUsingScale ? windowHeight * obj.size.sizeY : obj.size.sizeY);
+			objSize.isUsingScale ? windowHeight * objSize.sizeY : objSize.sizeY);
 
 		outPos.sizeX = static_cast<int>(
-			obj.position.isUsingScale ? windowWidth * obj.position.sizeX : obj.position.sizeX);
+			objPos.isUsingScale ? windowWidth * objPos.sizeX : objPos.sizeX);
 		outPos.sizeY = static_cast<int>(
-			obj.position.isUsingScale ? windowHeight * obj.position.sizeY : obj.position.sizeY);
+			objPos.isUsingScale ? windowHeight * objPos.sizeY : objPos.sizeY);
 
 		return { outPos, outSize };
 	}
@@ -32,16 +33,16 @@ std::pair<UIUnit, UIUnit> calculateChild(
 	UIUnit outPos, outSize;
 
 	outSize.sizeX = static_cast<int>(
-		obj.size.isUsingScale ? parentSize.sizeX * obj.size.sizeX : obj.size.sizeX);
+		objSize.isUsingScale ? parentSize.sizeX * objSize.sizeX : objSize.sizeX);
 	outSize.sizeY = static_cast<int>(
-		obj.size.isUsingScale ? parentSize.sizeY * obj.size.sizeY : obj.size.sizeY);
+		objSize.isUsingScale ? parentSize.sizeY * objSize.sizeY : objSize.sizeY);
 
 	outPos.sizeX = static_cast<int>(
 		parentPos.sizeX +
-		(obj.position.isUsingScale ? parentSize.sizeX * obj.position.sizeX : obj.position.sizeX));
+		(objPos.isUsingScale ? parentSize.sizeX * objPos.sizeX : objPos.sizeX));
 	outPos.sizeY = static_cast<int>(
 		parentPos.sizeY +
-		(obj.position.isUsingScale ? parentSize.sizeY * obj.position.sizeY : obj.position.sizeY));
+		(objPos.isUsingScale ? parentSize.sizeY * objPos.sizeY : objPos.sizeY));
 
 	return { outPos, outSize };
 }
@@ -58,18 +59,72 @@ void GuiObject::update(SDL_Renderer* renderer) {
 	objRect.h = static_cast<int>(calculatedSize.sizeY);
 }
 
-void GuiObject::move(const UIUnit& newPos, SDL_Renderer* renderer) {
+void GuiObject::move(const UIUnit& newPos) {
 	position = newPos;
-	update(renderer);
+	if (parent) {
+		SDL_Rect parentSize = parent.value()->getRect();
+		objRect.x = static_cast<int>(position.isUsingScale ? parentSize.w * position.sizeX : position.sizeX);
+		objRect.y = static_cast<int>(position.isUsingScale ? parentSize.h * position.sizeY : position.sizeY);
+	}
+	else {
+		objRect.x = static_cast<int>(position.isUsingScale ? 0 : position.sizeX);
+		objRect.y = static_cast<int>(position.isUsingScale ? 0 : position.sizeY);
+	}
+
+	update(ref);
 }
 
-void GuiObject::resize(const UIUnit& newSize, SDL_Renderer* renderer) {
+void GuiObject::resize(const UIUnit& newSize) {
 	size = newSize;
-	update(renderer);
+	update(ref);
 }
 
-SDL_Rect GuiObject::getSize() const {
+SDL_Rect GuiObject::getRect() const {
 	return objRect;
+}
+
+UIUnit GuiObject::getSize() const {
+	return size;
+}
+
+UIUnit GuiObject::getPosition() const {
+	return position;
+}
+
+void GuiObject::handleEvent(const SDL_Event& event) {
+	if (!canBeDragged) return;
+	switch (event.type) {
+	case SDL_MOUSEBUTTONDOWN:
+		if (event.button.button == SDL_BUTTON_LEFT &&
+			event.button.x >= objRect.x &&
+			event.button.x <= objRect.x + objRect.w &&
+			event.button.y >= objRect.y &&
+			event.button.y <= objRect.y + objRect.h
+			) {
+			isDragging = true;
+			dragOffsetX = event.button.x - objRect.x;
+			dragOffsetY = event.button.y - objRect.y;
+		}
+		break;
+
+	case SDL_MOUSEBUTTONUP:
+		if (event.button.button == SDL_BUTTON_LEFT) {
+			isDragging = false;
+		}
+		break;
+
+	case SDL_MOUSEMOTION:
+		if (isDragging) {
+			UIUnit newPos;
+			newPos.sizeX = event.motion.x - dragOffsetX;
+			newPos.sizeY = event.motion.y - dragOffsetY;
+			move(newPos); // Update the position
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 GuiObject::GuiObject():
@@ -79,12 +134,13 @@ GuiObject::GuiObject():
 	visible(false),
 	active(false),
 	parent(std::nullopt),
-	ref(nullrnd)
+	ref(nullrnd),
+	canBeDragged(false)
 {}
 GuiObject::GuiObject(
 	UIUnit size, UIUnit position,
 	std::optional<GuiObject*> parent,
-	SDL_Renderer* renderer,
+	SDL_Renderer*& renderer,
 	bool isVisible, bool isActive
 ) :
 	position(position),
@@ -92,7 +148,8 @@ GuiObject::GuiObject(
 	visible(isVisible),
 	active(isActive),
 	parent(parent),
-	ref(renderer)
+	ref(renderer),
+	canBeDragged(false)
 {
 	update(renderer);
 }
@@ -111,7 +168,7 @@ Frame::Frame(): GuiObject(), frameColor(SDL_Color()) {}
 Frame::Frame(
 	UIUnit size, UIUnit position,
 	std::optional<GuiObject*> parent,
-	SDL_Renderer* renderer, SDL_Color frameColor,
+	SDL_Renderer*& renderer, SDL_Color frameColor,
 	bool isVisible, bool isActive
 ):
 	GuiObject(size, position, parent, renderer, isVisible, isActive),

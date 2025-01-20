@@ -5,7 +5,7 @@ int TextButton::nextId = 0;
 
 void TextButton::loadText(SDL_Renderer* renderer) {
     if ((text.empty() || !textFont) && !textTexture) {
-        textTexture = nullptr;
+        textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         return;
     }
     if (textTexture != nullptr)
@@ -149,7 +149,7 @@ TextButton::TextButton(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     SDL_Color buttonColor,
     SDL_Color hoverColor,
     SDL_Color textColor,
@@ -171,7 +171,7 @@ TextButton::TextButton(
     hoverColor(hoverColor),
     id(nextId++)
 {
-    loadText(renderer);
+    loadText(ref);
 }
 
 TextButton::TextButton():

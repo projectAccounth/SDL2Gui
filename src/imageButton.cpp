@@ -100,7 +100,7 @@ ImageButton::ImageButton(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     std::string defaultImageFilePath,
     std::string hoverImageFilePath
 )

@@ -3,7 +3,7 @@
 Image::Image(
 	const char* filePath,
 	std::optional<GuiObject*> parent,
-	SDL_Renderer* renderer,
+	SDL_Renderer*& renderer,
 	UIUnit position, UIUnit size
 ) :
 	GuiObject(size, position, parent, renderer),

@@ -130,7 +130,7 @@ EditableTextBox::EditableTextBox(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     SDL_Color backgroundColor,
     SDL_Color textColor,
     TTF_Font* textFont,

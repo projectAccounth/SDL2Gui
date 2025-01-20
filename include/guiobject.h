@@ -12,36 +12,51 @@ protected:
 	SDL_Rect objRect;
 	void update(SDL_Renderer* renderer);
 	SDL_Renderer*& ref;
-public:
+
+	bool isDragging = false;
+	int dragOffsetX = 0;
+	int dragOffsetY = 0;
 
 	UIUnit position;
 	UIUnit size;
-	
+public:
 	std::optional<GuiObject*> parent;
 
 	bool visible, active;
+
+	bool canBeDragged;
 
 	GuiObject();
 	GuiObject(
 		UIUnit size,
 		UIUnit position,
 		std::optional<GuiObject*> parent,
-		SDL_Renderer* renderer,
+		SDL_Renderer*& renderer,
 		bool isVisible = true,
 		bool isActive = true
 	);
 
-	SDL_Rect getSize() const;
+	SDL_Rect getRect() const;
 
-	void move(const UIUnit& newPos, SDL_Renderer* renderer);
+	UIUnit getSize() const;
 
-	void resize(const UIUnit& newSize, SDL_Renderer* renderer);
+	UIUnit getPosition() const;
+
+	void move(const UIUnit& newPos);
+
+	void resize(const UIUnit& newSize);
 
 	bool isVisible() const;
 
 	bool isActive() const;
 
 	void toggleVisiblility(bool value);
+
+	void handleEvent(const SDL_Event& event);
+
+	virtual void render(SDL_Renderer*) = 0;
+
+	virtual ~GuiObject() = default;
 };
 
 class Frame : public GuiObject {
@@ -52,7 +67,7 @@ public:
 	Frame(
 		UIUnit size, UIUnit position,
 		std::optional<GuiObject*> parent,
-		SDL_Renderer* renderer, SDL_Color frameColor = SDL_Color(),
+		SDL_Renderer*& renderer, SDL_Color frameColor = SDL_Color(),
 		bool isVisible = true, bool isActive = true
 	);
 
