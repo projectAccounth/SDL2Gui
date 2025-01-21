@@ -100,6 +100,8 @@ void TextButton::handleEvents(SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
+    handleEvent(e);
+
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
         return;
     }
@@ -111,7 +113,8 @@ void TextButton::handleEvents(SDL_Event& e) {
     else {
         hovered = false;
     }
-    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered &&
+        e.button.button == SDL_BUTTON_LEFT) {
         if (buttonAction) buttonAction();
     }
 }

@@ -60,7 +60,7 @@ void TextBox::render(SDL_Renderer* renderer) {
     SDL_RenderFillRect(renderer, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
-    if (text.empty() || !textFont || !textTexture) {
+    if (text.empty() || !textFont) {
         return;
     }
     
@@ -110,7 +110,7 @@ void TextBox::render(SDL_Renderer* renderer) {
     }
 }
 
-void TextBox::update(SDL_Renderer* renderer, const char* textToUpdate) {
+void TextBox::updateText(SDL_Renderer* renderer, const char* textToUpdate) {
     text = textToUpdate;
     render(renderer);
 }
@@ -121,6 +121,10 @@ void TextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
         return;
     }
     xAlign = align;
+}
+
+void TextBox::changeFont(TTF_Font*& font) {
+    textFont = font;
 }
 
 TextBox::TextBox(
@@ -146,6 +150,5 @@ TextBox::TextBox(
     yAlign(alignY) {}
 
 TextBox::~TextBox() {
-    SDL_DestroyTexture(textTexture);
-    SDL_FreeSurface(textSurface);
+    if (textTexture) SDL_DestroyTexture(textTexture);
 }

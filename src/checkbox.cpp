@@ -44,6 +44,8 @@ void CheckBox::handleEvents(SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
+    handleEvent(e);
+
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && (active && visible))) {
         return;
     }

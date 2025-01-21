@@ -22,6 +22,9 @@ std::pair<UIUnit, UIUnit> calculateChild(
 		outPos.sizeY = static_cast<int>(
 			objPos.isUsingScale ? windowHeight * objPos.sizeY : objPos.sizeY);
 
+		outPos.isUsingScale = objPos.isUsingScale;
+		outSize.isUsingScale = objSize.isUsingScale;
+
 		return { outPos, outSize };
 	}
 
@@ -44,6 +47,9 @@ std::pair<UIUnit, UIUnit> calculateChild(
 		parentPos.sizeY +
 		(objPos.isUsingScale ? parentSize.sizeY * objPos.sizeY : objPos.sizeY));
 
+	outPos.isUsingScale = objPos.isUsingScale;
+	outSize.isUsingScale = objSize.isUsingScale;
+
 	return { outPos, outSize };
 }
 
@@ -61,14 +67,16 @@ void GuiObject::update(SDL_Renderer* renderer) {
 
 void GuiObject::move(const UIUnit& newPos) {
 	position = newPos;
-	if (parent) {
+	int ws = 0, hs = 0;
+	SDL_GetRendererOutputSize(ref, &ws, &hs);
+	if (parent && parent.value()) {
 		SDL_Rect parentSize = parent.value()->getRect();
 		objRect.x = static_cast<int>(position.isUsingScale ? parentSize.w * position.sizeX : position.sizeX);
 		objRect.y = static_cast<int>(position.isUsingScale ? parentSize.h * position.sizeY : position.sizeY);
 	}
 	else {
-		objRect.x = static_cast<int>(position.isUsingScale ? 0 : position.sizeX);
-		objRect.y = static_cast<int>(position.isUsingScale ? 0 : position.sizeY);
+		objRect.x = static_cast<int>(position.isUsingScale ? position.sizeX * ws : position.sizeX);
+		objRect.y = static_cast<int>(position.isUsingScale ? position.sizeY * hs : position.sizeY);
 	}
 
 	update(ref);
@@ -92,6 +100,7 @@ UIUnit GuiObject::getPosition() const {
 }
 
 void GuiObject::handleEvent(const SDL_Event& event) {
+	update(ref);
 	if (!canBeDragged) return;
 	switch (event.type) {
 	case SDL_MOUSEBUTTONDOWN:

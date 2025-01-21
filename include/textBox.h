@@ -40,9 +40,11 @@ public:
 
     void render(SDL_Renderer* renderer) override;
 
-    void update(SDL_Renderer* renderer, const char* textToUpdate);
+    void updateText(SDL_Renderer* renderer, const char* textToUpdate);
 
     void adjustTextAlignment(bool isVertical, TextAlign align);
+
+    void changeFont(TTF_Font*& font);
 
     ~TextBox();
 };
@@ -84,6 +86,8 @@ public:
     void adjustTextAlignment(bool isVertical, TextAlign align);
 
     std::string getText() const;
+
+    void changeFont(TTF_Font*& font);
 
     ~EditableTextBox();
 };

@@ -126,6 +126,10 @@ void EditableTextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
     xAlign = align;
 }
 
+void EditableTextBox::changeFont(TTF_Font*& font) {
+    textFont = font;
+}
+
 EditableTextBox::EditableTextBox(
     UIUnit size,
     UIUnit position,

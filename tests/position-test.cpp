@@ -14,11 +14,8 @@ int main(int argc, char* argv[]) {
 	mainWindow = SDL_CreateWindow("Program", 80, 80, 640, 480, 0);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
-	/*GuiManager manager;
-
-	manager.initialize();*/
-
 	TTF_Font* mainFont = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 25);
+	TTF_Font* mainFont8 = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 8);
 
 	if (!mainFont) {
 		std::cout << "Font cannot be opened\n";
@@ -33,33 +30,27 @@ int main(int argc, char* argv[]) {
 		SDL_Color{ 0, 0, 0, 255 }
 	);
 
-	Frame frame2(
+	TextBox box1(
 		UIUnit({ 0.5, 0.5, true }),
 		UIUnit({ 0.25, 0.25, true }),
 		&frame1,
 		mainRenderer,
-		SDL_Color({ 122, 122, 122, 255 })
+		SDL_Color({ 122, 122, 122, 255 }),
+		"Hello World!",
+		SDL_Color({ 0, 0, 0, 255 }),
+		mainFont8
 	);
+
 	CheckBox checkBox1(
 		mainFont,
 		SDL_Color{ 199, 199, 199, 255 },
 		SDL_Color{ 0, 0, 0, 255 },
-		&frame2,
+		std::nullopt,
 		mainRenderer,
-		UIUnit{ 1, 1, true },
+		UIUnit({ .1, .1, true }),
 		UIUnit{ 25, 25, false },
 		'X'
 	);
-
-	/*auto frame3 = manager.addObject("Frame", mainRenderer);
-	auto frame4 = manager.addObject("Frame", mainRenderer);
-	auto checkBox2 = manager.addObject("CheckBox", mainRenderer);
-
-	frame3.get()->move({0.75, 0.75, true});
-	frame3.get()->resize({ 0.25, 0.25, true });
-	frame3.get()->canBeDragged = true;*/
-
-	frame1.canBeDragged = true;
 
 	while (isRunning) {
 		SDL_Event e;
@@ -72,15 +63,14 @@ int main(int argc, char* argv[]) {
 			}
 			checkBox1.handleEvents(e);
 			frame1.handleEvent(e);
-			frame2.handleEvent(e);
-			// frame3.get()->handleEvent(e);
+			box1.handleEvent(e);
 		}
+		frame1.canBeDragged = checkBox1.isChecked;
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
 
 		frame1.render(mainRenderer);
-		frame2.render(mainRenderer);
-		// manager.renderAll(mainRenderer);
+		box1.render(mainRenderer);
 		checkBox1.render(mainRenderer);
 
 		SDL_RenderPresent(mainRenderer);
@@ -89,6 +79,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyRenderer(mainRenderer);
 	SDL_DestroyWindow(mainWindow);
 	TTF_CloseFont(mainFont);
+	TTF_CloseFont(mainFont8);
 	SDL_Quit();
 	return 0;
 }
