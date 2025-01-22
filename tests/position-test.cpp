@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
 	TTF_Font* mainFont = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 25);
-	TTF_Font* mainFont8 = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 8);
+	TTF_Font* mainFont15 = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 15);
 
 	if (!mainFont) {
 		std::cout << "Font cannot be opened\n";
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 		SDL_Color({ 122, 122, 122, 255 }),
 		"Hello World!",
 		SDL_Color({ 0, 0, 0, 255 }),
-		mainFont8
+		mainFont15
 	);
 
 	CheckBox checkBox1(
@@ -66,6 +66,7 @@ int main(int argc, char* argv[]) {
 			box1.handleEvent(e);
 		}
 		frame1.canBeDragged = checkBox1.isChecked;
+		frame1.visible = true;
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
 
@@ -79,7 +80,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyRenderer(mainRenderer);
 	SDL_DestroyWindow(mainWindow);
 	TTF_CloseFont(mainFont);
-	TTF_CloseFont(mainFont8);
+	TTF_CloseFont(mainFont15);
 	SDL_Quit();
 	return 0;
 }
