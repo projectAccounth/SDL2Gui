@@ -65,7 +65,7 @@
     <ClCompile Include="src\checkbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tests\position-test.cpp">
+    <ClCompile Include="things\position-test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\guimanager.cpp">

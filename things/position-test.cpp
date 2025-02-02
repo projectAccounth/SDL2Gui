@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
 	TTF_Font* mainFont = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 25);
-	TTF_Font* mainFont15 = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 15);
+	TTF_Font* mainFont9 = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 9);
 
 	if (!mainFont) {
 		std::cout << "Font cannot be opened\n";
@@ -30,15 +30,14 @@ int main(int argc, char* argv[]) {
 		SDL_Color{ 0, 0, 0, 255 }
 	);
 
-	TextBox box1(
+	EditableTextBox box1(
 		UIUnit({ 0.5, 0.5, true }),
 		UIUnit({ 0.25, 0.25, true }),
 		&frame1,
 		mainRenderer,
 		SDL_Color({ 122, 122, 122, 255 }),
-		"Hello World!",
 		SDL_Color({ 0, 0, 0, 255 }),
-		mainFont15
+		mainFont9
 	);
 
 	CheckBox checkBox1(
@@ -51,6 +50,17 @@ int main(int argc, char* argv[]) {
 		UIUnit{ 25, 25, false },
 		'X'
 	);
+	CheckBox checkBox2(
+		mainFont,
+		SDL_Color{ 199, 199, 199, 255 },
+		SDL_Color{ 0, 0, 0, 255 },
+		std::nullopt,
+		mainRenderer,
+		UIUnit({ .2, .1, true }),
+		UIUnit{ 25, 25, false },
+		'O'
+	);
+	box1.canBeDragged = false;
 
 	while (isRunning) {
 		SDL_Event e;
@@ -62,10 +72,12 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			checkBox1.handleEvents(e);
+			checkBox2.handleEvents(e);
 			frame1.handleEvent(e);
-			box1.handleEvent(e);
+			box1.handleEvents(e);
 		}
 		frame1.canBeDragged = checkBox1.isChecked;
+		box1.editable = checkBox2.isChecked;
 		frame1.visible = true;
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
@@ -73,6 +85,7 @@ int main(int argc, char* argv[]) {
 		frame1.render(mainRenderer);
 		box1.render(mainRenderer);
 		checkBox1.render(mainRenderer);
+		checkBox2.render(mainRenderer);
 
 		SDL_RenderPresent(mainRenderer);
 	}
@@ -80,7 +93,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyRenderer(mainRenderer);
 	SDL_DestroyWindow(mainWindow);
 	TTF_CloseFont(mainFont);
-	TTF_CloseFont(mainFont15);
+	TTF_CloseFont(mainFont9);
 	SDL_Quit();
 	return 0;
 }
