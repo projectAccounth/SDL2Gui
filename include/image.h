@@ -23,7 +23,7 @@ public:
 
 	void initialize(SDL_Renderer* renderer);
 
-	void render(SDL_Renderer* renderer) override;
+	void render() override;
 
 	void updatePath(const std::string& filePath, SDL_Renderer* renderer);
 
@@ -44,7 +44,7 @@ public:
 
 	void initializeAll(SDL_Renderer* renderer);
 
-	void renderAll(SDL_Renderer* renderer);
+	void renderAll();
 };
 
 

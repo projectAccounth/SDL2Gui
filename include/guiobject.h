@@ -54,7 +54,7 @@ public:
 
 	void handleEvent(const SDL_Event& event);
 
-	virtual void render(SDL_Renderer*) = 0;
+	virtual void render() = 0;
 
 	virtual ~GuiObject() = default;
 };
@@ -71,5 +71,5 @@ public:
 		bool isVisible = true, bool isActive = true
 	);
 
-	void render(SDL_Renderer* renderer);
+	void render() override;
 };

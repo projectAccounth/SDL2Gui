@@ -38,9 +38,9 @@ public:
         TextAlign alignY = CENTER
     );
 
-    void render(SDL_Renderer* renderer) override;
+    void render() override;
 
-    void updateText(SDL_Renderer* renderer, const char* textToUpdate);
+    void updateText(const char* textToUpdate);
 
     void adjustTextAlignment(bool isVertical, TextAlign align);
 
@@ -77,7 +77,7 @@ public:
         bool editable = false
     );
 
-    void render(SDL_Renderer* renderer) override;
+    void render() override;
 
     void reset();
 

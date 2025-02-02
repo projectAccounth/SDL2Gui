@@ -52,7 +52,7 @@ public:
     void loadText(SDL_Renderer* renderer);
 
     // Basically just rendering the button on the specified renderer.
-    void render(SDL_Renderer* renderer) override;
+    void render() override;
 
     // Setting the action for the button.
     void setAction(std::function<void()> actionFunction);
@@ -112,7 +112,7 @@ public:
     void initialize(SDL_Renderer* renderer);
 
     // Renders the button.
-    void render(SDL_Renderer* renderer) override;
+    void render() override;
 
     // Set an action (void function) for the button.
     void setAction(std::function<void()> actionFunction);

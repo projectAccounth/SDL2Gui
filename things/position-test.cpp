@@ -82,10 +82,10 @@ int main(int argc, char* argv[]) {
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
 
-		frame1.render(mainRenderer);
-		box1.render(mainRenderer);
-		checkBox1.render(mainRenderer);
-		checkBox2.render(mainRenderer);
+		frame1.render();
+		box1.render();
+		checkBox1.render();
+		checkBox2.render();
 
 		SDL_RenderPresent(mainRenderer);
 	}

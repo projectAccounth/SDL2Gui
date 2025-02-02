@@ -191,9 +191,9 @@ Frame::Frame(
 	frameColor(frameColor)
 {}
 
-void Frame::render(SDL_Renderer* renderer) {
+void Frame::render() {
 	if (!(visible && active)) return;
 
-	SDL_SetRenderDrawColor(renderer, frameColor.r, frameColor.g, frameColor.b, frameColor.a);
-	SDL_RenderFillRect(renderer, &objRect);
+	SDL_SetRenderDrawColor(ref, frameColor.r, frameColor.g, frameColor.b, frameColor.a);
+	SDL_RenderFillRect(ref, &objRect);
 }

@@ -46,7 +46,7 @@ std::vector<std::string> TextBox::splitTextIntoLines(std::string& str, int maxWi
     return outLines;
 }
 
-void TextBox::render(SDL_Renderer* renderer) {
+void TextBox::render() {
     int padding = 5;
     int maxWidth = objRect.w - padding * 2;
 
@@ -56,8 +56,8 @@ void TextBox::render(SDL_Renderer* renderer) {
         return;
     }
 
-    SDL_SetRenderDrawColor(renderer, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
-    SDL_RenderFillRect(renderer, &objRect);
+    SDL_SetRenderDrawColor(ref, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
+    SDL_RenderFillRect(ref, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
     if (text.empty() || !textFont) {
@@ -100,9 +100,9 @@ void TextBox::render(SDL_Renderer* renderer) {
         textSurface = TTF_RenderUTF8_Blended(textFont, line.c_str(), textColor);
         if (!textSurface) continue;
 
-        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        textTexture = SDL_CreateTextureFromSurface(ref, textSurface);
         SDL_Rect destRect = { startX, startY + offsetY, textWidth, textHeight };
-        SDL_RenderCopy(renderer, textTexture, nullptr, &destRect);
+        SDL_RenderCopy(ref, textTexture, nullptr, &destRect);
 
         offsetY += textHeight;
         SDL_FreeSurface(textSurface);
@@ -110,9 +110,9 @@ void TextBox::render(SDL_Renderer* renderer) {
     }
 }
 
-void TextBox::updateText(SDL_Renderer* renderer, const char* textToUpdate) {
+void TextBox::updateText(const char* textToUpdate) {
     text = textToUpdate;
-    render(renderer);
+    render();
 }
 
 void TextBox::adjustTextAlignment(bool isVertical, TextAlign align) {

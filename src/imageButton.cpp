@@ -29,13 +29,14 @@ void ImageButton::initialize(SDL_Renderer* renderer) {
     SDL_FreeSurface(imgSurf);
 }
 
-void ImageButton::render(SDL_Renderer* renderer) {
+void ImageButton::render() {
     if (!isVisible() || (parent && !parent.value()->visible)) {
         return;
     }
+
     SDL_Texture* finalTexture = hovered ? hoverTexture : buttonTexture;
 
-    SDL_RenderCopy(renderer, finalTexture, nullptr, &objRect);
+    SDL_RenderCopy(ref, finalTexture, nullptr, &objRect);
 
     SDL_DestroyTexture(finalTexture);
 }

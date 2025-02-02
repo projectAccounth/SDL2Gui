@@ -1,6 +1,6 @@
 #include "../include/textBox.h"
 
-void EditableTextBox::render(SDL_Renderer* renderer) {
+void EditableTextBox::render() {
     int padding = 0;
     int maxWidth = objRect.w - padding * 2;
 
@@ -11,8 +11,8 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
         return;
     }
 
-    SDL_SetRenderDrawColor(renderer, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
-    SDL_RenderFillRect(renderer, &objRect);
+    SDL_SetRenderDrawColor(ref, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
+    SDL_RenderFillRect(ref, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
     if (text.empty()) {
@@ -56,9 +56,9 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
         textSurface = TTF_RenderText_Blended(textFont, line.c_str(), textColor);
         if (!textSurface) continue;
 
-        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        textTexture = SDL_CreateTextureFromSurface(ref, textSurface);
         SDL_Rect destRect = { startX, startY + offsetY, textWidth, textHeight };
-        SDL_RenderCopy(renderer, textTexture, nullptr, &destRect);
+        SDL_RenderCopy(ref, textTexture, nullptr, &destRect);
 
         offsetY += textHeight;
         SDL_FreeSurface(textSurface);
