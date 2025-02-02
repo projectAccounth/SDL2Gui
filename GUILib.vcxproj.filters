@@ -36,9 +36,6 @@
     <ClInclude Include="include\guiobject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\guimanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\buttonManager.cpp">
@@ -66,9 +63,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="things\position-test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\guimanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

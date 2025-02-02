@@ -10,4 +10,3 @@
 #include "textBox.h"
 #include "types.h"
 #include "guiobject.h"
-#include "guimanager.h"
