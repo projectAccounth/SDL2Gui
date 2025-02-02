@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 		std::cout << "Font cannot be opened\n";
 		return 1;
 	}
-
+    
 	Frame frame1(
 		UIUnit{ 0.25, 0.25, true },
 		UIUnit{ 0.25, 0.25, true },
@@ -29,8 +29,16 @@ int main(int argc, char* argv[]) {
 		mainRenderer,
 		SDL_Color{ 0, 0, 0, 255 }
 	);
-
+    
 	EditableTextBox box1(
+		&frame2,
+		mainRenderer,
+		UIUnit{ 1, 1, true },
+		UIUnit{ 25, 25, false },
+		'X'
+	);
+    
+	Frame frame2(
 		UIUnit({ 0.5, 0.5, true }),
 		UIUnit({ 0.25, 0.25, true }),
 		&frame1,
@@ -39,7 +47,6 @@ int main(int argc, char* argv[]) {
 		SDL_Color({ 0, 0, 0, 255 }),
 		mainFont9
 	);
-
 	CheckBox checkBox1(
 		mainFont,
 		SDL_Color{ 199, 199, 199, 255 },
