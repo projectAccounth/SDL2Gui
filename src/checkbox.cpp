@@ -10,7 +10,7 @@ CheckBox::CheckBox(
     SDL_Color boxColor,
     SDL_Color textColor,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     UIUnit position, UIUnit size,
     char symbol
 ):
@@ -43,6 +43,8 @@ void CheckBox::handleEvents(SDL_Event& e) {
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
+
+    handleEvent(e);
 
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && (active && visible))) {
         return;

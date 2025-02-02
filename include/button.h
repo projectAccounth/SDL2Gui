@@ -38,7 +38,7 @@ public:
         UIUnit size,
         UIUnit position,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         SDL_Color buttonColor,
         SDL_Color hoverColor,
         SDL_Color textColor = {0, 0, 0, 255},
@@ -52,7 +52,7 @@ public:
     void loadText(SDL_Renderer* renderer);
 
     // Basically just rendering the button on the specified renderer.
-    void render(SDL_Renderer* renderer);
+    void render() override;
 
     // Setting the action for the button.
     void setAction(std::function<void()> actionFunction);
@@ -104,7 +104,7 @@ public:
         UIUnit size,
         UIUnit position,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         std::string defaultImageFilePath,
         std::string hoverImageFilePath
     );
@@ -112,7 +112,7 @@ public:
     void initialize(SDL_Renderer* renderer);
 
     // Renders the button.
-    void render(SDL_Renderer* renderer);
+    void render() override;
 
     // Set an action (void function) for the button.
     void setAction(std::function<void()> actionFunction);
@@ -144,7 +144,7 @@ public:
         SDL_Color boxColor,
         SDL_Color textColor,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         UIUnit position = { 0, 0, false }, UIUnit size = { 10, 10, false },
         char symbol = 'X'
     );

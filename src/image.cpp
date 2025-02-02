@@ -3,7 +3,7 @@
 Image::Image(
 	const char* filePath,
 	std::optional<GuiObject*> parent,
-	SDL_Renderer* renderer,
+	SDL_Renderer*& renderer,
 	UIUnit position, UIUnit size
 ) :
 	GuiObject(size, position, parent, renderer),
@@ -25,10 +25,10 @@ void Image::initialize(SDL_Renderer* renderer) {
 	SDL_FreeSurface(imageSurface);	
 }
 
-void Image::render(SDL_Renderer* renderer) {
-	if (!isVisible() || (parent && !parent.value()->visible)) return;
+void Image::render() {
+	if (!isVisible() || (parent && !parent.value()->visible) || !imageTexture) return;
 
-	SDL_RenderCopy(renderer, imageTexture, NULL, &objRect);
+	SDL_RenderCopy(ref, imageTexture, NULL, &objRect);
 }
 
 void Image::updatePath(const std::string& str, SDL_Renderer* renderer) {
@@ -63,8 +63,8 @@ void ImageManager::initializeAll(SDL_Renderer* renderer) {
 	}
 }
 
-void ImageManager::renderAll(SDL_Renderer* renderer) {
+void ImageManager::renderAll() {
 	for (auto& img : images) {
-		img.render(renderer);
+		img.render();
 	}
 }

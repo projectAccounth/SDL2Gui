@@ -29,13 +29,14 @@ void ImageButton::initialize(SDL_Renderer* renderer) {
     SDL_FreeSurface(imgSurf);
 }
 
-void ImageButton::render(SDL_Renderer* renderer) {
+void ImageButton::render() {
     if (!isVisible() || (parent && !parent.value()->visible)) {
         return;
     }
+
     SDL_Texture* finalTexture = hovered ? hoverTexture : buttonTexture;
 
-    SDL_RenderCopy(renderer, finalTexture, nullptr, &objRect);
+    SDL_RenderCopy(ref, finalTexture, nullptr, &objRect);
 
     SDL_DestroyTexture(finalTexture);
 }
@@ -66,6 +67,8 @@ void ImageButton::handleEvents(SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
+    handleEvent(e);
+
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
         return;
     }
@@ -77,7 +80,8 @@ void ImageButton::handleEvents(SDL_Event& e) {
     else {
         hovered = false;
     }
-    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered &&
+        e.button.button == SDL_BUTTON_LEFT) {
         if (buttonAction) buttonAction();
     }
 }
@@ -100,7 +104,7 @@ ImageButton::ImageButton(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     std::string defaultImageFilePath,
     std::string hoverImageFilePath
 )

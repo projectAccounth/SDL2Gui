@@ -14,7 +14,7 @@ public:
 
 	void add(const ButtonType& btn);
 
-	void renderAll(SDL_Renderer *renderer);
+	void renderAll();
 
 	void handleAllEvent(SDL_Event& e);
 

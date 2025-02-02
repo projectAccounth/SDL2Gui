@@ -29,7 +29,7 @@ public:
         UIUnit size,
         UIUnit position,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         SDL_Color boxColor,
         std::string text = "",
         SDL_Color textColor = { 0, 0, 0, 255 },
@@ -38,11 +38,13 @@ public:
         TextAlign alignY = CENTER
     );
 
-    void render(SDL_Renderer* renderer);
+    void render() override;
 
-    void update(SDL_Renderer* renderer, const char* textToUpdate);
+    void updateText(const char* textToUpdate);
 
     void adjustTextAlignment(bool isVertical, TextAlign align);
+
+    void changeFont(TTF_Font*& font);
 
     ~TextBox();
 };
@@ -66,7 +68,7 @@ public:
         UIUnit size,
         UIUnit position,
         std::optional<GuiObject*> parent,
-        SDL_Renderer* renderer,
+        SDL_Renderer*& renderer,
         SDL_Color backgroundColor,
         SDL_Color textColor = { 0, 0, 0, 255 },
         TTF_Font* textFont = nullptr,
@@ -75,15 +77,17 @@ public:
         bool editable = false
     );
 
-    void render(SDL_Renderer* renderer);
+    void render() override;
 
     void reset();
 
-    void handleEvent(const SDL_Event& e);
+    void handleEvents(const SDL_Event& e);
 
     void adjustTextAlignment(bool isVertical, TextAlign align);
 
     std::string getText() const;
+
+    void changeFont(TTF_Font*& font);
 
     ~EditableTextBox();
 };

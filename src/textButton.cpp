@@ -5,7 +5,7 @@ int TextButton::nextId = 0;
 
 void TextButton::loadText(SDL_Renderer* renderer) {
     if ((text.empty() || !textFont) && !textTexture) {
-        textTexture = nullptr;
+        textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         return;
     }
     if (textTexture != nullptr)
@@ -14,7 +14,7 @@ void TextButton::loadText(SDL_Renderer* renderer) {
     SDL_Surface* textSurface = TTF_RenderUTF8_Blended(textFont, text.c_str(), textColor);
     if (textSurface == nullptr) {
         std::cerr << "Cannot create surface for text, error:" << TTF_GetError() << "\n";
-        return;
+        exit(1);
     }
 
     textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -22,11 +22,11 @@ void TextButton::loadText(SDL_Renderer* renderer) {
 
     if (textTexture == nullptr) {
         std::cerr << "Cannot create text. Error: " << TTF_GetError() << "\n";
-        return;
+        exit(1);
     }
 }
 
-void TextButton::render(SDL_Renderer* renderer) {
+void TextButton::render() {
     if (!isVisible() || (parent && !parent.value()->visible)) {
         return;
     }
@@ -36,8 +36,8 @@ void TextButton::render(SDL_Renderer* renderer) {
     if (!active) {
         drawColor = hoverColor;
     }
-    SDL_SetRenderDrawColor(renderer, drawColor.r, drawColor.g, drawColor.b, drawColor.a);
-    SDL_RenderFillRect(renderer, &objRect);
+    SDL_SetRenderDrawColor(ref, drawColor.r, drawColor.g, drawColor.b, drawColor.a);
+    SDL_RenderFillRect(ref, &objRect);
     if (textTexture && textFont) {
         int textWidth = 0, textHeight = 0;
 
@@ -72,7 +72,7 @@ void TextButton::render(SDL_Renderer* renderer) {
 
         textRect.w = textWidth; textRect.h = textHeight;
 
-        SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
+        SDL_RenderCopy(ref, textTexture, nullptr, &textRect);
     }
 }
 
@@ -100,6 +100,8 @@ void TextButton::handleEvents(SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
+    handleEvent(e);
+
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
         return;
     }
@@ -111,7 +113,8 @@ void TextButton::handleEvents(SDL_Event& e) {
     else {
         hovered = false;
     }
-    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered &&
+        e.button.button == SDL_BUTTON_LEFT) {
         if (buttonAction) buttonAction();
     }
 }
@@ -149,7 +152,7 @@ TextButton::TextButton(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     SDL_Color buttonColor,
     SDL_Color hoverColor,
     SDL_Color textColor,
@@ -171,7 +174,7 @@ TextButton::TextButton(
     hoverColor(hoverColor),
     id(nextId++)
 {
-    loadText(renderer);
+    loadText(ref);
 }
 
 TextButton::TextButton():

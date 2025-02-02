@@ -4,9 +4,9 @@ void ButtonManager::add(const ButtonType& btn) {
 	buttons.push_back(btn);
 }
 
-void ButtonManager::renderAll(SDL_Renderer *renderer) {
+void ButtonManager::renderAll() {
 	for (auto& button : buttons) {
-		std::visit([&](auto& btn) { btn.render(renderer); }, button);
+		std::visit([&](auto& btn) { btn.render(); }, button);
 	}
 }
 

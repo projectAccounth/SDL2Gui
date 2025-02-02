@@ -1,7 +1,7 @@
 #include "../include/textBox.h"
 
-void EditableTextBox::render(SDL_Renderer* renderer) {
-    int padding = 5;
+void EditableTextBox::render() {
+    int padding = 0;
     int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
@@ -11,8 +11,8 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
         return;
     }
 
-    SDL_SetRenderDrawColor(renderer, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
-    SDL_RenderFillRect(renderer, &objRect);
+    SDL_SetRenderDrawColor(ref, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
+    SDL_RenderFillRect(ref, &objRect);
 
     // checking whether the text is empty or not to prevent problematic stuff
     if (text.empty()) {
@@ -56,9 +56,9 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
         textSurface = TTF_RenderText_Blended(textFont, line.c_str(), textColor);
         if (!textSurface) continue;
 
-        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        textTexture = SDL_CreateTextureFromSurface(ref, textSurface);
         SDL_Rect destRect = { startX, startY + offsetY, textWidth, textHeight };
-        SDL_RenderCopy(renderer, textTexture, nullptr, &destRect);
+        SDL_RenderCopy(ref, textTexture, nullptr, &destRect);
 
         offsetY += textHeight;
         SDL_FreeSurface(textSurface);
@@ -66,7 +66,8 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
     }
 }
 
-void EditableTextBox::handleEvent(const SDL_Event& e) {
+void EditableTextBox::handleEvents(const SDL_Event& e) {
+    handleEvent(e);
     if (!editable) return;
     if (e.type == SDL_KEYDOWN) {
         auto it = keyActions.find(e.key.keysym.sym);
@@ -126,11 +127,15 @@ void EditableTextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
     xAlign = align;
 }
 
+void EditableTextBox::changeFont(TTF_Font*& font) {
+    textFont = font;
+}
+
 EditableTextBox::EditableTextBox(
     UIUnit size,
     UIUnit position,
     std::optional<GuiObject*> parent,
-    SDL_Renderer* renderer,
+    SDL_Renderer*& renderer,
     SDL_Color backgroundColor,
     SDL_Color textColor,
     TTF_Font* textFont,
