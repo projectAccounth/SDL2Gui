@@ -1,7 +1,7 @@
 #include "../include/textBox.h"
 
 void EditableTextBox::render(SDL_Renderer* renderer) {
-    int padding = 5;
+    int padding = 0;
     int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
@@ -66,7 +66,8 @@ void EditableTextBox::render(SDL_Renderer* renderer) {
     }
 }
 
-void EditableTextBox::handleEvent(const SDL_Event& e) {
+void EditableTextBox::handleEvents(const SDL_Event& e) {
+    handleEvent(e);
     if (!editable) return;
     if (e.type == SDL_KEYDOWN) {
         auto it = keyActions.find(e.key.keysym.sym);

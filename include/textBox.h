@@ -81,7 +81,7 @@ public:
 
     void reset();
 
-    void handleEvent(const SDL_Event& e);
+    void handleEvents(const SDL_Event& e);
 
     void adjustTextAlignment(bool isVertical, TextAlign align);
 
