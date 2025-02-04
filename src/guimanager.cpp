@@ -1,11 +1,11 @@
 #include "guimanager.h"
 #include "lfmain.h"
 
-void GuiManager::registerClass(const std::string& className,
+void GuiInstance::registerClass(const std::string& className,
     std::function<std::unique_ptr<GuiObject>(SDL_Renderer*&)> creator) {
     factory[className] = std::move(creator);
 }
-std::unique_ptr<GuiObject> GuiManager::addObject(const std::string& className, SDL_Renderer*& ref) {
+std::unique_ptr<GuiObject> GuiInstance::newObj(const std::string& className, SDL_Renderer*& ref) {
     auto it = factory.find(className);
     if (it != factory.end()) {
         return it->second(ref);
@@ -15,23 +15,9 @@ std::unique_ptr<GuiObject> GuiManager::addObject(const std::string& className, S
         return nullptr;
     }
 }
-void GuiManager::renderAll(SDL_Renderer* renderer) const {
-    for (const auto& [id, obj] : objects) {
-        obj->render(renderer);
-    }
-}
-GuiObject* GuiManager::getObject(const std::string& id) {
-    if (objects.count(id)) {
-        return objects[id].get();
-    }
-    return nullptr;
-}
 
-void GuiManager::removeObject(const std::string& id) {
-    objects.erase(id);
-}
 
-void GuiManager::initialize() {
+void GuiInstance::initialize() {
     registerClass("TextButton", [](SDL_Renderer*& r) {
         return std::make_unique<TextButton>(
             UIUnit{},
