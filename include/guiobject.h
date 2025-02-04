@@ -16,10 +16,12 @@ protected:
 	bool isDragging = false;
 	int dragOffsetX = 0;
 	int dragOffsetY = 0;
-
-	UIUnit position;
-	UIUnit size;
 public:
+	// Use move() for this.
+	UIUnit position;
+	// Use resize() for this.
+	UIUnit size;
+
 	std::optional<GuiObject*> parent;
 
 	bool visible, active;
@@ -61,7 +63,6 @@ public:
 
 class Frame : public GuiObject {
 private:
-	SDL_Color frameColor;
 public:
 	Frame();
 	Frame(
@@ -70,6 +71,6 @@ public:
 		SDL_Renderer*& renderer, SDL_Color frameColor = SDL_Color(),
 		bool isVisible = true, bool isActive = true
 	);
-
+	SDL_Color frameColor;
 	void render() override;
 };

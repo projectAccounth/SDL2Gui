@@ -13,8 +13,6 @@ protected:
     SDL_Texture* textTexture;
     TextAlign xAlign;
     TextAlign yAlign;
-    SDL_Color boxColor;
-    SDL_Color textColor;
 
     std::vector<std::string> lines;
 
@@ -24,7 +22,8 @@ protected:
 
 public:
     std::string text;
-
+    SDL_Color boxColor;
+    SDL_Color textColor;
     TextBox(
         UIUnit size,
         UIUnit position,
