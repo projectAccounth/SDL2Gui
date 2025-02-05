@@ -5,8 +5,8 @@
 #endif
 
 // Include guard
-#ifndef MAIN_HDR_H
-#define MAIN_HDR_H
+#ifndef TYPES_H
+#define TYPES_H
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -31,4 +31,4 @@ enum TextAlign {
     RIGHT
 };
 
-#endif /* MAIN_HDR_H */
+#endif /* TYPES_H */
