@@ -15,7 +15,7 @@ Image::Image(
 	initialize(renderer);
 }
 	
-void Image::initialize(SDL_Renderer* renderer) {
+void Image::initialize(SDL_Renderer*& renderer) {
 	imageSurface = IMG_Load(filePath.c_str());
 	if (imageSurface == nullptr) {
 		std::cout << "A problem occurred when trying to create image. Error: " << SDL_GetError() << '\n';
@@ -31,7 +31,7 @@ void Image::render() {
 	SDL_RenderCopy(ref, imageTexture, NULL, &objRect);
 }
 
-void Image::updatePath(const std::string& str, SDL_Renderer* renderer) {
+void Image::updatePath(const std::string& str, SDL_Renderer*& renderer) {
 	prevFilePath = filePath;
 	filePath = str;
 
@@ -57,7 +57,7 @@ void ImageManager::add(const Image& img) {
 	images.push_back(img);
 }
 
-void ImageManager::initializeAll(SDL_Renderer* renderer) {
+void ImageManager::initializeAll(SDL_Renderer*& renderer) {
 	for (auto& img : images) {
 		img.initialize(renderer);
 	}

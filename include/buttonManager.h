@@ -18,7 +18,7 @@ public:
 
 	void handleAllEvent(SDL_Event& e);
 
-	void initializeAll(SDL_Renderer *renderer);
+	void initializeAll(SDL_Renderer*& renderer);
 };
 
 #endif /* BUTTONMGR_H */

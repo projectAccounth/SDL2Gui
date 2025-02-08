@@ -41,11 +41,11 @@ void ImageButton::render() {
     SDL_DestroyTexture(finalTexture);
 }
 
-void ImageButton::setAction(std::function<void()> actionFunction) {
+void ImageButton::setAction(const std::function<void()>& actionFunction) {
     buttonAction = actionFunction;
 }
 
-void ImageButton::setHoverAction(std::function<void()> actionFunction) {
+void ImageButton::setHoverAction(const std::function<void()>& actionFunction) {
     hoverAction = actionFunction;
 }
 
@@ -86,12 +86,12 @@ void ImageButton::handleEvents(SDL_Event& e) {
     }
 }
 
-void ImageButton::updateDefaultImgPath(const char* path, SDL_Renderer* renderer) {
+void ImageButton::updateDefaultImgPath(const char* path, SDL_Renderer*& renderer) {
     defaultImgPath = path;
     initialize(renderer);
 }
 
-void ImageButton::updateHoverImgPath(const char* path, SDL_Renderer* renderer) {
+void ImageButton::updateHoverImgPath(const char* path, SDL_Renderer*& renderer) {
     hoverImgPath = path;
     initialize(renderer);
 }
@@ -133,4 +133,8 @@ ImageButton::ImageButton():
 ImageButton::~ImageButton() {
     SDL_DestroyTexture(buttonTexture);
     SDL_DestroyTexture(hoverTexture);
+}
+
+bool ImageButton::isHovered() const {
+    return hovered;
 }

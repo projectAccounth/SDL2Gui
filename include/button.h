@@ -13,12 +13,7 @@ protected:
     bool isClicked(int x, int y);
 
     void checkHover(int mouseX, int mouseY);
-
-    SDL_Color buttonColor;
-
-    SDL_Color textColor; // color for TextButton
     SDL_Texture* textTexture;
-    SDL_Color hoverColor; // color for hovering
 
     TTF_Font* textFont; // font for the text in the TextButton
 
@@ -31,7 +26,10 @@ protected:
     // The "ID" of the button, can be used for querying.
     int id;
 public:
-    std::string text; // text for the TextButton
+    std::string text; // text
+    SDL_Color buttonColor; // buttonColor
+    SDL_Color textColor; // textColor
+    SDL_Color hoverColor; // hoverColor
 
     TextButton();
     TextButton(
@@ -49,16 +47,16 @@ public:
     );
 
     // Preloading text (must be called before rendering)
-    void loadText(SDL_Renderer* renderer);
+    void loadText(SDL_Renderer*& renderer);
 
     // Basically just rendering the button on the specified renderer.
     void render() override;
 
     // Setting the action for the button.
-    void setAction(std::function<void()> actionFunction);
+    void setAction(const std::function<void()>& actionFunction);
 
     // Setting the function responsible for hovering.
-    void setHoverAction(std::function<void()> actionFunction);
+    void setHoverAction(const std::function<void()>& actionFunction);
 
     // Handle all clicking and hovering events. Put in the PollEvent loop.
     void handleEvents(SDL_Event& event);
@@ -68,13 +66,18 @@ public:
 
     int getId() const;
 
-    void changeTextColor(const SDL_Color& color, SDL_Renderer* renderer);
+    // @deprecated Can still be used.
+    void changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer);
 
-    void changeHoverColor(const SDL_Color& color, SDL_Renderer* renderer);
+    // @deprecated Can still be used.
+    void changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer);
 
-    void changeButtonColor(const SDL_Color& color, SDL_Renderer* renderer);
+    // @deprecated Can still be used.
+    void changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer);
 
-    void changeFont(TTF_Font* font, SDL_Renderer* renderer);
+    void changeFont(TTF_Font* font, SDL_Renderer*& renderer);
+
+    bool isHovered() const;
 
     ~TextButton();
 };
@@ -115,19 +118,21 @@ public:
     void render() override;
 
     // Set an action (void function) for the button.
-    void setAction(std::function<void()> actionFunction);
+    void setAction(const std::function<void()>& actionFunction);
 
     // Setting the function responsible for hovering.
-    void setHoverAction(std::function<void()> actionFunction);
+    void setHoverAction(const std::function<void()>& actionFunction);
 
     // Handles clicking and hovering. Put in the PollEvent loop.
     void handleEvents(SDL_Event& event);
 
     int getId() const;
 
-    void updateHoverImgPath(const char* updatedPath, SDL_Renderer* renderer);
+    void updateHoverImgPath(const char* updatedPath, SDL_Renderer*& renderer);
 
-    void updateDefaultImgPath(const char* updatedPath, SDL_Renderer* renderer);
+    void updateDefaultImgPath(const char* updatedPath, SDL_Renderer*& renderer);
+
+    bool isHovered() const;
 
     ~ImageButton();
 };
@@ -149,9 +154,9 @@ public:
         char symbol = 'X'
     );
 
-    void setAction(std::function<void()> buttonAction) = delete;
+    void setAction(const std::function<void()>& buttonAction) = delete;
 
-    void setHoverAction(std::function<void()> buttonAction) = delete;
+    void setHoverAction(const std::function<void()>& buttonAction) = delete;
 
     void changeSymbol(char symbol);
 

@@ -16,7 +16,7 @@ void ButtonManager::handleAllEvent(SDL_Event& e) {
 	}
 }
 
-void ButtonManager::initializeAll(SDL_Renderer *renderer) {
+void ButtonManager::initializeAll(SDL_Renderer*& renderer) {
 	for (auto& button : buttons) {
 		const bool isTextButton =
 			std::is_same_v<std::decay_t<decltype(button)>, TextButton>;

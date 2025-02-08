@@ -21,11 +21,11 @@ public:
 		UIUnit position, UIUnit size
 	);
 
-	void initialize(SDL_Renderer* renderer);
+	void initialize(SDL_Renderer*& renderer);
 
 	void render() override;
 
-	void updatePath(const std::string& filePath, SDL_Renderer* renderer);
+	void updatePath(const std::string& filePath, SDL_Renderer*& renderer);
 
 	std::string previousFilePath() const;
 
@@ -42,7 +42,7 @@ public:
 
 	void add(const Image& img);
 
-	void initializeAll(SDL_Renderer* renderer);
+	void initializeAll(SDL_Renderer*& renderer);
 
 	void renderAll();
 };

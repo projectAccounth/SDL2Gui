@@ -3,7 +3,7 @@
 
 int TextButton::nextId = 0;
 
-void TextButton::loadText(SDL_Renderer* renderer) {
+void TextButton::loadText(SDL_Renderer*& renderer) {
     if ((text.empty() || !textFont) && !textTexture) {
         textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         return;
@@ -76,11 +76,11 @@ void TextButton::render() {
     }
 }
 
-void TextButton::setAction(std::function<void()> actionFunction) {
+void TextButton::setAction(const std::function<void()>& actionFunction) {
     buttonAction = actionFunction;
 }
 
-void TextButton::setHoverAction(std::function<void()> actionFunction) {
+void TextButton::setHoverAction(const std::function<void()>& actionFunction) {
     hoverAction = actionFunction;
 }
 
@@ -113,8 +113,8 @@ void TextButton::handleEvents(SDL_Event& e) {
     else {
         hovered = false;
     }
-    if (e.type == SDL_MOUSEBUTTONDOWN && hovered &&
-        e.button.button == SDL_BUTTON_LEFT) {
+    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
+        if (e.button.button != SDL_BUTTON_LEFT) return;
         if (buttonAction) buttonAction();
     }
 }
@@ -127,23 +127,23 @@ int TextButton::getId() const {
     return id;
 }
 
-void TextButton::changeTextColor(const SDL_Color& color, SDL_Renderer* renderer) {
+void TextButton::changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer) {
     textColor = color;
     loadText(renderer);
 
 }
 
-void TextButton::changeHoverColor(const SDL_Color& color, SDL_Renderer* renderer) {
+void TextButton::changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer) {
     hoverColor = color;
     loadText(renderer);
 }
 
-void TextButton::changeButtonColor(const SDL_Color& color, SDL_Renderer* renderer) {
+void TextButton::changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer) {
     buttonColor = color;
     loadText(renderer);
 }
 
-void TextButton::changeFont(TTF_Font* font, SDL_Renderer* renderer) {
+void TextButton::changeFont(TTF_Font* font, SDL_Renderer*& renderer) {
     textFont = font;
     loadText(renderer);
 }
@@ -193,6 +193,10 @@ TextButton::TextButton():
 
 TextButton::~TextButton() {
     SDL_DestroyTexture(textTexture);
+}
+
+bool TextButton::isHovered() const {
+    return hovered;
 }
 
 
