@@ -24,11 +24,18 @@
 #include <unordered_map>
 #include <memory>
 #include <optional>
+#include <any>
 
-enum TextAlign {
+enum class HorizontalTextAlign {
     LEFT,
     CENTER,
     RIGHT
+};
+
+enum class VerticalTextAlign {
+    UP,
+    CENTER,
+    BOTTOM
 };
 
 #endif /* TYPES_H */
