@@ -2,15 +2,15 @@
 
 SDL_Renderer* nullrnd = nullptr;
 
-std::pair<UIUnit, UIUnit> calculateChild(
-	const GuiObject& obj,
+std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
+	const GUILib::GuiObject& obj,
 	const int& windowWidth,
 	const int& windowHeight
 ) {
 	// Base case: If no parent exists, calculate relative to the window
-	const auto [objSize, objPos] = std::pair<UIUnit, UIUnit>{ obj.getSize(), obj.getPosition() };
-	if (!obj.parent) {
-		UIUnit outPos, outSize;
+	const auto [objSize, objPos] = std::pair<GUILib::UIUnit, GUILib::UIUnit>{ obj.getSize(), obj.getPosition() };
+	if (!obj.hasParent()) {
+		GUILib::UIUnit outPos, outSize;
 
 		outSize.sizeX = static_cast<int>(
 			objSize.isUsingScale ? windowWidth * objSize.sizeX : objSize.sizeX);
@@ -29,11 +29,11 @@ std::pair<UIUnit, UIUnit> calculateChild(
 	}
 
 	// Recursive case: Calculate parent's position and size first
-	const GuiObject* parent = obj.parent.value();
+	const auto parent = obj.getParent(); // Will never be a dangling pointer
 	auto [parentPos, parentSize] = calculateChild(*parent, windowWidth, windowHeight);
 
 	// Calculate this object's position and size relative to the parent's
-	UIUnit outPos, outSize;
+	GUILib::UIUnit outPos, outSize;
 
 	outSize.sizeX = static_cast<int>(
 		objSize.isUsingScale ? parentSize.sizeX * objSize.sizeX : objSize.sizeX);
@@ -53,7 +53,10 @@ std::pair<UIUnit, UIUnit> calculateChild(
 	return { outPos, outSize };
 }
 
-void GuiObject::update(SDL_Renderer* renderer) {
+void GUILib::GuiObject::update(SDL_Renderer* renderer) {
+	if (!renderer)
+		return;
+
 	int ws = 0, hs = 0;
 	SDL_GetRendererOutputSize(renderer, &ws, &hs);
 
@@ -65,12 +68,12 @@ void GuiObject::update(SDL_Renderer* renderer) {
 	objRect.h = static_cast<int>(calculatedSize.sizeY);
 }
 
-void GuiObject::move(const UIUnit& newPos) {
+void GUILib::GuiObject::move(const UIUnit& newPos) {
 	position = newPos;
 	int ws = 0, hs = 0;
 	SDL_GetRendererOutputSize(ref, &ws, &hs);
-	if (parent && parent.value() != nullptr) {
-		SDL_Rect parentSize = parent.value()->getRect();
+	if (parent && parent != nullptr) {
+		SDL_Rect parentSize = parent->getRect();
 		objRect.x = static_cast<int>(position.isUsingScale ? parentSize.w * position.sizeX : position.sizeX);
 		objRect.y = static_cast<int>(position.isUsingScale ? parentSize.h * position.sizeY : position.sizeY);
 	}
@@ -80,28 +83,30 @@ void GuiObject::move(const UIUnit& newPos) {
 	}
 
 	update(ref);
+	trigger("onPositionChange", position);
 }
 
-void GuiObject::resize(const UIUnit& newSize) {
+void GUILib::GuiObject::resize(const UIUnit& newSize) {
 	size = newSize;
 	update(ref);
+	trigger("onSizeChange", size);
 }
 
-SDL_Rect GuiObject::getRect() const {
+SDL_Rect GUILib::GuiObject::getRect() const {
 	return objRect;
 }
 
-UIUnit GuiObject::getSize() const {
+GUILib::UIUnit GUILib::GuiObject::getSize() const {
 	return size;
 }
 
-UIUnit GuiObject::getPosition() const {
+GUILib::UIUnit GUILib::GuiObject::getPosition() const {
 	return position;
 }
 
-void GuiObject::handleEvent(const SDL_Event& event) {
-	if (!canBeDragged) {
-		update(ref);
+void GUILib::GuiObject::handleEvent(const SDL_Event& event) {
+	update(ref);
+	if (!canBeDragged || !visible) {
 		return;
 	}
 	int ws = 0, hs = 0;
@@ -117,6 +122,7 @@ void GuiObject::handleEvent(const SDL_Event& event) {
 			isDragging = true;
 			dragOffsetX = event.button.x - objRect.x;
 			dragOffsetY = event.button.y - objRect.y;
+			trigger("onDragging", event.button.x, event.button.y);
 		}
 		break;
 
@@ -134,7 +140,7 @@ void GuiObject::handleEvent(const SDL_Event& event) {
 			newPos.sizeX = position.isUsingScale ? static_cast<double>(offsetX) / static_cast<double>(ws) : offsetX;
 			newPos.sizeY = position.isUsingScale ? static_cast<double>(offsetY) / static_cast<double>(hs) : offsetY;
 			newPos.isUsingScale = position.isUsingScale;
-			move(newPos); // Update the position
+			move(newPos);
 		}
 		break;
 
@@ -143,57 +149,89 @@ void GuiObject::handleEvent(const SDL_Event& event) {
 	}
 }
 
-GuiObject::GuiObject():
+GUILib::GuiObject::GuiObject():
 	size(UIUnit()),
 	position(UIUnit()),
 	objRect{ 0, 0, 0, 0 },
 	visible(false),
 	active(false),
-	parent(std::nullopt),
+	parent(nullptr),
 	ref(nullrnd),
-	canBeDragged(false)
+	canBeDragged(false),
+	isDragging(false),
+	dragOffsetX(0),
+	dragOffsetY(0)
 {}
-GuiObject::GuiObject(
-	UIUnit size, UIUnit position,
-	std::optional<GuiObject*> parent,
+GUILib::GuiObject::GuiObject(
+	GuiObject* parent,
 	SDL_Renderer*& renderer,
+	UIUnit size,
+	UIUnit position,
 	bool isVisible, bool isActive
 ) :
 	position(position),
 	size(size),
+	objRect({ 0, 0, 0, 0 }),
 	visible(isVisible),
 	active(isActive),
 	parent(parent),
 	ref(renderer),
-	canBeDragged(false)
+	canBeDragged(false),
+	isDragging(false),
+	dragOffsetX(0),
+	dragOffsetY(0)
 {
-	update(renderer);
+	if (renderer)
+		update(renderer);
 }
 
-bool GuiObject::isVisible() const {
+bool GUILib::GuiObject::isVisible() const {
 	return visible;
 }
-bool GuiObject::isActive() const {
+bool GUILib::GuiObject::isActive() const {
 	return active;
 }
-void GuiObject::toggleVisiblility(bool value) {
-	visible = value;
-}
 
-Frame::Frame(): GuiObject(), frameColor(SDL_Color()) {}
-Frame::Frame(
-	UIUnit size, UIUnit position,
-	std::optional<GuiObject*> parent,
-	SDL_Renderer*& renderer, SDL_Color frameColor,
+GUILib::Frame::Frame(): GuiObject(), frameColor(SDL_Color()) {}
+GUILib::Frame::Frame(
+	GuiObject* parent,
+	SDL_Renderer*& renderer,
+	UIUnit size,
+	UIUnit position,
+	SDL_Color frameColor,
 	bool isVisible, bool isActive
 ):
-	GuiObject(size, position, parent, renderer, isVisible, isActive),
+	GuiObject(parent, renderer, size, position, isVisible, isActive),
 	frameColor(frameColor)
 {}
 
-void Frame::render() {
+void GUILib::Frame::render() {
 	if (!(visible && active)) return;
 
 	SDL_SetRenderDrawColor(ref, frameColor.r, frameColor.g, frameColor.b, frameColor.a);
 	SDL_RenderFillRect(ref, &objRect);
+}
+
+GUILib::GuiObject& GUILib::GuiObject::operator=(const GUILib::GuiObject& other) {
+	if (this == &other) return *this;
+	ref = other.ref;
+
+	size = other.size;
+	position = other.position;
+
+	parent = other.parent;
+
+	canBeDragged = other.canBeDragged;
+	dragOffsetX = other.dragOffsetX;
+	dragOffsetY = other.dragOffsetY;
+	isDragging = false;
+
+	visible = other.visible;
+	active = other.active;
+
+	objRect = other.objRect;
+
+	update(ref);
+
+	return *this;
 }

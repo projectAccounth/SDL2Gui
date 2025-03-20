@@ -1,76 +1,117 @@
 #pragma once
 
 #include "types.h"
+#include "event.h"
 
-typedef struct UIUnit {
-	double sizeX, sizeY;
-	bool isUsingScale;
-} UIUnit;
+namespace GUILib {
+	typedef struct UIUnit {
+		double sizeX, sizeY;
+		bool isUsingScale;
+	} UIUnit;
 
-class GuiObject {
-protected:
-	SDL_Rect objRect;
-	void update(SDL_Renderer* renderer);
-	SDL_Renderer*& ref;
+	class GuiObject {
+	protected:
+		SDL_Rect objRect;
+		SDL_Renderer*& ref;
+		GuiObject* parent;
 
-	bool isDragging = false;
-	int dragOffsetX = 0;
-	int dragOffsetY = 0;
-public:
-	// Use move() for this.
-	UIUnit position;
-	// Use resize() for this.
-	UIUnit size;
+		int dragOffsetX;
+		int dragOffsetY;
 
-	std::optional<GuiObject*> parent;
+		UIUnit position;
+		UIUnit size;
 
-	bool visible, active;
+		bool isDragging;
+		bool visible, active;
+		bool canBeDragged;
 
-	bool canBeDragged;
+		EventEmitter events;
 
-	GuiObject();
-	GuiObject(
-		UIUnit size,
-		UIUnit position,
-		std::optional<GuiObject*> parent,
-		SDL_Renderer*& renderer,
-		bool isVisible = true,
-		bool isActive = true
-	);
+		void update(SDL_Renderer* renderer);
+	public:
+		GuiObject();
+		GuiObject(
+			GuiObject* parent,
+			SDL_Renderer*& renderer,
+			UIUnit size = UIUnit(),
+			UIUnit position = UIUnit(),
+			bool isVisible = true,
+			bool isActive = true
+		);
 
-	SDL_Rect getRect() const;
+		SDL_Rect getRect() const;
 
-	UIUnit getSize() const;
+		UIUnit getSize() const;
 
-	UIUnit getPosition() const;
+		UIUnit getPosition() const;
 
-	void move(const UIUnit& newPos);
+		// Moves the object to the specified location.
+		void move(const UIUnit& newPos);
 
-	void resize(const UIUnit& newSize);
+		// Resizes the object.
+		void resize(const UIUnit& newSize);
 
-	bool isVisible() const;
+		bool isActive() const;
+		inline void setActive(bool value) { 
+			active = value;
+			trigger("onActiveChange");
+		}
 
-	bool isActive() const;
+		bool isVisible() const;
+		inline void toggleVisiblility(bool value) {
+			visible = value;
+			trigger("onVisibilityChange");
+		}
 
-	void toggleVisiblility(bool value);
+		void handleEvent(const SDL_Event& event);
 
-	void handleEvent(const SDL_Event& event);
+		inline const GuiObject* getParent() const { return parent; }
+		inline void setParent(GuiObject* newParent) { 
+			parent = newParent;
+			trigger("onParentChange");
+		}
+		inline bool hasParent() const { return parent != nullptr; }
 
-	virtual void render() = 0;
+		inline bool isDraggable() const { return canBeDragged; }
+		inline void setDraggable(bool val) { 
+			canBeDragged = val;
+			trigger("onDraggableChange");
+		}
 
-	virtual ~GuiObject() = default;
-};
+		virtual void render() = 0;
 
-class Frame : public GuiObject {
-private:
-public:
-	Frame();
-	Frame(
-		UIUnit size, UIUnit position,
-		std::optional<GuiObject*> parent,
-		SDL_Renderer*& renderer, SDL_Color frameColor = SDL_Color(),
-		bool isVisible = true, bool isActive = true
-	);
-	SDL_Color frameColor;
-	void render() override;
-};
+		template <typename... Args>
+		void on(const std::string& eventName, std::function<void(Args...)> callback) {
+			events.connect(eventName, std::move(callback));
+		}
+
+		template <typename... Args>
+		void trigger(const std::string& eventName, Args&&... args) {
+			events.fire(eventName, std::forward<Args>(args)...);
+		}
+		
+		GuiObject& operator=(const GuiObject& other);
+
+		virtual ~GuiObject() = default;
+	};
+
+	class Frame : public GuiObject {
+	private:
+		SDL_Color frameColor;
+	public:
+		Frame();
+		Frame(
+			GuiObject* parent,
+			SDL_Renderer*& renderer,
+			UIUnit size = UIUnit(),
+			UIUnit position = UIUnit(),
+			SDL_Color frameColor = SDL_Color(),
+			bool isVisible = true, bool isActive = true
+		);
+
+		inline void setFrameColor(const SDL_Color& color) { frameColor = color; }
+		inline SDL_Color getFrameColor() const { return frameColor; }
+
+		void render() override;
+	};
+}

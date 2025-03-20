@@ -6,162 +6,180 @@
 #include "types.h"
 #include "guiobject.h"
 
-class TextButton : public GuiObject {
-protected:
-    static int nextId;
+namespace GUILib {
 
-    bool isClicked(int x, int y);
+    // Abstract, practically useless button class.
+    // Serves as a base for buttons.
+    class Button : public GuiObject {
+    protected:
+        std::function<void()> buttonAction;
+        std::function<void()> hoverAction;
 
-    void checkHover(int mouseX, int mouseY);
-    SDL_Texture* textTexture;
+        bool isClicked(int x, int y);
+        void checkHover(int mouseX, int mouseY);
 
-    TTF_Font* textFont; // font for the text in the TextButton
+        bool hovered;
+    public:
+        Button();
+        Button(
+            GuiObject* parent,
+            SDL_Renderer*& renderer,
+            UIUnit size = UIUnit(),
+            UIUnit position = UIUnit()
+        );
 
-    TextAlign xAlign, yAlign;
-    std::function<void()> buttonAction;
-    std::function<void()> hoverAction;
+        // @deprecated Migrate to the event system.
+        // Setting the function responsible for clicking.
+        inline void setAction(const std::function<void()>& actionFunction) {
+            buttonAction = actionFunction;
+        }
+        // @deprecated Migrate to the event system.
+        // Setting the function responsible for hovering.
+        inline void setHoverAction(const std::function<void()>& actionFunction) {
+            buttonAction = actionFunction;
+        }
 
-    bool hovered;
+        void handleEvents(SDL_Event& e);
 
-    // The "ID" of the button, can be used for querying.
-    int id;
-public:
-    std::string text; // text
-    SDL_Color buttonColor; // buttonColor
-    SDL_Color textColor; // textColor
-    SDL_Color hoverColor; // hoverColor
+        inline bool isHovered() const { return hovered; }
+    };
 
-    TextButton();
-    TextButton(
-        UIUnit size,
-        UIUnit position,
-        std::optional<GuiObject*> parent,
-        SDL_Renderer*& renderer,
-        SDL_Color buttonColor,
-        SDL_Color hoverColor,
-        SDL_Color textColor = {0, 0, 0, 255},
-        std::string text = "",
-        TTF_Font* textFont = nullptr,
-        TextAlign alignX = CENTER,
-        TextAlign alignY = CENTER
-    );
+    // A basic text button for anything.
+    class TextButton : public Button {
+    protected:
+        static int nextId;
+        SDL_Texture* textTexture;
 
-    // Preloading text (must be called before rendering)
-    void loadText(SDL_Renderer*& renderer);
+        TTF_Font* textFont; // font for the text in the TextButton
 
-    // Basically just rendering the button on the specified renderer.
-    void render() override;
+        HorizontalTextAlign xAlign;
+        VerticalTextAlign yAlign;
 
-    // Setting the action for the button.
-    void setAction(const std::function<void()>& actionFunction);
+        std::string text; // text
+        SDL_Color buttonColor; // buttonColor
+        SDL_Color textColor; // textColor
+        SDL_Color hoverColor; // hoverColor
 
-    // Setting the function responsible for hovering.
-    void setHoverAction(const std::function<void()>& actionFunction);
+        // The "ID" of the button, can be used for querying.
+        int id;
+    public:
+        TextButton();
+        TextButton(
+            GuiObject* parent,
+            SDL_Renderer*& renderer,
+            UIUnit size = UIUnit(),
+            UIUnit position = UIUnit(),
+            SDL_Color buttonColor = SDL_Color(),
+            SDL_Color hoverColor = SDL_Color(),
+            SDL_Color textColor = { 0, 0, 0, 255 },
+            std::string text = "",
+            TTF_Font* textFont = nullptr,
+            HorizontalTextAlign alignX = HorizontalTextAlign::CENTER,
+            VerticalTextAlign alignY = VerticalTextAlign::CENTER
+        );
 
-    // Handle all clicking and hovering events. Put in the PollEvent loop.
-    void handleEvents(SDL_Event& event);
+        // Preloading text (must be called before rendering)
+        void initialize(SDL_Renderer*& renderer);
 
-    // Alternative to button.active = value : bool;
-    void toggleActive(bool value);
+        // Basically just rendering the button on the specified renderer.
+        void render() override;
 
-    int getId() const;
+        // Alternative to button.active = value : bool;
+        void toggleActive(bool value);
 
-    // @deprecated Can still be used.
-    void changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer);
+        int getId() const;
 
-    // @deprecated Can still be used.
-    void changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer);
+        // Changes text color.
+        void changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer);
 
-    // @deprecated Can still be used.
-    void changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer);
+        // Changes hover color.
+        void changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer);
 
-    void changeFont(TTF_Font* font, SDL_Renderer*& renderer);
+        // Changes button color.
+        void changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer);
 
-    bool isHovered() const;
+        inline SDL_Color getTextColor() const { return textColor; }
+        inline SDL_Color getHoverColor() const { return hoverColor; }
+        inline SDL_Color getButtonColor() const { return buttonColor; }
 
-    ~TextButton();
-};
+        inline void setText(const std::string& str) { text = str; }
+        inline std::string getText() const { return text; }
 
-class ImageButton : public GuiObject {
-protected:
-    SDL_Texture* buttonTexture;
-    SDL_Texture* hoverTexture; // texture for hovering, set hoverTexture to buttonTexture if you don't want hover.
-    static int nextId;
+        void changeFont(TTF_Font* font, SDL_Renderer*& renderer);
 
-    bool isClicked(int x, int y);
-
-    void checkHover(int mouseX, int mouseY);
-    int id;
-
-    bool hovered;
+        ~TextButton();
+    };
     
-    std::function<void()> hoverAction;
-    std::function<void()> buttonAction;
+    // A basic image button wrapper.
+    class ImageButton : public Button {
+    protected:
+        SDL_Texture* buttonTexture;
+        SDL_Texture* hoverTexture; // texture for hovering, set hoverTexture to buttonTexture if you don't want hover.
+        static int nextId;
+        int id;
 
-    std::string defaultImgPath;
-    std::string hoverImgPath;
-public:
+        std::string defaultImgPath;
+        std::string hoverImgPath;
+    public:
 
-    ImageButton();
-    ImageButton(
-        UIUnit size,
-        UIUnit position,
-        std::optional<GuiObject*> parent,
-        SDL_Renderer*& renderer,
-        std::string defaultImageFilePath,
-        std::string hoverImageFilePath
-    );
+        ImageButton();
+        ImageButton(
+            GuiObject* parent,
+            SDL_Renderer*& renderer,
+            UIUnit size = UIUnit(),
+            UIUnit position = UIUnit(),
+            std::string defaultImageFilePath = "",
+            std::string hoverImageFilePath = ""
+        );
 
-    void initialize(SDL_Renderer* renderer);
+        void initialize(SDL_Renderer*& renderer);
 
-    // Renders the button.
-    void render() override;
+        // Renders the button.
+        void render() override;
 
-    // Set an action (void function) for the button.
-    void setAction(const std::function<void()>& actionFunction);
+        int getId() const;
 
-    // Setting the function responsible for hovering.
-    void setHoverAction(const std::function<void()>& actionFunction);
+        void updateHoverImgPath(const char* updatedPath, SDL_Renderer*& renderer);
 
-    // Handles clicking and hovering. Put in the PollEvent loop.
-    void handleEvents(SDL_Event& event);
+        void updateDefaultImgPath(const char* updatedPath, SDL_Renderer*& renderer);
 
-    int getId() const;
+        ~ImageButton();
+    };
 
-    void updateHoverImgPath(const char* updatedPath, SDL_Renderer*& renderer);
+    // A basic check box.
+    class CheckBox : public TextButton {
+    private:
+        char boxSymbol;
+        bool checked;
+    public:
+        CheckBox();
+        CheckBox(
+            GuiObject* parent,
+            SDL_Renderer*& renderer,
+            UIUnit size = UIUnit(),
+            UIUnit position = UIUnit(),
+            TTF_Font* textFont = nullptr,
+            SDL_Color boxColor = SDL_Color(),
+            SDL_Color textColor = SDL_Color(),
+            char symbol = 'X'
+        );
 
-    void updateDefaultImgPath(const char* updatedPath, SDL_Renderer*& renderer);
+        inline void toggleChecked() { checked = !checked; }
+        inline void toggleChecked(bool val) { checked = val; }
+        inline bool isChecked() const { return checked; }
 
-    bool isHovered() const;
+        void setAction(const std::function<void()>& buttonAction) = delete;
 
-    ~ImageButton();
-};
+        void setHoverAction(const std::function<void()>& buttonAction) = delete;
 
-class CheckBox : public TextButton {
-private:
-    char boxSymbol;
-public:
-    bool isChecked;
+        void changeSymbol(const char& symbol);
 
-    CheckBox();
-    CheckBox(
-        TTF_Font* textFont,
-        SDL_Color boxColor,
-        SDL_Color textColor,
-        std::optional<GuiObject*> parent,
-        SDL_Renderer*& renderer,
-        UIUnit position = { 0, 0, false }, UIUnit size = { 10, 10, false },
-        char symbol = 'X'
-    );
+        inline char getSymbol() const { return boxSymbol; }
 
-    void setAction(const std::function<void()>& buttonAction) = delete;
+        void handleEvents(SDL_Event& event);
+    };
 
-    void setHoverAction(const std::function<void()>& buttonAction) = delete;
-
-    void changeSymbol(char symbol);
-
-    void handleEvents(SDL_Event& event);
-};
+}
 
 
 #endif /* BUTTON_H */

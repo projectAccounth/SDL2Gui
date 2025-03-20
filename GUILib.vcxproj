@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="include\button.h" />
     <ClInclude Include="include\buttonManager.h" />
+    <ClInclude Include="include\event.h" />
     <ClInclude Include="include\guimanager.h" />
     <ClInclude Include="include\guiobject.h" />
     <ClInclude Include="include\image.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="include\textBox.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\buttonManager.cpp" />
     <ClCompile Include="src\checkbox.cpp" />
     <ClCompile Include="src\editableTextBox.cpp" />
@@ -178,6 +180,7 @@
     <ClCompile Include="src\imageButton.cpp" />
     <ClCompile Include="src\textBox.cpp" />
     <ClCompile Include="src\textButton.cpp" />
+    <ClCompile Include="examples\position-test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

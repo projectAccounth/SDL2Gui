@@ -1,13 +1,16 @@
 #include "../include/textBox.h"
 
-void EditableTextBox::render() {
+void GUILib::EditableTextBox::render() {
+    if (!ref)
+        return;
+
     int padding = 0;
     int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
     int startY = objRect.y;
 
-    if (!isVisible() || (parent && !parent.value()->visible)) {
+    if (!isVisible() || (parent && !parent->isVisible())) {
         return;
     }
 
@@ -25,13 +28,13 @@ void EditableTextBox::render() {
     int offsetY = 0;
 
     switch (yAlign) {
-    case LEFT:
+    case VerticalTextAlign::UP:
         startY = objRect.y + padding;
         break;
-    case CENTER:
+    case VerticalTextAlign::CENTER:
         startY = objRect.y + (objRect.h - totalHeight) / 2;
         break;
-    case RIGHT:
+    case VerticalTextAlign::BOTTOM:
         startY = objRect.y + (objRect.h - totalHeight) - padding;
         break;
     }
@@ -42,13 +45,13 @@ void EditableTextBox::render() {
 
         int startX = objRect.x;
         switch (xAlign) {
-        case LEFT:
+        case HorizontalTextAlign::LEFT:
             startX = objRect.x + padding;
             break;
-        case CENTER:
+        case HorizontalTextAlign::CENTER:
             startX = objRect.x + (maxWidth - textWidth) / 2;
             break;
-        case RIGHT:
+        case HorizontalTextAlign::RIGHT:
             startX = objRect.x + maxWidth - textWidth - padding;
             break;
         }
@@ -66,7 +69,7 @@ void EditableTextBox::render() {
     }
 }
 
-void EditableTextBox::handleEvents(const SDL_Event& e) {
+void GUILib::EditableTextBox::handleEvents(const SDL_Event& e) {
     handleEvent(e);
     if (!editable) return;
     if (e.type == SDL_KEYDOWN) {
@@ -77,75 +80,68 @@ void EditableTextBox::handleEvents(const SDL_Event& e) {
     }
     else if (e.type == SDL_TEXTINPUT) {
         insertCharacter(e.text.text[0]); // Insert the input character
+        trigger("onKeyInput", e.text.text[0]);
     }
 }
 
-void EditableTextBox::handleBackspace() {
+void GUILib::EditableTextBox::handleBackspace() {
     if (cursorPosition > 0) {
         text.erase(cursorPosition - 1, 1);
         cursorPosition--;
     }
 }
 
-void EditableTextBox::handleDelete() {
+void GUILib::EditableTextBox::handleDelete() {
     if (cursorPosition < text.size()) {
         text.erase(cursorPosition, 1);
     }
 }
 
-void EditableTextBox::moveCursorLeft() {
+void GUILib::EditableTextBox::moveCursorLeft() {
     if (cursorPosition > 0) {
         cursorPosition--;
     }
 }
 
-void EditableTextBox::moveCursorRight() {
+void GUILib::EditableTextBox::moveCursorRight() {
     if (cursorPosition < text.size()) {
         cursorPosition++;
     }
 }
 
-void EditableTextBox::insertCharacter(char c) {
+void GUILib::EditableTextBox::insertCharacter(char c) {
     text.insert(cursorPosition, 1, c);
     cursorPosition++;
 }
 
-std::string EditableTextBox::getText() const {
-    return text;
-}
-
-void EditableTextBox::reset() {
+void GUILib::EditableTextBox::reset() {
     text.clear();
     cursorPosition = 0;
 }
 
-void EditableTextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
-    if (isVertical) {
-        yAlign = align;
-        return;
-    }
-    xAlign = align;
-}
-
-void EditableTextBox::changeFont(TTF_Font*& font) {
-    textFont = font;
-}
-
-EditableTextBox::EditableTextBox(
+GUILib::EditableTextBox::EditableTextBox(
+    GuiObject* parent,
+    SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
-    std::optional<GuiObject*> parent,
-    SDL_Renderer*& renderer,
     SDL_Color backgroundColor,
     SDL_Color textColor,
     TTF_Font* textFont,
-    TextAlign alignX,
-    TextAlign alignY,
+    HorizontalTextAlign alignX,
+    VerticalTextAlign alignY,
     bool editable
 ):
-    TextBox(size, position, parent, renderer, backgroundColor, "", textColor, textFont, alignX, alignY),
+    TextBox(
+        parent, renderer,
+        size, position,
+        backgroundColor,
+        "",
+        textColor,
+        textFont,
+        alignX, alignY
+    ),
     editable(editable),
-    text(""), cursorPosition(0) {
+    cursorPosition(0) {
     // Define actions for specific keys
     keyActions[SDLK_BACKSPACE] = [this]() { handleBackspace(); };
     keyActions[SDLK_LEFT] = [this]() { moveCursorLeft(); };
@@ -154,6 +150,7 @@ EditableTextBox::EditableTextBox(
     keyActions[SDLK_RETURN] = [this]() { insertCharacter('\n'); };
 }
 
-EditableTextBox::~EditableTextBox() {
-    SDL_DestroyTexture(textTexture);
+GUILib::EditableTextBox::~EditableTextBox() {
+    if (textTexture)
+        SDL_DestroyTexture(textTexture);
 }

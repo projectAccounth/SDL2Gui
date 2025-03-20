@@ -1,11 +1,11 @@
 #include "textBox.h"
 
-int TextBox::lineHeight() const {
+int GUILib::TextBox::lineHeight() const {
     int fontHeight = TTF_FontHeight(textFont);
     return fontHeight;
 }
 
-std::vector<std::string> TextBox::splitTextIntoLines(std::string& str, int maxWidth) {
+std::vector<std::string> GUILib::TextBox::splitTextIntoLines(std::string& str, int maxWidth) {
     std::vector<std::string> outLines;
     std::string currentLine;
     std::string word;
@@ -46,13 +46,13 @@ std::vector<std::string> TextBox::splitTextIntoLines(std::string& str, int maxWi
     return outLines;
 }
 
-void TextBox::render() {
+void GUILib::TextBox::render() {
     int padding = 5;
     int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
     int startY = objRect.y;
-    if (!isVisible()) {
+    if (!isVisible() || (parent && !parent->isVisible())) {
         return;
     }
 
@@ -66,15 +66,14 @@ void TextBox::render() {
     
     lines = splitTextIntoLines(text, maxWidth);
 
-    // LEFT = up, CENTER = center; RIGHT = down.
     switch (yAlign) {
-    case LEFT:
+    case VerticalTextAlign::UP:
         startY = objRect.y + padding;
         break;
-    case CENTER:
+    case VerticalTextAlign::CENTER:
         startY = objRect.y + (objRect.h - totalHeight) / 2;
         break;
-    case RIGHT:
+    case VerticalTextAlign::BOTTOM:
         startY = objRect.y + (objRect.h - totalHeight) - padding;
         break;
     }
@@ -87,13 +86,13 @@ void TextBox::render() {
 
         int startX = objRect.x;
         switch (xAlign) {
-        case LEFT:
+        case HorizontalTextAlign::LEFT:
             startX = objRect.x + padding;
             break;
-        case CENTER:
+        case HorizontalTextAlign::CENTER:
             startX = objRect.x + (maxWidth - textWidth) / 2;
             break;
-        case RIGHT:
+        case HorizontalTextAlign::RIGHT:
             startX = objRect.x + maxWidth - textWidth - padding;
             break;
         }
@@ -110,45 +109,37 @@ void TextBox::render() {
     }
 }
 
-void TextBox::updateText(const char* textToUpdate) {
+void GUILib::TextBox::updateText(const char* textToUpdate) {
     text = textToUpdate;
     render();
 }
 
-void TextBox::adjustTextAlignment(bool isVertical, TextAlign align) {
-    if (isVertical) {
-        yAlign = align;
-        return;
-    }
-    xAlign = align;
-}
-
-void TextBox::changeFont(TTF_Font*& font) {
+void GUILib::TextBox::changeFont(TTF_Font*& font) {
     textFont = font;
 }
 
-TextBox::TextBox(
+GUILib::TextBox::TextBox(
+    GuiObject* parent,
+    SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
-    std::optional<GuiObject*> parent,
-    SDL_Renderer*& renderer,
     SDL_Color boxColor,
     std::string text,
     SDL_Color textColor,
     TTF_Font* textFont,
-    TextAlign alignX,
-    TextAlign alignY
+    HorizontalTextAlign alignX,
+    VerticalTextAlign alignY
 ) :
-    GuiObject(size, position, parent, renderer),
+    GuiObject(parent, renderer, size, position),
     textTexture(nullptr),
     textSurface(nullptr),
     boxColor(boxColor),
-    text(text),
+    text(std::move(text)),
     textColor(textColor),
     textFont(textFont),
     xAlign(alignX),
     yAlign(alignY) {}
 
-TextBox::~TextBox() {
+GUILib::TextBox::~TextBox() {
     if (textTexture) SDL_DestroyTexture(textTexture);
 }

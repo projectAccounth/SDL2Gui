@@ -1,24 +1,23 @@
 #include "button.h"
 
-CheckBox::CheckBox() :
+GUILib::CheckBox::CheckBox() :
     TextButton(),
     boxSymbol('X'),
-    isChecked(false)
+    checked(false)
 {}
-CheckBox::CheckBox(
+GUILib::CheckBox::CheckBox(
+    GuiObject* parent,
+    SDL_Renderer*& renderer,
+    UIUnit size,
+    UIUnit position,
     TTF_Font* textFont,
     SDL_Color boxColor,
     SDL_Color textColor,
-    std::optional<GuiObject*> parent,
-    SDL_Renderer*& renderer,
-    UIUnit position, UIUnit size,
     char symbol
 ):
     TextButton(
-        size,
-        position,
-        parent,
-        renderer,
+        parent, renderer,
+        size, position,
         boxColor,
         SDL_Color{
             (unsigned char)(boxColor.r - 122),
@@ -29,17 +28,17 @@ CheckBox::CheckBox(
         "",
         textFont
     ),
-    boxSymbol(symbol),
-    isChecked(false)
+    boxSymbol(std::move(symbol)),
+    checked(false)
 {}
 
-void CheckBox::changeSymbol(char symbol) {
+void GUILib::CheckBox::changeSymbol(const char& symbol) {
     boxSymbol = symbol;
-    if (isChecked)
+    if (isChecked())
         text = boxSymbol;
 }
 
-void CheckBox::handleEvents(SDL_Event& e) {
+void GUILib::CheckBox::handleEvents(SDL_Event& e) {
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
@@ -57,8 +56,8 @@ void CheckBox::handleEvents(SDL_Event& e) {
         hovered = false;
     }
     if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
-        isChecked = !isChecked;
-        text = isChecked ? std::string(1, boxSymbol) : "";
-        loadText(ref);
+        toggleChecked();
+        text = isChecked() ? std::string(1, boxSymbol) : "";
+        initialize(ref);
     }
 }

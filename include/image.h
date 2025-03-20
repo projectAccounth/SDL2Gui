@@ -6,46 +6,53 @@
 #include "types.h"
 #include "guiobject.h"
 
-// Images.
-class Image : public GuiObject {
-private:
-	SDL_Surface* imageSurface;
-	SDL_Texture* imageTexture;
-	std::string filePath;
-	std::string prevFilePath;
-public:
 
-	Image(const char* filePath,
-		std::optional<GuiObject*> parent,
-		SDL_Renderer*& renderer,
-		UIUnit position, UIUnit size
-	);
+namespace GUILib {
 
-	void initialize(SDL_Renderer*& renderer);
+	// Texture wrapper, but with more features.
+	class Image : public GuiObject {
+	private:
+		SDL_Texture* imageTexture;
+		std::string filePath;
+		std::string prevFilePath;
+	public:
 
-	void render() override;
+		Image(
+			GuiObject* parent,
+			SDL_Renderer*& renderer,
+			UIUnit size = UIUnit(),
+			UIUnit position = UIUnit(),
+			std::string filePath = ""
+		);
 
-	void updatePath(const std::string& filePath, SDL_Renderer*& renderer);
+		void initialize(SDL_Renderer*& renderer);
 
-	std::string previousFilePath() const;
+		void render() override;
 
-	std::string getFilePath() const;
+		void updatePath(const std::string& filePath, SDL_Renderer*& renderer);
 
-	bool isVisible() const;
+		std::string previousFilePath() const;
 
-	~Image();
-};
+		std::string getFilePath() const;
 
-class ImageManager {
-public:
-	std::vector<Image> images;
+		Image(const Image&);
+		Image& operator=(const Image&);
 
-	void add(const Image& img);
+		~Image();
+	};
 
-	void initializeAll(SDL_Renderer*& renderer);
+	class ImageManager {
+	public:
+		std::vector<Image> images;
 
-	void renderAll();
-};
+		void add(const Image& img);
+
+		void initializeAll(SDL_Renderer*& renderer);
+
+		void renderAll();
+	};
+
+}
 
 
 #endif /* IMAGE_H */

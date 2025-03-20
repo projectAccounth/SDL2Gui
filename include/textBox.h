@@ -6,89 +6,105 @@
 #include "types.h"
 #include "guiobject.h"
 
-class TextBox : public GuiObject {
-protected:
-    TTF_Font* textFont;
-    SDL_Surface* textSurface;
-    SDL_Texture* textTexture;
-    TextAlign xAlign;
-    TextAlign yAlign;
 
-    std::vector<std::string> lines;
+namespace GUILib {
 
-    int lineHeight() const;
+    // A basic text box.
+    // Can be used for texts, just remember to set the background colors' alpha channel to 0.
+    class TextBox : public GuiObject {
+    protected:
+        TTF_Font* textFont;
+        SDL_Surface* textSurface;
+        SDL_Texture* textTexture;
+        HorizontalTextAlign xAlign;
+        VerticalTextAlign yAlign;
 
-    std::vector<std::string> splitTextIntoLines(std::string &text, int maxWidth);
+        std::vector<std::string> lines;
 
-public:
-    std::string text;
-    SDL_Color boxColor;
-    SDL_Color textColor;
-    TextBox(
-        UIUnit size,
-        UIUnit position,
-        std::optional<GuiObject*> parent,
-        SDL_Renderer*& renderer,
-        SDL_Color boxColor,
-        std::string text = "",
-        SDL_Color textColor = { 0, 0, 0, 255 },
-        TTF_Font* textFont = nullptr,
-        TextAlign alignX = CENTER,
-        TextAlign alignY = CENTER
-    );
+        int lineHeight() const;
 
-    void render() override;
+        std::vector<std::string> splitTextIntoLines(std::string& text, int maxWidth);
 
-    void updateText(const char* textToUpdate);
+        std::string text;
+        SDL_Color boxColor;
+        SDL_Color textColor;
+    public:
 
-    void adjustTextAlignment(bool isVertical, TextAlign align);
+        TextBox(
+            GuiObject* parent,
+            SDL_Renderer*& renderer,
+            UIUnit size = UIUnit(),
+            UIUnit position = UIUnit(),
+            SDL_Color boxColor = SDL_Color(),
+            std::string text = "",
+            SDL_Color textColor = { 0, 0, 0, 255 },
+            TTF_Font* textFont = nullptr,
+            HorizontalTextAlign alignX = HorizontalTextAlign::CENTER,
+            VerticalTextAlign alignY = VerticalTextAlign::CENTER
+        );
 
-    void changeFont(TTF_Font*& font);
+        void render() override;
 
-    ~TextBox();
-};
+        void updateText(const char* textToUpdate);
 
-class EditableTextBox : public TextBox {
-private:
-    size_t cursorPosition;
-    std::string text;
+        inline void adjustTextAlignment(const HorizontalTextAlign& alignX, const VerticalTextAlign& alignY) {
+            xAlign = alignX;
+            yAlign = alignY;
+        }
 
-    void handleBackspace();
-    void moveCursorLeft();
-    void moveCursorRight();
-    void handleDelete();
+        inline SDL_Color getBoxColor() const { return boxColor; }
+        inline SDL_Color getTextColor() const { return textColor; }
+        inline std::string getText() const { return text; }
 
-    void insertCharacter(char c);
+        inline void setBoxColor(const SDL_Color& color) { boxColor = color; }
+        inline void setTextColor(const SDL_Color& color) { textColor = color; }
+        inline void setText(const std::string& str) { text = str; }
 
-    std::unordered_map<SDL_Keycode, std::function<void()>> keyActions;
-public:
-    bool editable;
-    EditableTextBox(
-        UIUnit size,
-        UIUnit position,
-        std::optional<GuiObject*> parent,
-        SDL_Renderer*& renderer,
-        SDL_Color backgroundColor,
-        SDL_Color textColor = { 0, 0, 0, 255 },
-        TTF_Font* textFont = nullptr,
-        TextAlign alignX = CENTER,
-        TextAlign alignY = CENTER,
-        bool editable = false
-    );
+        void changeFont(TTF_Font*& font);
 
-    void render() override;
+        ~TextBox();
+    };
 
-    void reset();
+    // A basic text box, but editable.
+    class EditableTextBox : public TextBox {
+    private:
+        size_t cursorPosition;
 
-    void handleEvents(const SDL_Event& e);
+        void handleBackspace();
+        void moveCursorLeft();
+        void moveCursorRight();
+        void handleDelete();
 
-    void adjustTextAlignment(bool isVertical, TextAlign align);
+        void insertCharacter(char c);
 
-    std::string getText() const;
+        std::unordered_map<SDL_Keycode, std::function<void()>> keyActions;
+        bool editable;
+    public:
+        EditableTextBox(
+            GuiObject* parent,
+            SDL_Renderer*& renderer,
+            UIUnit size = UIUnit(),
+            UIUnit position = UIUnit(),
+            SDL_Color backgroundColor = SDL_Color(),
+            SDL_Color textColor = { 0, 0, 0, 255 },
+            TTF_Font* textFont = nullptr,
+            HorizontalTextAlign alignX = HorizontalTextAlign::CENTER,
+            VerticalTextAlign alignY = VerticalTextAlign::CENTER,
+            bool editable = false
+        );
 
-    void changeFont(TTF_Font*& font);
+        inline bool isEditable() const { return editable; }
+        inline void setEditable(bool val) { editable = val; }
 
-    ~EditableTextBox();
-};
+        void render() override;
+
+        void reset();
+
+        void handleEvents(const SDL_Event& e);
+
+        ~EditableTextBox();
+    };
+
+}
 
 #endif /* TEXTBOX_H */

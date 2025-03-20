@@ -6,19 +6,23 @@
 #include "types.h"
 #include "button.h"
 
-using ButtonType = std::variant<TextButton, ImageButton>;
+namespace GUILib {
 
-class ButtonManager {
-public:
-	std::vector<ButtonType> buttons;
+	using ButtonType = std::variant<TextButton, ImageButton>;
 
-	void add(const ButtonType& btn);
+	class ButtonManager {
+	public:
+		std::vector<ButtonType> buttons;
 
-	void renderAll();
+		void add(const ButtonType& btn);
 
-	void handleAllEvent(SDL_Event& e);
+		void renderAll();
 
-	void initializeAll(SDL_Renderer*& renderer);
-};
+		void handleAllEvent(SDL_Event& e);
+
+		void initializeAll(SDL_Renderer*& renderer);
+	};
+
+}
 
 #endif /* BUTTONMGR_H */

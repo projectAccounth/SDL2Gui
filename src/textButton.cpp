@@ -1,9 +1,12 @@
 #include "button.h"
 #include "types.h"
 
-int TextButton::nextId = 0;
+int GUILib::TextButton::nextId = 0;
 
-void TextButton::loadText(SDL_Renderer*& renderer) {
+void GUILib::TextButton::initialize(SDL_Renderer*& renderer) {
+    if (!renderer)
+        return;
+
     if ((text.empty() || !textFont) && !textTexture) {
         textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         return;
@@ -13,7 +16,7 @@ void TextButton::loadText(SDL_Renderer*& renderer) {
 
     SDL_Surface* textSurface = TTF_RenderUTF8_Blended(textFont, text.c_str(), textColor);
     if (textSurface == nullptr) {
-        std::cerr << "Cannot create surface for text, error:" << TTF_GetError() << "\n";
+        std::cerr << "Cannot create surface for text, error: " << TTF_GetError() << "\n";
         return;
     }
 
@@ -21,13 +24,13 @@ void TextButton::loadText(SDL_Renderer*& renderer) {
     SDL_FreeSurface(textSurface);
 
     if (textTexture == nullptr) {
-        std::cerr << "Cannot create text. Error: " << TTF_GetError() << "\n";
+        std::cerr << "Cannot create text texture. Error: " << TTF_GetError() << "\n";
         return;
     }
 }
 
-void TextButton::render() {
-    if (!isVisible() || (parent && !parent.value()->visible)) {
+void GUILib::TextButton::render() {
+    if (!isVisible() || (parent && !parent->isVisible())) {
         return;
     }
     // set the color to draw for the button and also set the settings to render the button
@@ -47,25 +50,25 @@ void TextButton::render() {
 
         // align the text
         switch (xAlign) {
-        case LEFT:
+        case HorizontalTextAlign::LEFT:
             textRect.x = objRect.x + 5;
             break;
-        case CENTER:
+        case HorizontalTextAlign::CENTER:
             textRect.x = objRect.x + (objRect.w - textWidth) / 2;
             break;
-        case RIGHT:
+        case HorizontalTextAlign::RIGHT:
             textRect.x = objRect.x + (objRect.w - textWidth) - 5;
             break;
         }
-        // LEFT = up, CENTER = center; RIGHT = down.
+
         switch (yAlign) {
-        case LEFT:
+        case VerticalTextAlign::UP:
             textRect.y = objRect.y + 5;
             break;
-        case CENTER:
+        case VerticalTextAlign::CENTER:
             textRect.y = objRect.y + (objRect.h - textHeight) / 2;
             break;
-        case RIGHT:
+        case VerticalTextAlign::BOTTOM:
             textRect.y = objRect.y + (objRect.h - textHeight) - 5;
             break;
         }
@@ -76,127 +79,78 @@ void TextButton::render() {
     }
 }
 
-void TextButton::setAction(const std::function<void()>& actionFunction) {
-    buttonAction = actionFunction;
-}
-
-void TextButton::setHoverAction(const std::function<void()>& actionFunction) {
-    hoverAction = actionFunction;
-}
-
-bool TextButton::isClicked(int x, int y) {
-    return (x > objRect.x &&
-        x < (objRect.x + objRect.w) &&
-        y > objRect.y &&
-        y < (objRect.y + objRect.h));
-}
-
-void TextButton::checkHover(int mouseX, int mouseY) {
-    hovered = isClicked(mouseX, mouseY);
-}
-
-void TextButton::handleEvents(SDL_Event& e) {
-    int x, y;
-    SDL_PumpEvents();
-    SDL_GetMouseState(&x, &y);
-
-    handleEvent(e);
-
-    if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
-        return;
-    }
-    if (x > objRect.x && x < (objRect.x + objRect.w) &&
-        y > objRect.y && y < (objRect.y + objRect.h)) {
-        hovered = true;
-        if (hoverAction) hoverAction();
-    }
-    else {
-        hovered = false;
-    }
-    if (e.type == SDL_MOUSEBUTTONDOWN && hovered) {
-        if (e.button.button != SDL_BUTTON_LEFT) return;
-        if (buttonAction) buttonAction();
-    }
-}
-
-void TextButton::toggleActive(bool value) {
+void GUILib::TextButton::toggleActive(bool value) {
     active = value;
 }
 
-int TextButton::getId() const {
+int GUILib::TextButton::getId() const {
     return id;
 }
 
-void TextButton::changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer) {
     textColor = color;
-    loadText(renderer);
+    initialize(renderer);
 
 }
 
-void TextButton::changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer) {
     hoverColor = color;
-    loadText(renderer);
+    initialize(renderer);
 }
 
-void TextButton::changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer) {
     buttonColor = color;
-    loadText(renderer);
+    initialize(renderer);
 }
 
-void TextButton::changeFont(TTF_Font* font, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeFont(TTF_Font* font, SDL_Renderer*& renderer) {
     textFont = font;
-    loadText(renderer);
+    initialize(renderer);
 }
 
-TextButton::TextButton(
+GUILib::TextButton::TextButton(
+    GuiObject* parent,
+    SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
-    std::optional<GuiObject*> parent,
-    SDL_Renderer*& renderer,
     SDL_Color buttonColor,
     SDL_Color hoverColor,
     SDL_Color textColor,
     std::string text,
     TTF_Font* textFont,
-    TextAlign alignX,
-    TextAlign alignY
-)
-    :
-    GuiObject(size, position, parent, renderer),
+    HorizontalTextAlign alignX,
+    VerticalTextAlign alignY
+):
+    Button(parent, renderer, size, position),
     buttonColor(buttonColor),
     textColor(textColor),
     textFont(textFont),
-    text(text),
+    text(std::move(text)),
     xAlign(alignX),
     yAlign(alignY),
     textTexture(nullptr),
-    hovered(false),
     hoverColor(hoverColor),
     id(nextId++)
 {
-    loadText(ref);
+    initialize(ref);
 }
 
-TextButton::TextButton():
-    GuiObject(),
+GUILib::TextButton::TextButton():
+    Button(),
     buttonColor(SDL_Color()),
     textColor(SDL_Color()),
     textFont(nullptr),
     text(""),
-    xAlign(CENTER),
-    yAlign(CENTER),
+    xAlign(HorizontalTextAlign::CENTER),
+    yAlign(VerticalTextAlign::CENTER),
     textTexture(nullptr),
-    hovered(false),
     hoverColor(SDL_Color()),
     id(nextId++)
 {}
 
-TextButton::~TextButton() {
-    SDL_DestroyTexture(textTexture);
-}
-
-bool TextButton::isHovered() const {
-    return hovered;
+GUILib::TextButton::~TextButton() {
+    if (textTexture)
+        SDL_DestroyTexture(textTexture);
 }
 
 
