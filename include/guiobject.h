@@ -81,13 +81,25 @@ namespace GUILib {
 		virtual void render() = 0;
 
 		template <typename... Args>
-		void on(const std::string& eventName, std::function<void(Args...)> callback) {
+		void on(
+			const std::string& eventName,
+			std::function<void(Args...)> callback
+		) {
 			events.connect(eventName, std::move(callback));
 		}
 
 		template <typename... Args>
-		void trigger(const std::string& eventName, Args&&... args) {
-			events.fire(eventName, std::forward<Args>(args)...);
+		void trigger(
+			const std::string& eventName,
+			Args&&... args
+		) {
+			events.fire(eventName, std::forward<Args>(args)...); // Extra O(n)
+		}
+
+		inline void updateRenderer(SDL_Renderer*& renderer) {
+			if (renderer == ref) return;
+			ref = renderer;
+			trigger("onRendererUpdate");
 		}
 		
 		GuiObject& operator=(const GuiObject& other);
@@ -106,7 +118,8 @@ namespace GUILib {
 			UIUnit size = UIUnit(),
 			UIUnit position = UIUnit(),
 			SDL_Color frameColor = SDL_Color(),
-			bool isVisible = true, bool isActive = true
+			bool isVisible = true,
+			bool isActive = true
 		);
 
 		inline void setFrameColor(const SDL_Color& color) { frameColor = color; }

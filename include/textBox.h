@@ -14,7 +14,6 @@ namespace GUILib {
     class TextBox : public GuiObject {
     protected:
         TTF_Font* textFont;
-        SDL_Surface* textSurface;
         SDL_Texture* textTexture;
         HorizontalTextAlign xAlign;
         VerticalTextAlign yAlign;
@@ -47,7 +46,10 @@ namespace GUILib {
 
         void updateText(const char* textToUpdate);
 
-        inline void adjustTextAlignment(const HorizontalTextAlign& alignX, const VerticalTextAlign& alignY) {
+        inline void adjustTextAlignment(
+            const HorizontalTextAlign& alignX,
+            const VerticalTextAlign& alignY
+        ) {
             xAlign = alignX;
             yAlign = alignY;
         }
@@ -56,9 +58,15 @@ namespace GUILib {
         inline SDL_Color getTextColor() const { return textColor; }
         inline std::string getText() const { return text; }
 
-        inline void setBoxColor(const SDL_Color& color) { boxColor = color; }
-        inline void setTextColor(const SDL_Color& color) { textColor = color; }
-        inline void setText(const std::string& str) { text = str; }
+        inline void setBoxColor(const SDL_Color& color) {
+            boxColor = color;
+        }
+        inline void setTextColor(const SDL_Color& color) {
+            textColor = color;
+        }
+        inline void setText(const std::string& str) {
+            text = str;
+        }
 
         void changeFont(TTF_Font*& font);
 
@@ -94,9 +102,10 @@ namespace GUILib {
         );
 
         inline bool isEditable() const { return editable; }
-        inline void setEditable(bool val) { editable = val; }
-
-        void render() override;
+        inline void setEditable(bool val) { 
+            editable = val;
+            trigger("onEditableChange", val);
+        }
 
         void reset();
 

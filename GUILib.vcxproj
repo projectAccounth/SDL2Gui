@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -174,13 +174,23 @@
     <ClCompile Include="src\buttonManager.cpp" />
     <ClCompile Include="src\checkbox.cpp" />
     <ClCompile Include="src\editableTextBox.cpp" />
+    <ClCompile Include="src\event.cpp" />
     <ClCompile Include="src\guimanager.cpp" />
     <ClCompile Include="src\guiobject.cpp" />
     <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\imageButton.cpp" />
     <ClCompile Include="src\textBox.cpp" />
     <ClCompile Include="src\textButton.cpp" />
-    <ClCompile Include="examples\position-test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="docs\Button.md" />
+    <None Include="docs\Event.md" />
+    <None Include="docs\GuiManager (GuiInstance).md" />
+    <None Include="docs\GuiObject.md" />
+    <None Include="docs\Image.md" />
+    <None Include="README.md" />
+    <None Include="docs\TextBox.md" />
+    <None Include="docs\Types.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

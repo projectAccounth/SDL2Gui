@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "guiobject.h"
+#include "textBox.h"
 
 namespace GUILib {
 
@@ -84,28 +85,38 @@ namespace GUILib {
         // Basically just rendering the button on the specified renderer.
         void render() override;
 
-        // Alternative to button.active = value : bool;
-        void toggleActive(bool value);
-
         int getId() const;
 
         // Changes text color.
-        void changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer);
+        void changeTextColor(
+            const SDL_Color& color
+        );
 
         // Changes hover color.
-        void changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer);
+        void changeHoverColor(
+            const SDL_Color& color
+        );
 
         // Changes button color.
-        void changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer);
+        void changeButtonColor(
+            const SDL_Color& color
+        );
 
         inline SDL_Color getTextColor() const { return textColor; }
         inline SDL_Color getHoverColor() const { return hoverColor; }
         inline SDL_Color getButtonColor() const { return buttonColor; }
 
-        inline void setText(const std::string& str) { text = str; }
+        inline void setText(
+            const std::string& str
+        ) { 
+            text = str;
+            trigger("onTextChange", str);
+        }
         inline std::string getText() const { return text; }
 
-        void changeFont(TTF_Font* font, SDL_Renderer*& renderer);
+        void changeFont(
+            TTF_Font* font
+        );
 
         ~TextButton();
     };
@@ -132,16 +143,24 @@ namespace GUILib {
             std::string hoverImageFilePath = ""
         );
 
-        void initialize(SDL_Renderer*& renderer);
+        void initialize(
+            SDL_Renderer*& renderer
+        );
 
         // Renders the button.
         void render() override;
 
         int getId() const;
 
-        void updateHoverImgPath(const char* updatedPath, SDL_Renderer*& renderer);
+        void updateHoverImgPath(
+            const char* updatedPath,
+            SDL_Renderer*& renderer
+        );
 
-        void updateDefaultImgPath(const char* updatedPath, SDL_Renderer*& renderer);
+        void updateDefaultImgPath(
+            const char* updatedPath,
+            SDL_Renderer*& renderer
+        );
 
         ~ImageButton();
     };
@@ -168,9 +187,13 @@ namespace GUILib {
         inline void toggleChecked(bool val) { checked = val; }
         inline bool isChecked() const { return checked; }
 
-        void setAction(const std::function<void()>& buttonAction) = delete;
+        void setAction(
+            const std::function<void()>& buttonAction
+        ) = delete;
 
-        void setHoverAction(const std::function<void()>& buttonAction) = delete;
+        void setHoverAction(
+            const std::function<void()>& buttonAction
+        ) = delete;
 
         void changeSymbol(const char& symbol);
 

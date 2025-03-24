@@ -39,11 +39,11 @@ void GUILib::Image::render() {
 	SDL_RenderCopy(ref, imageTexture, NULL, &objRect);
 }
 
-void GUILib::Image::updatePath(const std::string& str, SDL_Renderer*& renderer) {
+void GUILib::Image::updatePath(const std::string& str) {
 	prevFilePath = filePath;
 	filePath = str;
 
-	initialize(renderer);
+	initialize(ref);
 	trigger("onPathChange", str);
 }
 

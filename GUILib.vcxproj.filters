@@ -71,11 +71,35 @@
     <ClCompile Include="src\guimanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="examples\position-test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="docs\Button.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="docs\Event.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="docs\GuiManager (GuiInstance).md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="docs\GuiObject.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="docs\Image.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="docs\TextBox.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="docs\Types.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

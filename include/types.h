@@ -26,16 +26,19 @@
 #include <optional>
 #include <any>
 
-enum class HorizontalTextAlign {
-    LEFT,
-    CENTER,
-    RIGHT
-};
+namespace GUILib {
 
-enum class VerticalTextAlign {
-    UP,
-    CENTER,
-    BOTTOM
-};
+    enum class HorizontalTextAlign {
+        LEFT,
+        CENTER,
+        RIGHT
+    };
 
+    enum class VerticalTextAlign {
+        UP,
+        CENTER,
+        BOTTOM
+    };
+
+}
 #endif /* TYPES_H */

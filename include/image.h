@@ -29,7 +29,9 @@ namespace GUILib {
 
 		void render() override;
 
-		void updatePath(const std::string& filePath, SDL_Renderer*& renderer);
+		void updatePath(
+			const std::string& filePath
+		);
 
 		std::string previousFilePath() const;
 

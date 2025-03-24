@@ -79,33 +79,50 @@ void GUILib::TextButton::render() {
     }
 }
 
-void GUILib::TextButton::toggleActive(bool value) {
-    active = value;
-}
-
 int GUILib::TextButton::getId() const {
     return id;
 }
 
-void GUILib::TextButton::changeTextColor(const SDL_Color& color, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeTextColor(const SDL_Color& color) {
+    if (
+        textColor.r == color.r &&
+        textColor.g == color.g &&
+        textColor.b == color.b &&
+        textColor.a == color.a
+        )
+        return;
     textColor = color;
-    initialize(renderer);
-
+    initialize(ref);
 }
 
-void GUILib::TextButton::changeHoverColor(const SDL_Color& color, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeHoverColor(const SDL_Color& color) {
+    if (
+        hoverColor.r == color.r &&
+        hoverColor.g == color.g &&
+        hoverColor.b == color.b &&
+        hoverColor.a == color.a
+        )
+        return;
     hoverColor = color;
-    initialize(renderer);
+    initialize(ref);
 }
 
-void GUILib::TextButton::changeButtonColor(const SDL_Color& color, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeButtonColor(const SDL_Color& color) {
+    if (
+        buttonColor.r == color.r &&
+        buttonColor.g == color.g &&
+        buttonColor.b == color.b &&
+        buttonColor.a == color.a
+        )
+        return;
     buttonColor = color;
-    initialize(renderer);
+    initialize(ref);
 }
 
-void GUILib::TextButton::changeFont(TTF_Font* font, SDL_Renderer*& renderer) {
+void GUILib::TextButton::changeFont(TTF_Font* font) {
+    if (this->textFont == font) return;
     textFont = font;
-    initialize(renderer);
+    initialize(ref);
 }
 
 GUILib::TextButton::TextButton(

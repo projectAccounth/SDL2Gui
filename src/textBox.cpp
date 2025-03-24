@@ -47,15 +47,17 @@ std::vector<std::string> GUILib::TextBox::splitTextIntoLines(std::string& str, i
 }
 
 void GUILib::TextBox::render() {
+    if (!ref) return;
+    if (!isVisible() || (parent && !parent->isVisible())) {
+        return;
+    }
+
     int padding = 5;
     int maxWidth = objRect.w - padding * 2;
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
     int startY = objRect.y;
-    if (!isVisible() || (parent && !parent->isVisible())) {
-        return;
-    }
-
+    
     SDL_SetRenderDrawColor(ref, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
     SDL_RenderFillRect(ref, &objRect);
 
@@ -79,6 +81,7 @@ void GUILib::TextBox::render() {
     }
 
     int offsetY = 0;
+    SDL_Surface* textSurface = nullptr;
 
     for (const auto& line : lines) {
         int textWidth = 0, textHeight = 0;
@@ -132,7 +135,6 @@ GUILib::TextBox::TextBox(
 ) :
     GuiObject(parent, renderer, size, position),
     textTexture(nullptr),
-    textSurface(nullptr),
     boxColor(boxColor),
     text(std::move(text)),
     textColor(textColor),

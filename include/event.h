@@ -15,49 +15,68 @@ namespace GUILib {
         std::unordered_map<std::string, std::vector<Callback>> listeners;
     public:
         
-        inline void subscribe(const std::string& eventType, Callback callback) {
-            listeners[eventType].push_back(std::move(callback));
-        }
+        void subscribe(
+            const std::string& eventType,
+            Callback callback
+        );
 
-        inline void dispatch(const std::string& eventType, const Event& event) {
-            if (listeners.count(eventType)) {
-                for (const auto& callback : listeners[eventType]) {
-                    callback(event);
-                }
-            }
-        }
+        void dispatch(
+            const std::string& eventType,
+            const Event& event
+        );
     };
 
     class EventEmitter {
     private:
-        using Callback = std::function<void(std::vector<std::any>)>;
-        std::unordered_map<std::string, std::vector<Callback>> listeners;
+        using Callback = std::function<void(const std::vector<std::any>&)>;
+        std::unordered_map<std::string, std::vector<std::pair<size_t, Callback>>> listeners;
+        size_t nextListenerId = 0;
     public:
+        using EventId = size_t;
+
+        // Register an event listener and return an ID for deregistration
         template <typename... Args>
-        void connect(const std::string& eventName, std::function<void(Args...)> callback) {
+        EventId connect(const std::string& eventName, std::function<void(Args...)> callback) {
+            EventId id = nextListenerId++;
+
             auto wrapper = [callback](const std::vector<std::any>& args) {
                 if (args.size() != sizeof...(Args)) {
                     throw std::runtime_error("Event argument mismatch!");
                 }
-                // Unpack arguments and invoke the callback
                 std::apply(callback, unpackArguments<Args...>(args, std::index_sequence_for<Args...>{}));
+            };
+
+            listeners[eventName].push_back({ id, wrapper });
+            return id;
+        }
+
+        // Register an event listener that fires only once
+        template <typename... Args>
+        EventId connectOnce(const std::string& eventName, std::function<void(Args...)> callback) {
+            EventId id = nextListenerId++;
+
+            auto wrapper = [this, eventName, id, callback](const std::vector<std::any>& args) {
+                callback(std::apply(callback, unpackArguments<Args...>(args, std::index_sequence_for<Args...>{})));
+                this->disconnect(eventName, id); // Remove itself after execution
                 };
-            listeners[eventName].push_back(std::move(wrapper));
+
+            listeners[eventName].emplace_back(id, std::move(wrapper));
+            return id;
         }
 
         template <typename... Args>
         void fire(const std::string& eventName, Args&&... args) {
-            if (listeners.count(eventName)) {
-                std::vector<std::any> packedArgs = { std::forward<Args>(args)... };
-                for (const auto& callback : listeners[eventName]) {
-                    callback(packedArgs);
-                    // Packing the actual arguments in the vector,
-                    // which can then be used in the callback.
-                }
+            if (!listeners.count(eventName)) return;
+            std::vector<std::any> packedArgs = { std::forward<Args>(args)... };
+            for (const auto& callback : listeners[eventName]) {
+                callback.second(packedArgs);
             }
         }
 
-        // TODO: implement something to disconnect the events;
+        void disconnect(
+            const std::string& eventName,
+            EventId listenerId
+        );
 
     private:
         template <typename... Args, std::size_t... I>
