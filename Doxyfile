@@ -1,0 +1,21 @@
+# Doxyfile 1.9.6
+
+# Project-related settings
+PROJECT_NAME           = "My Project"
+PROJECT_BRIEF          = "Documentation for symbols in ./include/"
+OUTPUT_DIRECTORY       = ./docs
+
+# Input settings
+INPUT                  = ./include/
+RECURSIVE              = YES
+
+# Build settings
+EXTRACT_ALL            = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+
+# Other default options
+QUIET                  = NO
+WARNINGS               = YES

@@ -33,7 +33,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -162,6 +162,7 @@
     <ClInclude Include="include\button.h" />
     <ClInclude Include="include\buttonManager.h" />
     <ClInclude Include="include\event.h" />
+    <ClInclude Include="include\frame.h" />
     <ClInclude Include="include\guimanager.h" />
     <ClInclude Include="include\guiobject.h" />
     <ClInclude Include="include\image.h" />
@@ -170,11 +171,13 @@
     <ClInclude Include="include\textBox.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="examples\position-test.cpp" />
     <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\buttonManager.cpp" />
     <ClCompile Include="src\checkbox.cpp" />
     <ClCompile Include="src\editableTextBox.cpp" />
     <ClCompile Include="src\event.cpp" />
+    <ClCompile Include="src\frame.cpp" />
     <ClCompile Include="src\guimanager.cpp" />
     <ClCompile Include="src\guiobject.cpp" />
     <ClCompile Include="src\image.cpp" />
@@ -185,6 +188,7 @@
   <ItemGroup>
     <None Include="docs\Button.md" />
     <None Include="docs\Event.md" />
+    <None Include="docs\Frame and ScrollingFrame.md" />
     <None Include="docs\GuiManager (GuiInstance).md" />
     <None Include="docs\GuiObject.md" />
     <None Include="docs\Image.md" />
