@@ -19,7 +19,7 @@ void GUILib::Image::initialize(SDL_Renderer*& renderer) {
 	if (!renderer)
 		return;
 
-	ref = renderer;
+	updateRenderer(renderer);
 
 	auto fPath = filePath.c_str();
 	SDL_Surface* imageSurface = IMG_Load(fPath);

@@ -1,7 +1,7 @@
-#include "../include/textBox.h"
+#include "textBox.h"
 
-void GUILib::EditableTextBox::handleEvents(const SDL_Event& e) {
-    handleEvent(e);
+void GUILib::EditableTextBox::handleEvent(const SDL_Event& e) {
+    GuiObject::handleEvent(e); // Calling superclass function
     if (!editable) return;
     if (e.type == SDL_KEYDOWN) {
         auto it = keyActions.find(e.key.keysym.sym);
@@ -84,4 +84,35 @@ GUILib::EditableTextBox::EditableTextBox(
 GUILib::EditableTextBox::~EditableTextBox() {
     if (textTexture)
         SDL_DestroyTexture(textTexture);
+}
+
+bool GUILib::EditableTextBox::isEditable() const {
+    return editable;
+}
+
+void GUILib::EditableTextBox::setEditable(bool val) {
+    editable = val;
+    trigger("onEditableChange");
+}
+
+void GUILib::EditableTextBox::render() {
+    TextBox::render(); // Call superclass render function
+    if (editable) {
+        // Render cursor
+        SDL_Rect cursorRect = { objRect.x, objRect.y, 2, objRect.h };
+        if (text.size() > 0) {
+            TTF_SizeText(textFont, text.substr(0, cursorPosition).c_str(), &cursorRect.w, nullptr);
+        }
+        SDL_SetRenderDrawColor(ref, textColor.r, textColor.g, textColor.b, textColor.a);
+        SDL_RenderFillRect(ref, &cursorRect);
+    }
+}
+
+void GUILib::TextBox::adjustTextAlignment(
+    const HorizontalTextAlign& alignX,
+    const VerticalTextAlign& alignY
+) {
+    xAlign = alignX;
+    yAlign = alignY;
+    render();
 }

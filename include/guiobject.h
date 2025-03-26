@@ -4,30 +4,63 @@
 #include "event.h"
 
 namespace GUILib {
-	typedef struct UIUnit {
-		double sizeX, sizeY;
-		bool isUsingScale;
-	} UIUnit;
 
+	/// @brief A struct to represent the size of a GUI object.
+	typedef struct UIUnit {
+		/// @brief The size of the object.
+		double sizeX, sizeY;
+		/// @brief Whether the size is using scale or not.
+		bool isUsingScale;
+
+		/// @brief Gets the absolute size of the object.
+		/// @param containerSize The size of the container.
+		/// @return The absolute size of the object, in pixels.
+		SDL_Point getAbsoluteSize(const SDL_Point& containerSize) const {
+			if (isUsingScale) {
+				return {static_cast<int>(sizeX * containerSize.x), static_cast<int>(sizeY * containerSize.y)};
+			}
+			return {static_cast<int>(sizeX), static_cast<int>(sizeY)};
+		}
+    } UIUnit;
+	 
+	/// @brief A basic GUI object.
+	/// @brief Can be used as a base for all GUI objects.
 	class GuiObject {
 	protected:
+		/// @brief The rect of the object.
 		SDL_Rect objRect;
+		/// @brief The renderer of the object.
 		SDL_Renderer*& ref;
+		/// @brief The parent of the object.
 		GuiObject* parent;
 
-		int dragOffsetX;
-		int dragOffsetY;
+		/// @brief The offset of the drag.
+		int dragOffsetX,
+		    dragOffsetY;
 
+		/// @brief The position of the object.
 		UIUnit position;
+		/// @brief The size of the object.
 		UIUnit size;
 
+		/// @brief Whether the object is being dragged.
 		bool isDragging;
+		/// @brief Whether the object is visible/or active.
 		bool visible, active;
+		/// @brief Whether the object can be dragged.
 		bool canBeDragged;
 
+		/// @brief The event emitter of the object.
 		EventEmitter events;
 
+		/// @brief Updates the object, the position and size.
 		void update(SDL_Renderer* renderer);
+
+		/// @brief The children of the object.
+		std::vector<GuiObject*> children;
+
+		/// @brief The children's rendering state.
+		bool shouldRenderChildren;
 	public:
 		GuiObject();
 		GuiObject(
@@ -39,55 +72,104 @@ namespace GUILib {
 			bool isActive = true
 		);
 
+		/// @brief Returns the children's rendering state.
+		/// @return The boolean that indicates whether the children should be rendered.
+		bool getChildrenRenderingState() const;
+
+		/// @brief Sets the children's rendering state (whether the children should be rendered).
+		/// @param value The value.
+		void setChildrenRenderingState(bool value);
+
+		/// @brief Adds a child to the object.
+		/// @param child The child to be added.
+		void addChild(GuiObject* child);
+
+		/// @brief Removes a child from the object.
+		/// @param child The child to be removed. Can be nullptr.
+		void removeChild(GuiObject* child);
+
+		/// @brief Returns the rect of the object.
+		/// @return The rect of the object.
 		SDL_Rect getRect() const;
 
+		/// @brief Returns the size of the object.
+		/// @return The size of the object.
 		UIUnit getSize() const;
 
+		/// @brief Returns the position of the object.
+		/// @return The position of the object.
 		UIUnit getPosition() const;
 
-		// Moves the object to the specified location.
+		/// @brief Moves the object to a new position.
+		/// @param newPos The new position.
 		void move(const UIUnit& newPos);
 
-		// Resizes the object.
+		/// @brief Resizes the object.
+		/// @param newSize The new size.
 		void resize(const UIUnit& newSize);
 
+		/// @brief Returns the activity state of the object.
+		/// @return The activity state.
 		bool isActive() const;
-		inline void setActive(bool value) { 
-			active = value;
-			trigger("onActiveChange");
-		}
 
+		/// @brief Sets the activity state of the object.
+		/// @param value The new activity state.
+		void setActive(bool value);
+
+		/// @brief Returns the visibility of the object.
+		/// @return The visibility state.
 		bool isVisible() const;
-		inline void toggleVisiblility(bool value) {
-			visible = value;
-			trigger("onVisibilityChange");
-		}
 
-		void handleEvent(const SDL_Event& event);
+		/// @deprecated No longer in use.
+		/// @param value The new visibility state.
+		/// @brief Toggles the visibility of the object.
+		void toggleVisibility(bool value);
 
-		inline const GuiObject* getParent() const { return parent; }
-		inline void setParent(GuiObject* newParent) { 
-			parent = newParent;
-			trigger("onParentChange");
-		}
-		inline bool hasParent() const { return parent != nullptr; }
+		/// @brief Sets the visibility of the object.
+		/// @param value The new visibility state.
+		void setVisible(bool value);
 
-		inline bool isDraggable() const { return canBeDragged; }
-		inline void setDraggable(bool val) { 
-			canBeDragged = val;
-			trigger("onDraggableChange");
-		}
+		/// @brief Handles the event for the object.
+		/// @param event The event that will be processed.
+		virtual void handleEvent(const SDL_Event& event);
 
-		virtual void render() = 0;
+		/// @brief Returns the parent of the object.
+		/// @return The parent of the object.
+		const GuiObject* getParent() const;
 
+		/// @brief Sets the parent of the object.
+		/// @param newParent The new parent of the object.
+		void setParent(GuiObject* newParent);
+
+		/// @brief Checks if the object has a parent.
+		/// @return True if the object has a parent, false otherwise.
+		bool hasParent() const;
+
+		/// @brief Checks if the object is draggable.
+		/// @return True if the object is draggable, false otherwise.
+		bool isDraggable() const;
+
+		/// @brief Sets the draggable state of the object.
+		/// @param value The new draggable state.
+		void setDraggable(bool val);
+
+		/// @brief Renders the object, and all its children, if it has.
+		virtual void render();
+
+		/// @brief Connects a callback to an event.
+		/// @param eventName The name of the event.
+		/// @param callback The callback function. Must contain the same arguments as the trigger function.
 		template <typename... Args>
 		void on(
 			const std::string& eventName,
 			std::function<void(Args...)> callback
 		) {
+			// can't hide the implementation as this is a template function
 			events.connect(eventName, std::move(callback));
 		}
 
+		/// @brief Triggers an event.
+		/// @param eventName The name of the event.
 		template <typename... Args>
 		void trigger(
 			const std::string& eventName,
@@ -96,35 +178,19 @@ namespace GUILib {
 			events.fire(eventName, std::forward<Args>(args)...); // Extra O(n)
 		}
 
-		inline void updateRenderer(SDL_Renderer*& renderer) {
-			if (renderer == ref) return;
-			ref = renderer;
-			trigger("onRendererUpdate");
-		}
+		/// @brief Updates the reference to the renderer of the object.
+		/// @param renderer The new renderer.
+		void updateRenderer(SDL_Renderer*& renderer);
+
+		// @brief Gets the current renderer.
+		/// @return The current renderer.
+		const SDL_Renderer*& getCurrentRenderer() const;
 		
 		GuiObject& operator=(const GuiObject& other);
 
-		virtual ~GuiObject() = default;
-	};
+		bool operator==(const GuiObject& other) const;
 
-	class Frame : public GuiObject {
-	private:
-		SDL_Color frameColor;
-	public:
-		Frame();
-		Frame(
-			GuiObject* parent,
-			SDL_Renderer*& renderer,
-			UIUnit size = UIUnit(),
-			UIUnit position = UIUnit(),
-			SDL_Color frameColor = SDL_Color(),
-			bool isVisible = true,
-			bool isActive = true
-		);
-
-		inline void setFrameColor(const SDL_Color& color) { frameColor = color; }
-		inline SDL_Color getFrameColor() const { return frameColor; }
-
-		void render() override;
+		/// @brief Destructor.
+		virtual ~GuiObject();
 	};
 }

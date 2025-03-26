@@ -46,15 +46,15 @@ void GUILib::ImageButton::render() {
     SDL_DestroyTexture(finalTexture);
 }
 
-void GUILib::ImageButton::updateDefaultImgPath(const char* path, SDL_Renderer*& renderer) {
+void GUILib::ImageButton::updateDefaultImgPath(const char* path) {
     defaultImgPath = path;
-    initialize(renderer);
+    initialize(ref);
     trigger("onPathUpdate", path);
 }
 
-void GUILib::ImageButton::updateHoverImgPath(const char* path, SDL_Renderer*& renderer) {
+void GUILib::ImageButton::updateHoverImgPath(const char* path) {
     hoverImgPath = path;
-    initialize(renderer);
+    initialize(ref);
     trigger("onHoverPathUpdate", path);
 }
 

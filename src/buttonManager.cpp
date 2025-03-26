@@ -12,7 +12,7 @@ void GUILib::ButtonManager::renderAll() {
 
 void GUILib::ButtonManager::handleAllEvent(SDL_Event& e) {
 	for (auto& button : buttons) {
-		std::visit([&](auto& btn) { btn.handleEvents(e); }, button);
+		std::visit([&](auto& btn) { btn.handleEvent(e); }, button);
 	}
 }
 

@@ -25,6 +25,7 @@
 #include <memory>
 #include <optional>
 #include <any>
+#include <cmath>
 
 namespace GUILib {
 
@@ -33,6 +34,7 @@ namespace GUILib {
         CENTER,
         RIGHT
     };
+
 
     enum class VerticalTextAlign {
         UP,

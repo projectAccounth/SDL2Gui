@@ -170,5 +170,23 @@ GUILib::TextButton::~TextButton() {
         SDL_DestroyTexture(textTexture);
 }
 
+SDL_Color GUILib::TextButton::getTextColor() const {
+    return textColor;
+}
 
+SDL_Color GUILib::TextButton::getHoverColor() const {
+    return hoverColor;
+}
 
+SDL_Color GUILib::TextButton::getButtonColor() const {
+    return buttonColor;
+}
+
+void GUILib::TextButton::setText(const std::string& str) {
+    text = str;
+    trigger("onTextChange", str);
+}
+
+std::string GUILib::TextButton::getText() const {
+    return text;
+}

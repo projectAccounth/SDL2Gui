@@ -178,7 +178,6 @@
     <ClCompile Include="src\editableTextBox.cpp" />
     <ClCompile Include="src\event.cpp" />
     <ClCompile Include="src\frame.cpp" />
-    <ClCompile Include="src\guimanager.cpp" />
     <ClCompile Include="src\guiobject.cpp" />
     <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\imageButton.cpp" />
@@ -186,15 +185,7 @@
     <ClCompile Include="src\textButton.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="docs\Button.md" />
-    <None Include="docs\Event.md" />
-    <None Include="docs\Frame and ScrollingFrame.md" />
-    <None Include="docs\GuiManager (GuiInstance).md" />
-    <None Include="docs\GuiObject.md" />
-    <None Include="docs\Image.md" />
     <None Include="README.md" />
-    <None Include="docs\TextBox.md" />
-    <None Include="docs\Types.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

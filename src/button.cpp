@@ -27,7 +27,8 @@ void Button::checkHover(int mouseX, int mouseY) {
     hovered = isClicked(mouseX, mouseY);
 }
 
-void Button::handleEvents(SDL_Event& e) {
+void Button::handleEvent(const SDL_Event& e) {
+    GuiObject::handleEvent(e);
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);

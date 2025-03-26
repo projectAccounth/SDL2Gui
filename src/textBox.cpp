@@ -66,7 +66,7 @@ void GUILib::TextBox::render() {
         return;
     }
     
-    lines = splitTextIntoLines(text, maxWidth);
+    lines = splitTextIntoLines(text, maxWidth); // For wrapping
 
     switch (yAlign) {
     case VerticalTextAlign::UP:
@@ -93,7 +93,7 @@ void GUILib::TextBox::render() {
             startX = objRect.x + padding;
             break;
         case HorizontalTextAlign::CENTER:
-            startX = objRect.x + (maxWidth - textWidth) / 2;
+            startX = objRect.x + (maxWidth - textWidth) / 2 + padding;
             break;
         case HorizontalTextAlign::RIGHT:
             startX = objRect.x + maxWidth - textWidth - padding;
@@ -144,4 +144,28 @@ GUILib::TextBox::TextBox(
 
 GUILib::TextBox::~TextBox() {
     if (textTexture) SDL_DestroyTexture(textTexture);
+}
+
+SDL_Color GUILib::TextBox::getBoxColor() const {
+    return boxColor;
+}
+
+SDL_Color GUILib::TextBox::getTextColor() const {
+    return textColor;
+}
+
+std::string GUILib::TextBox::getText() const {
+    return text;
+}
+
+void GUILib::TextBox::setBoxColor(const SDL_Color& color) {
+    boxColor = color;
+}
+
+void GUILib::TextBox::setTextColor(const SDL_Color& color) {
+    textColor = color;
+}
+
+void GUILib::TextBox::setText(const std::string& str) {
+    text = str;
 }

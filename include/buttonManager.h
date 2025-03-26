@@ -8,8 +8,10 @@
 
 namespace GUILib {
 
+	/// @brief The tuple.
 	using ButtonType = std::variant<TextButton, ImageButton>;
 
+	/// @brief A fancy std::vector<Button> wrapper, but with more features.
 	class ButtonManager {
 	public:
 		std::vector<ButtonType> buttons;

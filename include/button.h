@@ -9,16 +9,21 @@
 
 namespace GUILib {
 
-    // Abstract, practically useless button class.
-    // Serves as a base for buttons.
+    /// @brief Abstract, practically useless button class.
+    /// @brief Serves as a base for buttons.
     class Button : public GuiObject {
     protected:
-        std::function<void()> buttonAction;
-        std::function<void()> hoverAction;
+        /// @brief The action when clicked.
+        /// @deprecated Migrate to Events API.
+        std::function<void()> buttonAction,
+                              hoverAction;
 
+        /// @brief Checks if the button is clicked.
         bool isClicked(int x, int y);
+        /// @brief Checks if the button is hovered.
         void checkHover(int mouseX, int mouseY);
 
+        /// @brief Whether the button is hovered.
         bool hovered;
     public:
         Button();
@@ -29,39 +34,51 @@ namespace GUILib {
             UIUnit position = UIUnit()
         );
 
-        // @deprecated Migrate to the event system.
-        // Setting the function responsible for clicking.
+        /// @deprecated Migrate to the event system.
+        /// @brief Setting the function responsible for clicking.
         inline void setAction(const std::function<void()>& actionFunction) {
             buttonAction = actionFunction;
         }
-        // @deprecated Migrate to the event system.
-        // Setting the function responsible for hovering.
+        /// @deprecated Migrate to the event system.
+        /// @brief Setting the function responsible for hovering.
         inline void setHoverAction(const std::function<void()>& actionFunction) {
             buttonAction = actionFunction;
         }
 
-        void handleEvents(SDL_Event& e);
+        /// @brief Handles all event for the button.
+        /// @param e The event to be handled.
+        void handleEvent(const SDL_Event& e) override;
 
+        /// @brief Checks if the button is hovered.
+        /// @return The value.
         inline bool isHovered() const { return hovered; }
+
+        virtual ~Button() = default;
     };
 
-    // A basic text button for anything.
+    /// @brief A basic text button for anything.
     class TextButton : public Button {
     protected:
         static int nextId;
+        /// @brief The texture of the text.
         SDL_Texture* textTexture;
-
-        TTF_Font* textFont; // font for the text in the TextButton
-
+        /// @brief The font of the text.
+        TTF_Font* textFont;
+        /// @brief The alignment of the text.
         HorizontalTextAlign xAlign;
+        /// @brief The alignment of the text.
         VerticalTextAlign yAlign;
 
-        std::string text; // text
-        SDL_Color buttonColor; // buttonColor
-        SDL_Color textColor; // textColor
-        SDL_Color hoverColor; // hoverColor
+        /// @brief The text of the button.
+        std::string text;
+        /// @brief The color of the button.
+        SDL_Color buttonColor;
+        /// @brief The color of the text.
+        SDL_Color textColor;
+        /// @brief The color of the hovered button.
+        SDL_Color hoverColor;
 
-        // The "ID" of the button, can be used for querying.
+        /// @brief The "ID" of the button, can be used for querying.
         int id;
     public:
         TextButton();
@@ -79,41 +96,58 @@ namespace GUILib {
             VerticalTextAlign alignY = VerticalTextAlign::CENTER
         );
 
-        // Preloading text (must be called before rendering)
+        /// @brief Preloading text (must be called before rendering)
         void initialize(SDL_Renderer*& renderer);
 
-        // Basically just rendering the button on the specified renderer.
+        /// @brief Renders the button.
         void render() override;
 
+        /// @brief Gets the ID of the button.
+        /// @return The ID.
         int getId() const;
 
-        // Changes text color.
+        /// @brief Changes text color.
+        /// @param color The new color.
         void changeTextColor(
             const SDL_Color& color
         );
 
-        // Changes hover color.
+        /// @brief Changes hover color.
+        /// @param color The new color.
         void changeHoverColor(
             const SDL_Color& color
         );
 
-        // Changes button color.
+        /// @brief Changes button color.
+        /// @param color The new color.
         void changeButtonColor(
             const SDL_Color& color
         );
 
-        inline SDL_Color getTextColor() const { return textColor; }
-        inline SDL_Color getHoverColor() const { return hoverColor; }
-        inline SDL_Color getButtonColor() const { return buttonColor; }
+        /// @brief Gets the text color.
+        /// @return The text color.
+        SDL_Color getTextColor() const;
 
-        inline void setText(
+        /// @brief Gets the hover color.
+        /// @return The hover color.
+        SDL_Color getHoverColor() const;
+
+        /// @brief Gets the hover color.
+        /// @return The hover color.
+        SDL_Color getButtonColor() const;
+
+        /// @brief Modifies the text.
+        /// @param str The text that will be assigned.
+        void setText(
             const std::string& str
-        ) { 
-            text = str;
-            trigger("onTextChange", str);
-        }
-        inline std::string getText() const { return text; }
+        );
 
+        /// @brief Returns the current text.
+        /// @return The text;
+        std::string getText() const;
+
+        /// @brief Changes the reference to the font
+        /// @param font The reference.
         void changeFont(
             TTF_Font* font
         );
@@ -121,15 +155,21 @@ namespace GUILib {
         ~TextButton();
     };
     
-    // A basic image button wrapper.
+    /// @brief A basic image button wrapper.
     class ImageButton : public Button {
     protected:
+        /// @brief The texture of the button.
         SDL_Texture* buttonTexture;
-        SDL_Texture* hoverTexture; // texture for hovering, set hoverTexture to buttonTexture if you don't want hover.
+        /// @brief The hover texture of the button.
+        SDL_Texture* hoverTexture;
+        
         static int nextId;
-        int id;
 
+        /// @brief The ID of the button.
+        int id;
+        /// @brief The default image path.
         std::string defaultImgPath;
+        /// @brief The hover image path.
         std::string hoverImgPath;
     public:
 
@@ -143,29 +183,35 @@ namespace GUILib {
             std::string hoverImageFilePath = ""
         );
 
+        /// @brief Initializes the button's components.
         void initialize(
             SDL_Renderer*& renderer
         );
 
-        // Renders the button.
+        /// @brief Renders the button.
         void render() override;
 
+        /// @brief Returns the ID.
+        /// @return The ID.
         int getId() const;
 
+        /// @brief Updates the hover image path.
+        /// @param updatedPath The new path.
         void updateHoverImgPath(
-            const char* updatedPath,
-            SDL_Renderer*& renderer
+            const char* updatedPath
         );
 
+        /// @brief Updates the default image path.
+        /// @param updatedPath The new path.
         void updateDefaultImgPath(
-            const char* updatedPath,
-            SDL_Renderer*& renderer
+            const char* updatedPath
         );
 
         ~ImageButton();
     };
 
-    // A basic check box.
+    /// @brief A basic check box.
+    /// @brief Inherits TextButton.
     class CheckBox : public TextButton {
     private:
         char boxSymbol;
@@ -183,9 +229,16 @@ namespace GUILib {
             char symbol = 'X'
         );
 
-        inline void toggleChecked() { checked = !checked; }
-        inline void toggleChecked(bool val) { checked = val; }
-        inline bool isChecked() const { return checked; }
+        /// @brief Toggles the checked state.
+        void toggleChecked();
+
+        /// @brief Sets the checked state.
+        /// @param val The new state.
+        void toggleChecked(bool val);
+
+        /// @brief Checks if the box is checked.
+        /// @return The value.
+        bool isChecked() const;
 
         void setAction(
             const std::function<void()>& buttonAction
@@ -195,11 +248,16 @@ namespace GUILib {
             const std::function<void()>& buttonAction
         ) = delete;
 
+        /// @brief Changes the symbol of the box.
         void changeSymbol(const char& symbol);
 
-        inline char getSymbol() const { return boxSymbol; }
+        /// @brief Gets the symbol of the box.
+        /// @brief The symbol.
+        char getSymbol() const;
 
-        void handleEvents(SDL_Event& event);
+        /// @brief Handles the event.
+        /// @param e The event to be handled.
+        void handleEvent(const SDL_Event& event) override;
     };
 
 }

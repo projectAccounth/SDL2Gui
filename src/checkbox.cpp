@@ -38,12 +38,12 @@ void GUILib::CheckBox::changeSymbol(const char& symbol) {
         text = boxSymbol;
 }
 
-void GUILib::CheckBox::handleEvents(SDL_Event& e) {
+void GUILib::CheckBox::handleEvent(const SDL_Event& e) {
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
-    handleEvent(e);
+    GuiObject::handleEvent(e);
 
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && (active && visible))) {
         return;
@@ -61,3 +61,8 @@ void GUILib::CheckBox::handleEvents(SDL_Event& e) {
         initialize(ref);
     }
 }
+
+void GUILib::CheckBox::toggleChecked() { checked = !checked; }
+void GUILib::CheckBox::toggleChecked(bool val) { checked = val; }
+bool GUILib::CheckBox::isChecked() const { return checked; }
+char GUILib::CheckBox::getSymbol() const { return boxSymbol; }

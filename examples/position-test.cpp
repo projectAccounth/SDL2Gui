@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
 	mainWindow = SDL_CreateWindow("Program", 80, 80, 640, 480, 0);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
+	SDL_SetRenderDrawBlendMode(mainRenderer, SDL_BLENDMODE_BLEND);
+
 	TTF_Font* mainFont = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 25);
 	TTF_Font* mainFont9 = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 9);
 
@@ -30,18 +32,25 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	auto frame1 = manager.newObj<Frame>("Frame", mainRenderer);
-	auto box1 = manager.newObj<EditableTextBox>("EditableTextBox", mainRenderer);
-	auto ap = manager.newObj<Image>("Image", mainRenderer);
+	auto frame1 = manager.create<Frame>("Frame", mainRenderer);
+	auto box1 = manager.create<EditableTextBox>("EditableTextBox", mainRenderer);
+	auto ap = manager.create<Image>("Image", mainRenderer);
+	auto frame2 = manager.create<ScrollingFrame>("ScrollingFrame", mainRenderer);
 
 	box1->on("onKeyInput", std::function<void(char)>([](char c) {
 		std::cout << "Key " << c << " pressed!\n";
 	}));
 
-	ap->updatePath("./res/imgs/giri.webp", mainRenderer);
+	ap->updatePath("./res/imgs/giri.webp");
 	ap->setParent(nullptr);
 	ap->move({ 0, 0, true });
 	ap->resize({ 50, 50, false });
+
+	frame2->move({ 0.5, 0.5, true });
+	frame2->resize({ 100, 100, false });
+	frame2->setContentSize({ 100, 200, false });
+	frame2->setFrameColor({ 200, 200, 200, 255 });
+	frame2->setScrollbarColor({ 233, 233, 233, 122 });
 	
 	Image ac = *ap;
 	Image ae = ac;
@@ -106,6 +115,8 @@ int main(int argc, char* argv[]) {
 		img.initialize(mainRenderer);
 	}
 
+	frame2->addChild(&af);
+
 	while (isRunning) {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
@@ -115,11 +126,12 @@ int main(int argc, char* argv[]) {
 				isRunning = false;
 				break;
 			}
-			checkBox1.handleEvents(e);
-			checkBox2.handleEvents(e);
+			checkBox1.handleEvent(e);
+			checkBox2.handleEvent(e);
 			frame1->handleEvent(e);
-			box1->handleEvents(e);
+			box1->handleEvent(e);
 			ap->handleEvent(e);
+			frame2->handleEvent(e);
 			// af.handleEvent(e);
 		}
 		frame1->setDraggable(checkBox1.isChecked());
@@ -135,6 +147,7 @@ int main(int argc, char* argv[]) {
 		checkBox2.render();
 		ap->render();
 		af.render();
+		frame2->render();
 
 		for (auto& img : imgs) {
 			// img.render();

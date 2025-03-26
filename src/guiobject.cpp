@@ -183,6 +183,8 @@ GUILib::GuiObject::GuiObject(
 {
 	if (renderer)
 		update(renderer);
+	if (parent)
+		parent->addChild(this);
 }
 
 bool GUILib::GuiObject::isVisible() const {
@@ -190,26 +192,6 @@ bool GUILib::GuiObject::isVisible() const {
 }
 bool GUILib::GuiObject::isActive() const {
 	return active;
-}
-
-GUILib::Frame::Frame(): GuiObject(), frameColor(SDL_Color()) {}
-GUILib::Frame::Frame(
-	GuiObject* parent,
-	SDL_Renderer*& renderer,
-	UIUnit size,
-	UIUnit position,
-	SDL_Color frameColor,
-	bool isVisible, bool isActive
-):
-	GuiObject(parent, renderer, size, position, isVisible, isActive),
-	frameColor(frameColor)
-{}
-
-void GUILib::Frame::render() {
-	if (!(visible && active)) return;
-
-	SDL_SetRenderDrawColor(ref, frameColor.r, frameColor.g, frameColor.b, frameColor.a);
-	SDL_RenderFillRect(ref, &objRect);
 }
 
 GUILib::GuiObject& GUILib::GuiObject::operator=(const GUILib::GuiObject& other) {
@@ -234,4 +216,98 @@ GUILib::GuiObject& GUILib::GuiObject::operator=(const GUILib::GuiObject& other) 
 	update(ref);
 
 	return *this;
+}
+
+void GUILib::GuiObject::addChild(GuiObject* child) {
+	if (!child) return;
+	children.push_back(child);
+	child->setParent(this);
+}
+
+void GUILib::GuiObject::removeChild(GuiObject* child) {
+	auto it = std::find(children.begin(), children.end(), child);
+	if (it != children.end()) {
+		(*it)->setParent(nullptr);
+		children.erase(it);
+	}
+}
+
+void GUILib::GuiObject::updateRenderer(SDL_Renderer*& renderer) {
+	if (renderer == ref) return;
+	ref = renderer;
+    if (parent && parent->getCurrentRenderer() != renderer)
+        parent->removeChild(this);
+	if (!children.empty())
+		for (auto& child : children)
+			child->updateRenderer(renderer);
+	update(renderer);
+    trigger("onRendererUpdate");
+}
+
+GUILib::GuiObject::~GuiObject() {
+	if (parent)
+		parent->removeChild(this);
+	if (!children.empty()) {
+		for (auto& child : children) {
+			delete child;
+		}
+	}
+}
+
+void GUILib::GuiObject::setVisible(bool value) {
+    visible = value;
+    trigger("onVisibilityChange");
+}
+
+void GUILib::GuiObject::toggleVisibility(bool value) {
+	visible = value;
+	trigger("onVisibilityChange");
+}
+
+void GUILib::GuiObject::setActive(bool value) { 
+	active = value;
+	trigger("onActiveChange");
+}
+
+const GUILib::GuiObject* GUILib::GuiObject::getParent() const {
+	return parent;
+}
+
+bool GUILib::GuiObject::hasParent() const {
+	return parent != nullptr;
+}
+
+void GUILib::GuiObject::setParent(GuiObject* newParent) {
+	parent = newParent;
+}
+
+bool GUILib::GuiObject::isDraggable() const {
+	return canBeDragged;
+}
+
+void GUILib::GuiObject::setDraggable(bool value) {
+	canBeDragged = value;
+}
+
+void GUILib::GuiObject::render() {
+	if (!visible || !ref || !shouldRenderChildren) return;
+	for (auto& child : children) {
+		child->render();
+	}
+}
+
+const SDL_Renderer*& GUILib::GuiObject::getCurrentRenderer() const {
+	return ref;
+}
+
+bool GUILib::GuiObject::operator==(const GuiObject& other) const {
+	return this == &other;
+}
+
+bool GUILib::GuiObject::getChildrenRenderingState() const {
+	return shouldRenderChildren;
+}
+
+void GUILib::GuiObject::setChildrenRenderingState(bool value) {
+	shouldRenderChildren = value;
 }
