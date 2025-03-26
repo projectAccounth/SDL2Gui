@@ -256,7 +256,7 @@ namespace GUILib {
         char getSymbol() const;
 
         /// @brief Handles the event.
-        /// @param e The event to be handled.
+        /// @param event The event to be handled.
         void handleEvent(const SDL_Event& event) override;
     };
 

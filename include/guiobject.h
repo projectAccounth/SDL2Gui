@@ -150,7 +150,7 @@ namespace GUILib {
 		bool isDraggable() const;
 
 		/// @brief Sets the draggable state of the object.
-		/// @param value The new draggable state.
+		/// @param val The new draggable state.
 		void setDraggable(bool val);
 
 		/// @brief Renders the object, and all its children, if it has.
@@ -170,6 +170,7 @@ namespace GUILib {
 
 		/// @brief Triggers an event.
 		/// @param eventName The name of the event.
+		/// @param args The arguments that will be fired with the event. See EventEmitter for more details.
 		template <typename... Args>
 		void trigger(
 			const std::string& eventName,
@@ -182,12 +183,16 @@ namespace GUILib {
 		/// @param renderer The new renderer.
 		void updateRenderer(SDL_Renderer*& renderer);
 
-		// @brief Gets the current renderer.
+		/// @brief Gets the current renderer.
 		/// @return The current renderer.
-		const SDL_Renderer*& getCurrentRenderer() const;
+		SDL_Renderer*& getCurrentRenderer() const;
 		
+		/// @brief Assignment operator.
+		/// @param other The right-hand-side.
 		GuiObject& operator=(const GuiObject& other);
 
+		/// @brief Equality check.
+		/// @param other The right-hand-side.
 		bool operator==(const GuiObject& other) const;
 
 		/// @brief Destructor.

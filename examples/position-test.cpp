@@ -17,8 +17,6 @@ int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 
-	manager.initialize();
-
 	mainWindow = SDL_CreateWindow("Program", 80, 80, 640, 480, 0);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
@@ -32,10 +30,10 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	auto frame1 = manager.create<Frame>("Frame", mainRenderer);
-	auto box1 = manager.create<EditableTextBox>("EditableTextBox", mainRenderer);
-	auto ap = manager.create<Image>("Image", mainRenderer);
-	auto frame2 = manager.create<ScrollingFrame>("ScrollingFrame", mainRenderer);
+	auto frame1 = manager.create<Frame>(mainRenderer);
+	auto box1 = manager.create<EditableTextBox>(mainRenderer);
+	auto ap = manager.create<Image>(mainRenderer);
+	auto frame2 = manager.create<ScrollingFrame>(mainRenderer);
 
 	box1->on("onKeyInput", std::function<void(char)>([](char c) {
 		std::cout << "Key " << c << " pressed!\n";
@@ -65,7 +63,7 @@ int main(int argc, char* argv[]) {
 
 	af.initialize(mainRenderer);
 	af.setDraggable(true);
-	af.toggleVisiblility(false);
+	af.setVisible(false);
 
 	imgs.push_back(Image(
 		nullptr,
@@ -109,7 +107,7 @@ int main(int argc, char* argv[]) {
 	);
 
 	box1->setDraggable(false);
-	ap->toggleVisiblility(true);
+	ap->setVisible(true);
 
 	for (auto& img : imgs) {
 		img.initialize(mainRenderer);
@@ -137,7 +135,7 @@ int main(int argc, char* argv[]) {
 		frame1->setDraggable(checkBox1.isChecked());
 		box1->setEditable(checkBox2.isChecked());
 		ap->setDraggable(true);
-		frame1->toggleVisiblility(true);
+		frame1->setVisible(true);
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
 

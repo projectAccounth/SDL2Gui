@@ -61,6 +61,15 @@ namespace GUILib {
         /// @brief The color of the scrollbar.
         SDL_Color scrollingBarColor;
 
+        /// @brief The scrolling speed.
+        int scrollingSpeed;
+
+        /// @brief The last mouse position.
+        int lastMouseX, lastMouseY;
+        /// @brief Whether the user is dragging the scrollbar.
+        bool draggingX, draggingY;
+        
+
         /// @brief Updates the scrollbars.
         void updateScrollbars();
 
@@ -73,8 +82,7 @@ namespace GUILib {
         /// @param absContentSize The absolute content size of this (reference to contentSize).
         /// @param rect The rect of the object.
         void renderScrollbars(const SDL_Point& absContentSize, const SDL_Rect& rect);
-
-       public:
+    public:
         ScrollingFrame(
             GuiObject* parent,
             SDL_Renderer*& renderer,
@@ -107,5 +115,12 @@ namespace GUILib {
         /// @brief Handles the event for the object.
         /// @param event The event to be passed.
         void handleEvent(const SDL_Event& event) override;
+
+        /// @brief Gets the scrolling speed of this frame (px/ms).
+        int getScrollingSpeed() const;
+
+        /// @brief Sets the scrolling speed of this frame (px/ms).
+        /// @param speed The new scrolling speed.
+        void setScrollingSpeed(int speed);
     };
 }

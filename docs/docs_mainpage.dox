@@ -1,0 +1,31 @@
+/**
+ * @mainpage SDL2Gui Documentation
+ *
+ * @section intro Introduction
+ * SDL2Gui is a weirdly complex graphical user interface library designed for
+ * low performance and the API that will cause the developer to slam their desk.
+ * This documentation provides an overview of the API, including classes, functions, and modules.
+ *
+ * @section features Features
+ * - Hard-to-use widget system
+ * - Has basic GUI components and an event system
+ * - Cross-platform support
+ * - Horribly unoptimized
+ *
+ * @section usage Getting Started
+ * To use this, include the main header in your project:
+ * @code
+ * #include <lfmain.h>
+ * @endcode
+ * The whole library is included in the namespace GUILib.
+ *
+ * You can use features of this library directly from now on!
+ * If there's nothing interfering with the functions, you can use
+ * @code
+ * using namespace GUILib;
+ * @endcode
+ *
+ * @section resources Additional Resources
+ * - [GitHub Repository](https://github.com/projectAccounth/SDL2Gui)
+ *
+ */

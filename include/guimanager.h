@@ -10,10 +10,9 @@ namespace GUILib {
     class GuiInstance {
     public:
         /// @brief Creates a GUI object of type T, must be derived from GuiObject.
-        /// @param className The name of the class to be created.
+        /// @param ref The renderer to use for the object.
         template <class T>
         std::unique_ptr<T> create(
-            const std::string& className,
             SDL_Renderer*& ref
         ) {
             static_assert(std::is_base_of_v<GuiObject, T>, "T must inherit from GuiObject");

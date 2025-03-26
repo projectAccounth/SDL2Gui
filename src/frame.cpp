@@ -37,6 +37,7 @@ GUILib::ScrollingFrame::ScrollingFrame(
     scrollY(0),
     showScrollbarX(false),
     showScrollbarY(false),
+    scrollingSpeed(10),
     scrollingBarColor() {}
 
 void GUILib::ScrollingFrame::setContentSize(const UIUnit& newSize) {
@@ -138,10 +139,42 @@ void GUILib::ScrollingFrame::scroll(int deltaX, int deltaY) {
 
 void GUILib::ScrollingFrame::handleEvent(const SDL_Event& event) {
     GuiObject::handleEvent(event);
+    SDL_Rect rect = getRect();
+    SDL_Point absContentSize = contentSize.getAbsoluteSize({rect.w, rect.h});
+
     if (event.type == SDL_MOUSEWHEEL) {
-        scroll(0, -event.wheel.y * 10);
+        scroll(0, -event.wheel.y * scrollingSpeed);
+    } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+        int mouseX = event.button.x;
+        int mouseY = event.button.y;
+
+        if (showScrollbarX && mouseY >= rect.y + rect.h - 8) {
+            draggingX = true;
+            lastMouseX = mouseX;
+        }
+        if (showScrollbarY && mouseX >= rect.x + rect.w - 8) {
+            draggingY = true;
+            lastMouseY = mouseY;
+        }
+    } else if (event.type == SDL_MOUSEBUTTONUP) {
+        draggingX = draggingY = false;
+    } else if (event.type == SDL_MOUSEMOTION) {
+        if (draggingX) {
+            int deltaX = event.motion.x - lastMouseX;
+            scroll(deltaX, 0);
+            lastMouseX = event.motion.x;
+        }
+        if (draggingY) {
+            int deltaY = event.motion.y - lastMouseY;
+            scroll(0, deltaY);
+            lastMouseY = event.motion.y;
+        }
     }
 }
 
 SDL_Color GUILib::ScrollingFrame::getScrollbarColor() const { return scrollingBarColor; }
 void GUILib::ScrollingFrame::setScrollbarColor(SDL_Color color) { scrollingBarColor = color; }
+
+void GUILib::ScrollingFrame::setScrollingSpeed(int speed) {
+    scrollingSpeed = speed;
+}

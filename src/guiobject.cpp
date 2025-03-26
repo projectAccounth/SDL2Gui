@@ -248,8 +248,10 @@ GUILib::GuiObject::~GuiObject() {
 	if (parent)
 		parent->removeChild(this);
 	if (!children.empty()) {
-		for (auto& child : children) {
-			delete child;
+		for (auto child : children) {
+            if (child && dynamic_cast<std::unique_ptr<GuiObject>*>(child) == nullptr) {
+                delete child;  // Only delete heap objects (not stack ones)
+            }
 		}
 	}
 }
@@ -296,7 +298,7 @@ void GUILib::GuiObject::render() {
 	}
 }
 
-const SDL_Renderer*& GUILib::GuiObject::getCurrentRenderer() const {
+SDL_Renderer*& GUILib::GuiObject::getCurrentRenderer() const {
 	return ref;
 }
 

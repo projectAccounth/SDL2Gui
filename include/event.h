@@ -9,6 +9,25 @@ namespace GUILib {
         virtual ~Event() = default;
     };
     /// Basic event dispatcher.
+    /**
+     * Example usage of the class and the event
+     * @code
+     * class MyEvent : public Event {
+     * public:
+     *    int data; // anything you want goes here!
+     *    MyEvent(int data) : data(data) {}
+     * };
+     * 
+     * EventDispatcher dispatcher;
+     * 
+     * dispatcher.subscribe("myEvent", [](const Event& event) {
+     *    auto& myEvent = dynamic_cast<const MyEvent&>(event);
+     *    std::cout << "Data: " << myEvent.data << std::endl;
+     * });
+     * 
+     * dispatcher.dispatch("myEvent", MyEvent(42)); // Data: 42
+     * @endcode
+     */
     class EventDispatcher {
     private:
         using Callback = std::function<void(const Event&)>;
@@ -18,6 +37,21 @@ namespace GUILib {
         /// @brief Subscribes a listener to an event.
         /// @param eventType The type of the event.
         /// @param callback The callback function.
+        /**
+         * Example usage:
+         * @code
+         * class MyEvent : public Event {
+         * public:
+         *    int data;
+         *    MyEvent(int data) : data(data) {}
+         * };
+         * 
+         * dispatcher.subscribe("myEvent", [](const Event& event) {
+         *     auto& myEvent = dynamic_cast<const MyEvent&>(event);
+         *     // do something!
+         * });
+         * @endcode
+         */
         void subscribe(
             const std::string& eventType,
             Callback callback
@@ -26,6 +60,18 @@ namespace GUILib {
         /// @brief Dispatches an event.
         /// @param eventType The type of the event.
         /// @param event The event to be dispatched.
+        /**
+         * Example usage:
+         * @code
+         * class MyEvent : public Event {
+         * public:
+         *    int data;
+         *    MyEvent(int data) : data(data) {}
+         * };
+         * 
+         * dispatcher.dispatch("myEvent", MyEvent(2));
+         * @endcode
+         */
         void dispatch(
             const std::string& eventType,
             const Event& event
@@ -130,7 +176,7 @@ namespace GUILib {
          * @param args The arguments to pass to the event listeners.
          * 
          * This function triggers all callbacks associated with the given event name,
-         * passing the provided arguments to each callback. If no listeners are registered
+         * passing the provided arguments to each callback (registered with connect()). If no listeners are registered
          * for the event, the function does nothing.
          * 
          * @code
