@@ -140,7 +140,9 @@ GUILib::TextBox::TextBox(
     textColor(textColor),
     textFont(textFont),
     xAlign(alignX),
-    yAlign(alignY) {}
+    yAlign(alignY) 
+{
+}
 
 GUILib::TextBox::~TextBox() {
     if (textTexture) SDL_DestroyTexture(textTexture);

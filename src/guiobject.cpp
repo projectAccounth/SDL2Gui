@@ -1,4 +1,5 @@
 #include "guiobject.h"
+#include "frame.h"
 
 SDL_Renderer* nullrnd = nullptr;
 
@@ -36,18 +37,28 @@ std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
 	GUILib::UIUnit outPos, outSize;
 
 	outSize.sizeX = static_cast<int>(
-		objSize.isUsingScale ? parentSize.sizeX * objSize.sizeX : objSize.sizeX);
+		objSize.isUsingScale ? parentSize.sizeX * objSize.sizeX : objSize.sizeX
+	);
 	outSize.sizeY = static_cast<int>(
-		objSize.isUsingScale ? parentSize.sizeY * objSize.sizeY : objSize.sizeY);
+		objSize.isUsingScale ? parentSize.sizeY * objSize.sizeY : objSize.sizeY
+	);
 
 	outPos.sizeX = static_cast<int>(
 		parentPos.sizeX +
-		(objPos.isUsingScale ? parentSize.sizeX * objPos.sizeX : objPos.sizeX));
+		(objPos.isUsingScale ? parentSize.sizeX * objPos.sizeX : objPos.sizeX)
+	);
 	outPos.sizeY = static_cast<int>(
 		parentPos.sizeY +
-		(objPos.isUsingScale ? parentSize.sizeY * objPos.sizeY : objPos.sizeY));
+		(objPos.isUsingScale ? parentSize.sizeY * objPos.sizeY : objPos.sizeY)
+	);
 
-	outPos.isUsingScale = objPos.isUsingScale;
+	auto* scrollingParent = dynamic_cast<const GUILib::ScrollingFrame*>(parent); // what the fuck happened?
+	if (scrollingParent) {
+        outPos.sizeX -= (objPos.isUsingScale ? (double) scrollingParent->getScrollX() / windowWidth : scrollingParent->getScrollX());
+        outPos.sizeY -= (objPos.isUsingScale ? (double) scrollingParent->getScrollY() / windowHeight : scrollingParent->getScrollY());
+    }
+
+    outPos.isUsingScale = objPos.isUsingScale;
 	outSize.isUsingScale = objSize.isUsingScale;
 
 	return { outPos, outSize };
@@ -111,6 +122,11 @@ void GUILib::GuiObject::handleEvent(const SDL_Event& event) {
 	}
 	int ws = 0, hs = 0;
 	SDL_GetRendererOutputSize(ref, &ws, &hs);
+
+	for (auto& child: children) {
+		if (!child) continue;
+		child->handleEvent(event);
+	}
 	switch (event.type) {
 	case SDL_MOUSEBUTTONDOWN:
 		if (event.button.button == SDL_BUTTON_LEFT &&
@@ -160,7 +176,8 @@ GUILib::GuiObject::GuiObject():
 	canBeDragged(false),
 	isDragging(false),
 	dragOffsetX(0),
-	dragOffsetY(0)
+	dragOffsetY(0),
+	shouldRenderChildren(true)
 {}
 GUILib::GuiObject::GuiObject(
 	GuiObject* parent,
@@ -179,7 +196,8 @@ GUILib::GuiObject::GuiObject(
 	canBeDragged(false),
 	isDragging(false),
 	dragOffsetX(0),
-	dragOffsetY(0)
+	dragOffsetY(0),
+	shouldRenderChildren(true)
 {
 	if (renderer)
 		update(renderer);
@@ -219,16 +237,19 @@ GUILib::GuiObject& GUILib::GuiObject::operator=(const GUILib::GuiObject& other) 
 }
 
 void GUILib::GuiObject::addChild(GuiObject* child) {
-	if (!child) return;
+	if (!child || !this) return;
 	children.push_back(child);
 	child->setParent(this);
+	trigger("onChildAdded");
 }
 
 void GUILib::GuiObject::removeChild(GuiObject* child) {
+	if (!child || !this) return;
 	auto it = std::find(children.begin(), children.end(), child);
 	if (it != children.end()) {
 		(*it)->setParent(nullptr);
 		children.erase(it);
+		trigger("onChildRemoved");
 	}
 }
 
@@ -245,13 +266,15 @@ void GUILib::GuiObject::updateRenderer(SDL_Renderer*& renderer) {
 }
 
 GUILib::GuiObject::~GuiObject() {
+	if (!this) return; // what the fuck happened?
 	if (parent)
 		parent->removeChild(this);
-	if (!children.empty()) {
-		for (auto child : children) {
-            if (child && dynamic_cast<std::unique_ptr<GuiObject>*>(child) == nullptr) {
-                delete child;  // Only delete heap objects (not stack ones)
-            }
+	for (auto& child : children) {
+		if (!child) continue;
+		try {
+			delete child;
+		} catch (const std::exception& e) {
+			std::cerr << "Child is stack-allocated: " << e.what() << '\n';
 		}
 	}
 }
@@ -280,7 +303,11 @@ bool GUILib::GuiObject::hasParent() const {
 }
 
 void GUILib::GuiObject::setParent(GuiObject* newParent) {
+	if (!this || !newParent) return;
 	parent = newParent;
+	newParent->children.push_back(this);
+	newParent->trigger("onChildAdded");
+	trigger("onParentChange");
 }
 
 bool GUILib::GuiObject::isDraggable() const {
@@ -292,8 +319,10 @@ void GUILib::GuiObject::setDraggable(bool value) {
 }
 
 void GUILib::GuiObject::render() {
-	if (!visible || !ref || !shouldRenderChildren) return;
-	for (auto& child : children) {
+	if (!visible || !ref) return;
+
+    for (auto& child : children) {
+		if (!child || !shouldRenderChildren) continue;
 		child->render();
 	}
 }
@@ -312,4 +341,24 @@ bool GUILib::GuiObject::getChildrenRenderingState() const {
 
 void GUILib::GuiObject::setChildrenRenderingState(bool value) {
 	shouldRenderChildren = value;
+}
+
+std::string GUILib::GuiObject::getClassName() const {
+	return className;
+}
+
+SDL_Point GUILib::UIUnit::getAbsoluteSize(const SDL_Point& containerSize) const {
+	if (isUsingScale) {
+		return {static_cast<int>(sizeX * containerSize.x), static_cast<int>(sizeY * containerSize.y)};
+	}
+	return {static_cast<int>(sizeX), static_cast<int>(sizeY)};
+}
+
+double GUILib::Reserved::clamp(double val, double min, double max) {
+    return std::min(std::max(val, min), max);
+}
+
+bool GUILib::Reserved::isPointInRect(const SDL_Point& point, const SDL_Rect& rect) {
+	return point.x >= rect.x && point.x <= rect.x + rect.w &&
+		   point.y >= rect.y && point.y <= rect.y + rect.h;
 }

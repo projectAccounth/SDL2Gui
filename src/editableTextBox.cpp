@@ -97,6 +97,7 @@ void GUILib::EditableTextBox::setEditable(bool val) {
 
 void GUILib::EditableTextBox::render() {
     TextBox::render(); // Call superclass render function
+    /*
     if (editable) {
         // Render cursor
         SDL_Rect cursorRect = { objRect.x, objRect.y, 2, objRect.h };
@@ -106,6 +107,7 @@ void GUILib::EditableTextBox::render() {
         SDL_SetRenderDrawColor(ref, textColor.r, textColor.g, textColor.b, textColor.a);
         SDL_RenderFillRect(ref, &cursorRect);
     }
+    */
 }
 
 void GUILib::TextBox::adjustTextAlignment(

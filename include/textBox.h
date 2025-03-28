@@ -37,6 +37,9 @@ namespace GUILib {
         SDL_Color boxColor;
         /// @brief The color of the text.
         SDL_Color textColor;
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "TextBox";
     public:
 
         TextBox(
@@ -118,6 +121,9 @@ namespace GUILib {
 
         /// @brief The editable state of the text box.
         bool editable;
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "EditableTextBox";
     public:
         EditableTextBox(
             GuiObject* parent,

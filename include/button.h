@@ -25,6 +25,8 @@ namespace GUILib {
 
         /// @brief Whether the button is hovered.
         bool hovered;
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "Button";
     public:
         Button();
         Button(
@@ -80,6 +82,9 @@ namespace GUILib {
 
         /// @brief The "ID" of the button, can be used for querying.
         int id;
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "TextButton";
     public:
         TextButton();
         TextButton(
@@ -171,6 +176,9 @@ namespace GUILib {
         std::string defaultImgPath;
         /// @brief The hover image path.
         std::string hoverImgPath;
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "ImageButton";
     public:
 
         ImageButton();
@@ -214,8 +222,13 @@ namespace GUILib {
     /// @brief Inherits TextButton.
     class CheckBox : public TextButton {
     private:
+        /// @brief The symbol of the box.
         char boxSymbol;
+        /// @brief The checked state of the box.
         bool checked;
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "CheckBox";
     public:
         CheckBox();
         CheckBox(

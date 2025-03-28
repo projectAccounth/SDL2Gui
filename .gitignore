@@ -33,7 +33,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 dependencies/
-.vscode/
+**/.vscode/
 *.bat
 
 # Visual Studio 2015/2017 cache/options directory

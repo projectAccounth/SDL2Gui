@@ -5,6 +5,13 @@
 
 namespace GUILib {
 
+	namespace Reserved {
+        /// helper function, __cplusplus refused to work
+        double clamp(double val, double min, double max);
+		/// helper function to check whether the point is in the rect
+		bool isPointInRect(const SDL_Point& point, const SDL_Rect& rect);
+    }
+
 	/// @brief A struct to represent the size of a GUI object.
 	typedef struct UIUnit {
 		/// @brief The size of the object.
@@ -15,12 +22,7 @@ namespace GUILib {
 		/// @brief Gets the absolute size of the object.
 		/// @param containerSize The size of the container.
 		/// @return The absolute size of the object, in pixels.
-		SDL_Point getAbsoluteSize(const SDL_Point& containerSize) const {
-			if (isUsingScale) {
-				return {static_cast<int>(sizeX * containerSize.x), static_cast<int>(sizeY * containerSize.y)};
-			}
-			return {static_cast<int>(sizeX), static_cast<int>(sizeY)};
-		}
+		SDL_Point getAbsoluteSize(const SDL_Point& containerSize) const;
     } UIUnit;
 	 
 	/// @brief A basic GUI object.
@@ -61,6 +63,13 @@ namespace GUILib {
 
 		/// @brief The children's rendering state.
 		bool shouldRenderChildren;
+
+		[[maybe_unused]]
+		/// @brief The class name of the object.
+		std::string className;
+
+		/// @brief The class name.
+		static inline const std::string CLASS_NAME = "GuiObject";
 	public:
 		GuiObject();
 		GuiObject(
@@ -81,11 +90,13 @@ namespace GUILib {
 		void setChildrenRenderingState(bool value);
 
 		/// @brief Adds a child to the object.
+		/// Fires the "onChildAdded" event.
 		/// @param child The child to be added.
 		void addChild(GuiObject* child);
 
 		/// @brief Removes a child from the object.
-		/// @param child The child to be removed. Can be nullptr.
+		/// Fires the "onChildRemoved" event.
+		/// @param child The child to be removbed. Can be nullptr.
 		void removeChild(GuiObject* child);
 
 		/// @brief Returns the rect of the object.
@@ -101,10 +112,12 @@ namespace GUILib {
 		UIUnit getPosition() const;
 
 		/// @brief Moves the object to a new position.
+		/// Fires the "onPositionChange" event.
 		/// @param newPos The new position.
 		void move(const UIUnit& newPos);
 
 		/// @brief Resizes the object.
+		/// Fires the "onSizeChange" event.
 		/// @param newSize The new size.
 		void resize(const UIUnit& newSize);
 
@@ -113,6 +126,7 @@ namespace GUILib {
 		bool isActive() const;
 
 		/// @brief Sets the activity state of the object.
+		/// Fires the "onActiveChange" event.
 		/// @param value The new activity state.
 		void setActive(bool value);
 
@@ -122,10 +136,12 @@ namespace GUILib {
 
 		/// @deprecated No longer in use.
 		/// @param value The new visibility state.
+		/// Fires the "onVisibilityChange" event.
 		/// @brief Toggles the visibility of the object.
 		void toggleVisibility(bool value);
 
 		/// @brief Sets the visibility of the object.
+		/// Fires the "onVisibilityChange" event.
 		/// @param value The new visibility state.
 		void setVisible(bool value);
 
@@ -150,6 +166,7 @@ namespace GUILib {
 		bool isDraggable() const;
 
 		/// @brief Sets the draggable state of the object.
+		/// Fires the "onDraggableChange" event.
 		/// @param val The new draggable state.
 		void setDraggable(bool val);
 
@@ -180,6 +197,7 @@ namespace GUILib {
 		}
 
 		/// @brief Updates the reference to the renderer of the object.
+		/// Fires the "onRendererChange" event.
 		/// @param renderer The new renderer.
 		void updateRenderer(SDL_Renderer*& renderer);
 
@@ -194,6 +212,10 @@ namespace GUILib {
 		/// @brief Equality check.
 		/// @param other The right-hand-side.
 		bool operator==(const GuiObject& other) const;
+
+		/// @brief Returns the class name of the object.
+		/// @return The class name.
+		std::string getClassName() const;
 
 		/// @brief Destructor.
 		virtual ~GuiObject();

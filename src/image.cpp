@@ -13,6 +13,7 @@ GUILib::Image::Image(
 	prevFilePath(filePath)
 {
 	initialize(renderer);
+	className = "Image";
 }
 	
 void GUILib::Image::initialize(SDL_Renderer*& renderer) {

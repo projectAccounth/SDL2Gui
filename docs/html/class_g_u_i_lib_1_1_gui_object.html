@@ -80,6 +80,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="class_g_u_i_lib_1_1_gui_object-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">GUILib::GuiObject Class Reference</div></div>
 </div><!--header-->
@@ -96,13 +97,14 @@ Inheritance diagram for GUILib::GuiObject:</div>
   <img src="class_g_u_i_lib_1_1_gui_object.png" usemap="#GUILib::GuiObject_map" alt=""/>
   <map id="GUILib::GuiObject_map" name="GUILib::GuiObject_map">
 <area href="class_g_u_i_lib_1_1_button.html" title="Abstract, practically useless button class." alt="GUILib::Button" shape="rect" coords="77,56,221,80"/>
-<area href="class_g_u_i_lib_1_1_frame.html" title="A basic frame." alt="GUILib::Frame" shape="rect" coords="308,56,452,80"/>
-<area href="class_g_u_i_lib_1_1_image.html" title="Texture wrapper, but with more features." alt="GUILib::Image" shape="rect" coords="462,56,606,80"/>
-<area href="class_g_u_i_lib_1_1_text_box.html" title="A basic text box." alt="GUILib::TextBox" shape="rect" coords="616,56,760,80"/>
+<area href="class_g_u_i_lib_1_1_frame.html" title="A basic frame." alt="GUILib::Frame" shape="rect" coords="385,56,529,80"/>
+<area href="class_g_u_i_lib_1_1_image.html" title="Texture wrapper, but with more features." alt="GUILib::Image" shape="rect" coords="539,56,683,80"/>
+<area href="class_g_u_i_lib_1_1_text_box.html" title="A basic text box." alt="GUILib::TextBox" shape="rect" coords="693,56,837,80"/>
 <area href="class_g_u_i_lib_1_1_image_button.html" title="A basic image button wrapper." alt="GUILib::ImageButton" shape="rect" coords="0,112,144,136"/>
 <area href="class_g_u_i_lib_1_1_text_button.html" title="A basic text button for anything." alt="GUILib::TextButton" shape="rect" coords="154,112,298,136"/>
 <area href="class_g_u_i_lib_1_1_scrolling_frame.html" title="A scrollable frame. Shouldn&#39;t be used for now, as the implementation is still buggy." alt="GUILib::ScrollingFrame" shape="rect" coords="308,112,452,136"/>
-<area href="class_g_u_i_lib_1_1_editable_text_box.html" title="A basic text box, but editable." alt="GUILib::EditableTextBox" shape="rect" coords="616,112,760,136"/>
+<area href="class_g_u_i_lib_1_1_slider.html" alt="GUILib::Slider" shape="rect" coords="462,112,606,136"/>
+<area href="class_g_u_i_lib_1_1_editable_text_box.html" title="A basic text box, but editable." alt="GUILib::EditableTextBox" shape="rect" coords="693,112,837,136"/>
 <area href="class_g_u_i_lib_1_1_check_box.html" title="A basic check box." alt="GUILib::CheckBox" shape="rect" coords="154,168,298,192"/>
   </map>
 </div></div>
@@ -120,10 +122,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ad1f13b1dbe8fce7c4831665ab26c3467"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the children's rendering state (whether the children should be rendered).  <br /></td></tr>
 <tr class="separator:ad1f13b1dbe8fce7c4831665ab26c3467"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a250d824ab9a7a4586618cac6837be670" id="r_a250d824ab9a7a4586618cac6837be670"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a250d824ab9a7a4586618cac6837be670">addChild</a> (<a class="el" href="class_g_u_i_lib_1_1_gui_object.html">GuiObject</a> *child)</td></tr>
-<tr class="memdesc:a250d824ab9a7a4586618cac6837be670"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a child to the object.  <br /></td></tr>
+<tr class="memdesc:a250d824ab9a7a4586618cac6837be670"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a child to the object. Fires the "onChildAdded" event.  <br /></td></tr>
 <tr class="separator:a250d824ab9a7a4586618cac6837be670"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84a69363247ab3502abbefcedaf8a61e" id="r_a84a69363247ab3502abbefcedaf8a61e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84a69363247ab3502abbefcedaf8a61e">removeChild</a> (<a class="el" href="class_g_u_i_lib_1_1_gui_object.html">GuiObject</a> *child)</td></tr>
-<tr class="memdesc:a84a69363247ab3502abbefcedaf8a61e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a child from the object.  <br /></td></tr>
+<tr class="memdesc:a84a69363247ab3502abbefcedaf8a61e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a child from the object. Fires the "onChildRemoved" event.  <br /></td></tr>
 <tr class="separator:a84a69363247ab3502abbefcedaf8a61e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb2740bd45e76b1ae00149f3d6202442" id="r_afb2740bd45e76b1ae00149f3d6202442"><td class="memItemLeft" align="right" valign="top">SDL_Rect&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb2740bd45e76b1ae00149f3d6202442">getRect</a> () const</td></tr>
 <tr class="memdesc:afb2740bd45e76b1ae00149f3d6202442"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the rect of the object.  <br /></td></tr>
@@ -135,16 +137,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a790fbdae5591a5d4d02ae78b1350c4b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the position of the object.  <br /></td></tr>
 <tr class="separator:a790fbdae5591a5d4d02ae78b1350c4b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c92aa0c821a8ed92b1b3986d6561350" id="r_a1c92aa0c821a8ed92b1b3986d6561350"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c92aa0c821a8ed92b1b3986d6561350">move</a> (const <a class="el" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a> &amp;newPos)</td></tr>
-<tr class="memdesc:a1c92aa0c821a8ed92b1b3986d6561350"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the object to a new position.  <br /></td></tr>
+<tr class="memdesc:a1c92aa0c821a8ed92b1b3986d6561350"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the object to a new position. Fires the "onPositionChange" event.  <br /></td></tr>
 <tr class="separator:a1c92aa0c821a8ed92b1b3986d6561350"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abadece46d5fb6136efcdb7bb92b0b694" id="r_abadece46d5fb6136efcdb7bb92b0b694"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abadece46d5fb6136efcdb7bb92b0b694">resize</a> (const <a class="el" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a> &amp;newSize)</td></tr>
-<tr class="memdesc:abadece46d5fb6136efcdb7bb92b0b694"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the object.  <br /></td></tr>
+<tr class="memdesc:abadece46d5fb6136efcdb7bb92b0b694"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the object. Fires the "onSizeChange" event.  <br /></td></tr>
 <tr class="separator:abadece46d5fb6136efcdb7bb92b0b694"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26fdff94f9ec708d2da49dec9dbdf047" id="r_a26fdff94f9ec708d2da49dec9dbdf047"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26fdff94f9ec708d2da49dec9dbdf047">isActive</a> () const</td></tr>
 <tr class="memdesc:a26fdff94f9ec708d2da49dec9dbdf047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the activity state of the object.  <br /></td></tr>
 <tr class="separator:a26fdff94f9ec708d2da49dec9dbdf047"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51b625a24761fb7dac7858660a70a59e" id="r_a51b625a24761fb7dac7858660a70a59e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51b625a24761fb7dac7858660a70a59e">setActive</a> (bool value)</td></tr>
-<tr class="memdesc:a51b625a24761fb7dac7858660a70a59e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the activity state of the object.  <br /></td></tr>
+<tr class="memdesc:a51b625a24761fb7dac7858660a70a59e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the activity state of the object. Fires the "onActiveChange" event.  <br /></td></tr>
 <tr class="separator:a51b625a24761fb7dac7858660a70a59e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4246b852ad3e080a50b157d1a14984d" id="r_ae4246b852ad3e080a50b157d1a14984d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4246b852ad3e080a50b157d1a14984d">isVisible</a> () const</td></tr>
 <tr class="memdesc:ae4246b852ad3e080a50b157d1a14984d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the visibility of the object.  <br /></td></tr>
@@ -153,7 +155,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa4d383dc23b284131d4b33249c8a9525"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toggles the visibility of the object.  <br /></td></tr>
 <tr class="separator:aa4d383dc23b284131d4b33249c8a9525"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7c2efaae485b97a4e995417d12186cd" id="r_ad7c2efaae485b97a4e995417d12186cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7c2efaae485b97a4e995417d12186cd">setVisible</a> (bool value)</td></tr>
-<tr class="memdesc:ad7c2efaae485b97a4e995417d12186cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the visibility of the object.  <br /></td></tr>
+<tr class="memdesc:ad7c2efaae485b97a4e995417d12186cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the visibility of the object. Fires the "onVisibilityChange" event.  <br /></td></tr>
 <tr class="separator:ad7c2efaae485b97a4e995417d12186cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae19c57ce37b16acff029af1108ed6fa6" id="r_ae19c57ce37b16acff029af1108ed6fa6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae19c57ce37b16acff029af1108ed6fa6">handleEvent</a> (const SDL_Event &amp;event)</td></tr>
 <tr class="memdesc:ae19c57ce37b16acff029af1108ed6fa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the event for the object.  <br /></td></tr>
@@ -171,7 +173,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aec245fa90d02dee9e30568a941375a81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the object is draggable.  <br /></td></tr>
 <tr class="separator:aec245fa90d02dee9e30568a941375a81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8139a3f5624083fda068d6e25037bc86" id="r_a8139a3f5624083fda068d6e25037bc86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8139a3f5624083fda068d6e25037bc86">setDraggable</a> (bool val)</td></tr>
-<tr class="memdesc:a8139a3f5624083fda068d6e25037bc86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the draggable state of the object.  <br /></td></tr>
+<tr class="memdesc:a8139a3f5624083fda068d6e25037bc86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the draggable state of the object. Fires the "onDraggableChange" event.  <br /></td></tr>
 <tr class="separator:a8139a3f5624083fda068d6e25037bc86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a819b5f8f2d5f44fdea1109d1dee47eed" id="r_a819b5f8f2d5f44fdea1109d1dee47eed"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a819b5f8f2d5f44fdea1109d1dee47eed">render</a> ()</td></tr>
 <tr class="memdesc:a819b5f8f2d5f44fdea1109d1dee47eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders the object, and all its children, if it has.  <br /></td></tr>
@@ -185,7 +187,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:af08af61757a88d144700504913ad5922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Triggers an event.  <br /></td></tr>
 <tr class="separator:af08af61757a88d144700504913ad5922"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c051a5d746ede4bbb30948c7efbb767" id="r_a6c051a5d746ede4bbb30948c7efbb767"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c051a5d746ede4bbb30948c7efbb767">updateRenderer</a> (SDL_Renderer *&amp;renderer)</td></tr>
-<tr class="memdesc:a6c051a5d746ede4bbb30948c7efbb767"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the reference to the renderer of the object.  <br /></td></tr>
+<tr class="memdesc:a6c051a5d746ede4bbb30948c7efbb767"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the reference to the renderer of the object. Fires the "onRendererChange" event.  <br /></td></tr>
 <tr class="separator:a6c051a5d746ede4bbb30948c7efbb767"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaada65b25e135ba752c847d7a4e4234" id="r_aeaada65b25e135ba752c847d7a4e4234"><td class="memItemLeft" align="right" valign="top">SDL_Renderer *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeaada65b25e135ba752c847d7a4e4234">getCurrentRenderer</a> () const</td></tr>
 <tr class="memdesc:aeaada65b25e135ba752c847d7a4e4234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current renderer.  <br /></td></tr>
@@ -196,6 +198,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac3fb8c1c901d7d8819ba805ccda24301" id="r_ac3fb8c1c901d7d8819ba805ccda24301"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3fb8c1c901d7d8819ba805ccda24301">operator==</a> (const <a class="el" href="class_g_u_i_lib_1_1_gui_object.html">GuiObject</a> &amp;other) const</td></tr>
 <tr class="memdesc:ac3fb8c1c901d7d8819ba805ccda24301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equality check.  <br /></td></tr>
 <tr class="separator:ac3fb8c1c901d7d8819ba805ccda24301"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e833cea07cd7c646cefcbd9d9e48294" id="r_a1e833cea07cd7c646cefcbd9d9e48294"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e833cea07cd7c646cefcbd9d9e48294">getClassName</a> () const</td></tr>
+<tr class="memdesc:a1e833cea07cd7c646cefcbd9d9e48294"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the class name of the object.  <br /></td></tr>
+<tr class="separator:a1e833cea07cd7c646cefcbd9d9e48294"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8944bba51bbcfe2888fdac0d928586b" id="r_aa8944bba51bbcfe2888fdac0d928586b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8944bba51bbcfe2888fdac0d928586b">~GuiObject</a> ()</td></tr>
 <tr class="memdesc:aa8944bba51bbcfe2888fdac0d928586b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:aa8944bba51bbcfe2888fdac0d928586b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -248,6 +253,15 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:ad2adfa29564c191fabfcb75d26b855ce" id="r_ad2adfa29564c191fabfcb75d26b855ce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2adfa29564c191fabfcb75d26b855ce">shouldRenderChildren</a></td></tr>
 <tr class="memdesc:ad2adfa29564c191fabfcb75d26b855ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The children's rendering state.  <br /></td></tr>
 <tr class="separator:ad2adfa29564c191fabfcb75d26b855ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81b854db25ed8107296b7f5f1e4b8d12" id="r_a81b854db25ed8107296b7f5f1e4b8d12"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81b854db25ed8107296b7f5f1e4b8d12">className</a></td></tr>
+<tr class="memdesc:a81b854db25ed8107296b7f5f1e4b8d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">The class name of the object.  <br /></td></tr>
+<tr class="separator:a81b854db25ed8107296b7f5f1e4b8d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-attribs" name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:ab0571bece1047e6dc9c2925311cc28bc" id="r_ab0571bece1047e6dc9c2925311cc28bc"><td class="memItemLeft" align="right" valign="top">static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0571bece1047e6dc9c2925311cc28bc">CLASS_NAME</a> = &quot;GuiObject&quot;</td></tr>
+<tr class="memdesc:ab0571bece1047e6dc9c2925311cc28bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The class name.  <br /></td></tr>
+<tr class="separator:ab0571bece1047e6dc9c2925311cc28bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A basic GUI object. </p>
@@ -354,7 +368,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Adds a child to the object. </p>
+<p>Adds a child to the object. Fires the "onChildAdded" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">child</td><td>The child to be added. </td></tr>
@@ -381,6 +395,26 @@ Protected Attributes</h2></td></tr>
 
 <p>Returns the children's rendering state. </p>
 <dl class="section return"><dt>Returns</dt><dd>The boolean that indicates whether the children should be rendered. </dd></dl>
+
+</div>
+</div>
+<a id="a1e833cea07cd7c646cefcbd9d9e48294" name="a1e833cea07cd7c646cefcbd9d9e48294"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e833cea07cd7c646cefcbd9d9e48294">&#9670;&#160;</a></span>getClassName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string GUILib::GuiObject::getClassName </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the class name of the object. </p>
+<dl class="section return"><dt>Returns</dt><dd>The class name. </dd></dl>
 
 </div>
 </div>
@@ -515,7 +549,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_g_u_i_lib_1_1_button.html#a3294836fe700fc2b12945b5543aa0518">GUILib::Button</a>, <a class="el" href="class_g_u_i_lib_1_1_editable_text_box.html#ad8deb166e46a91e809b90d257223c8d0">GUILib::EditableTextBox</a>, <a class="el" href="class_g_u_i_lib_1_1_check_box.html#a63a1d783984b39ebea87e726f4738147">GUILib::CheckBox</a>, and <a class="el" href="class_g_u_i_lib_1_1_scrolling_frame.html#a140b1e9805fd879e05057e20d1487c8c">GUILib::ScrollingFrame</a>.</p>
+<p>Reimplemented in <a class="el" href="class_g_u_i_lib_1_1_button.html#a3294836fe700fc2b12945b5543aa0518">GUILib::Button</a>, <a class="el" href="class_g_u_i_lib_1_1_editable_text_box.html#ad8deb166e46a91e809b90d257223c8d0">GUILib::EditableTextBox</a>, <a class="el" href="class_g_u_i_lib_1_1_check_box.html#a63a1d783984b39ebea87e726f4738147">GUILib::CheckBox</a>, <a class="el" href="class_g_u_i_lib_1_1_scrolling_frame.html#a140b1e9805fd879e05057e20d1487c8c">GUILib::ScrollingFrame</a>, and <a class="el" href="class_g_u_i_lib_1_1_slider.html#a21b90dedfaa4cc5bc3fd65392f84bc9c">GUILib::Slider</a>.</p>
 
 </div>
 </div>
@@ -614,7 +648,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Moves the object to a new position. </p>
+<p>Moves the object to a new position. Fires the "onPositionChange" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newPos</td><td>The new position. </td></tr>
@@ -729,10 +763,10 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Removes a child from the object. </p>
+<p>Removes a child from the object. Fires the "onChildRemoved" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">child</td><td>The child to be removed. Can be nullptr. </td></tr>
+    <tr><td class="paramname">child</td><td>The child to be removbed. Can be nullptr. </td></tr>
   </table>
   </dd>
 </dl>
@@ -764,7 +798,7 @@ template&lt;typename... Args&gt; </div>
 
 <p>Renders the object, and all its children, if it has. </p>
 
-<p>Reimplemented in <a class="el" href="class_g_u_i_lib_1_1_text_button.html#a555a6e3a46ed61358077d23cbff1893b">GUILib::TextButton</a>, <a class="el" href="class_g_u_i_lib_1_1_image_button.html#aa5707a115e03ac33d734e7157dc335dd">GUILib::ImageButton</a>, <a class="el" href="class_g_u_i_lib_1_1_frame.html#af039d3375c14d3abca554fe866b41303">GUILib::Frame</a>, <a class="el" href="class_g_u_i_lib_1_1_scrolling_frame.html#af76c84999231225e6e41e7c710d7404a">GUILib::ScrollingFrame</a>, <a class="el" href="class_g_u_i_lib_1_1_image.html#a10172cb6335ee3d9df4154303249da00">GUILib::Image</a>, <a class="el" href="class_g_u_i_lib_1_1_text_box.html#a6b842691cd3199f2fca44b7b63711ede">GUILib::TextBox</a>, and <a class="el" href="class_g_u_i_lib_1_1_editable_text_box.html#aaa1b0743df1b48b8409441800c63d164">GUILib::EditableTextBox</a>.</p>
+<p>Reimplemented in <a class="el" href="class_g_u_i_lib_1_1_text_button.html#a555a6e3a46ed61358077d23cbff1893b">GUILib::TextButton</a>, <a class="el" href="class_g_u_i_lib_1_1_image_button.html#aa5707a115e03ac33d734e7157dc335dd">GUILib::ImageButton</a>, <a class="el" href="class_g_u_i_lib_1_1_frame.html#af039d3375c14d3abca554fe866b41303">GUILib::Frame</a>, <a class="el" href="class_g_u_i_lib_1_1_scrolling_frame.html#af76c84999231225e6e41e7c710d7404a">GUILib::ScrollingFrame</a>, <a class="el" href="class_g_u_i_lib_1_1_image.html#a10172cb6335ee3d9df4154303249da00">GUILib::Image</a>, <a class="el" href="class_g_u_i_lib_1_1_slider.html#a6eb94d409b3c095723ae5fa535d385db">GUILib::Slider</a>, <a class="el" href="class_g_u_i_lib_1_1_text_box.html#a6b842691cd3199f2fca44b7b63711ede">GUILib::TextBox</a>, and <a class="el" href="class_g_u_i_lib_1_1_editable_text_box.html#aaa1b0743df1b48b8409441800c63d164">GUILib::EditableTextBox</a>.</p>
 
 </div>
 </div>
@@ -783,7 +817,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Resizes the object. </p>
+<p>Resizes the object. Fires the "onSizeChange" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newSize</td><td>The new size. </td></tr>
@@ -808,7 +842,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Sets the activity state of the object. </p>
+<p>Sets the activity state of the object. Fires the "onActiveChange" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>The new activity state. </td></tr>
@@ -858,7 +892,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Sets the draggable state of the object. </p>
+<p>Sets the draggable state of the object. Fires the "onDraggableChange" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">val</td><td>The new draggable state. </td></tr>
@@ -908,7 +942,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Sets the visibility of the object. </p>
+<p>Sets the visibility of the object. Fires the "onVisibilityChange" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>The new visibility state. </td></tr>
@@ -937,7 +971,7 @@ template&lt;typename... Args&gt; </div>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated</a></b></dt><dd>No longer in use. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">value</td><td>The new visibility state. </td></tr>
+    <tr><td class="paramname">value</td><td>The new visibility state. Fires the "onVisibilityChange" event. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1026,7 +1060,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Updates the reference to the renderer of the object. </p>
+<p>Updates the reference to the renderer of the object. Fires the "onRendererChange" event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">renderer</td><td>The new renderer. </td></tr>
@@ -1104,6 +1138,54 @@ template&lt;typename... Args&gt; </div>
 </div><div class="memdoc">
 
 <p>The children of the object. </p>
+
+</div>
+</div>
+<a id="ab0571bece1047e6dc9c2925311cc28bc" name="ab0571bece1047e6dc9c2925311cc28bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0571bece1047e6dc9c2925311cc28bc">&#9670;&#160;</a></span>CLASS_NAME</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string GUILib::GuiObject::CLASS_NAME = &quot;GuiObject&quot;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The class name. </p>
+
+</div>
+</div>
+<a id="a81b854db25ed8107296b7f5f1e4b8d12" name="a81b854db25ed8107296b7f5f1e4b8d12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81b854db25ed8107296b7f5f1e4b8d12">&#9670;&#160;</a></span>className</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string GUILib::GuiObject::className</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The class name of the object. </p>
 
 </div>
 </div>

@@ -4,13 +4,6 @@
 
 namespace GUILib {
 
-    namespace {
-        // helper function, __cplusplus refuses to work
-        inline double clamp(double val, double min, double max) {
-            return std::min(std::max(val, min), max);
-        }
-    }
-
     /// @brief A basic frame.
     /// @brief Can be used as a base for all frames.
     class Frame : public GuiObject {
@@ -18,6 +11,9 @@ namespace GUILib {
 
         /// @brief The color of the frame.
         SDL_Color frameColor;
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "Frame";
 
     public:
         Frame();
@@ -69,6 +65,7 @@ namespace GUILib {
         /// @brief Whether the user is dragging the scrollbar.
         bool draggingX, draggingY;
         
+        SDL_Rect handleRectX, handleRectY;
 
         /// @brief Updates the scrollbars.
         void updateScrollbars();
@@ -82,6 +79,9 @@ namespace GUILib {
         /// @param absContentSize The absolute content size of this (reference to contentSize).
         /// @param rect The rect of the object.
         void renderScrollbars(const SDL_Point& absContentSize, const SDL_Rect& rect);
+
+        /// @brief The class name.
+		static inline const std::string CLASS_NAME = "ScrollingFrame";
     public:
         ScrollingFrame(
             GuiObject* parent,
@@ -122,5 +122,13 @@ namespace GUILib {
         /// @brief Sets the scrolling speed of this frame (px/ms).
         /// @param speed The new scrolling speed.
         void setScrollingSpeed(int speed);
+
+        /// @brief Gets the current X position of the handle.
+        /// @return The X position of the handle relative to the progress.
+        int getScrollX() const;
+        
+        /// @brief Gets the current Y position of the handle.
+        /// @return The Y position of the handle relative to the progress.
+        int getScrollY() const;
     };
 }

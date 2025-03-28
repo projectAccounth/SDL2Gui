@@ -88,7 +88,8 @@ GUILib::ImageButton::ImageButton():
     defaultImgPath(""),
     hoverImgPath(""),
     id(nextId++)
-{}
+{
+}
 
 GUILib::ImageButton::~ImageButton() {
     if (buttonTexture)

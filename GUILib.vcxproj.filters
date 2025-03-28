@@ -42,6 +42,9 @@
     <ClInclude Include="include\event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\slider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\buttonManager.cpp">
@@ -72,6 +75,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\slider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scrollingFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

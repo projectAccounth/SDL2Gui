@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
 	auto box1 = manager.create<EditableTextBox>(mainRenderer);
 	auto ap = manager.create<Image>(mainRenderer);
 	auto frame2 = manager.create<ScrollingFrame>(mainRenderer);
+	auto frame3 = manager.create<ScrollingFrame>(mainRenderer);
 
 	box1->on("onKeyInput", std::function<void(char)>([](char c) {
 		std::cout << "Key " << c << " pressed!\n";
@@ -41,17 +42,30 @@ int main(int argc, char* argv[]) {
 
 	ap->updatePath("./res/imgs/giri.webp");
 	ap->setParent(nullptr);
-	ap->move({ 0, 0, true });
+	ap->move({ 0, 0, false });
 	ap->resize({ 50, 50, false });
 
 	frame2->move({ 0.5, 0.5, true });
 	frame2->resize({ 100, 100, false });
-	frame2->setContentSize({ 100, 200, false });
+	frame2->setContentSize({ 200, 200, false });
 	frame2->setFrameColor({ 200, 200, 200, 255 });
 	frame2->setScrollbarColor({ 233, 233, 233, 122 });
+
 	
 	Image ac = *ap;
 	Image ae = ac;
+
+	Slider slider0 = Slider(nullptr, mainRenderer);
+	Slider slider1 = Slider(nullptr, mainRenderer);
+
+	slider0.resize({ 100, 30, false });
+	slider0.move({ .5, 0, true });
+	slider0.setFrameColor({ 188, 188, 188, 255 });
+
+	slider1.resize({ 30, 100, false });
+	slider1.move({ .7, .2, true });
+	slider1.setFrameColor({ 188, 188, 188, 255 });
+	slider1.setDirection(DragDirection::VERTICAL);
 
 	Image af = Image(
 		nullptr,
@@ -113,7 +127,7 @@ int main(int argc, char* argv[]) {
 		img.initialize(mainRenderer);
 	}
 
-	frame2->addChild(&af);
+	frame2->addChild(ap.get());
 
 	while (isRunning) {
 		SDL_Event e;
@@ -130,22 +144,27 @@ int main(int argc, char* argv[]) {
 			box1->handleEvent(e);
 			ap->handleEvent(e);
 			frame2->handleEvent(e);
+			slider0.handleEvent(e);
+			slider1.handleEvent(e);
 			// af.handleEvent(e);
 		}
 		frame1->setDraggable(checkBox1.isChecked());
 		box1->setEditable(checkBox2.isChecked());
-		ap->setDraggable(true);
+		// ap->setDraggable(true);
 		frame1->setVisible(true);
 		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(mainRenderer);
 
+		slider0.render();
 		frame1->render();
 		box1->render();
 		checkBox1.render();
 		checkBox2.render();
-		ap->render();
-		af.render();
+		// ap->render();
+		// af.render();
 		frame2->render();
+		slider1.render();
+
 
 		for (auto& img : imgs) {
 			// img.render();

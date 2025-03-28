@@ -169,6 +169,7 @@
     <ClInclude Include="include\lfmain.h" />
     <ClInclude Include="include\types.h" />
     <ClInclude Include="include\textBox.h" />
+    <ClIncludeCompile Include="src\slider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="examples\position-test.cpp" />
@@ -183,6 +184,8 @@
     <ClCompile Include="src\imageButton.cpp" />
     <ClCompile Include="src\textBox.cpp" />
     <ClCompile Include="src\textButton.cpp" />
+    <ClCompile Include="src\slider.cpp" />
+    <ClCompile Include="src\scrollingFrame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -12,3 +12,4 @@
 #include "guiobject.h"
 #include "guimanager.h"
 #include "frame.h"
+#include "slider.h"

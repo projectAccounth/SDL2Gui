@@ -14,7 +14,8 @@ Button::Button(
 ):
     GuiObject(parent, renderer, size, position),
     hovered(false)
-{}
+{
+}
 
 bool Button::isClicked(int x, int y) {
     return (x > objRect.x &&

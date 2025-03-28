@@ -17,6 +17,7 @@ var searchData=
   ['isdragging_14',['isDragging',['../class_g_u_i_lib_1_1_gui_object.html#a86f4a3504c398550cef4fa6a510264ab',1,'GUILib::GuiObject']]],
   ['iseditable_15',['isEditable',['../class_g_u_i_lib_1_1_editable_text_box.html#addc402504e2d198c573350c142feb5ce',1,'GUILib::EditableTextBox']]],
   ['ishovered_16',['isHovered',['../class_g_u_i_lib_1_1_button.html#acf7781c6c4553ccc79e3b4ec982b4e9b',1,'GUILib::Button']]],
-  ['isusingscale_17',['isUsingScale',['../struct_g_u_i_lib_1_1_u_i_unit.html#a06df6e9d4a42a6e6de75e6bc566151ff',1,'GUILib::UIUnit']]],
-  ['isvisible_18',['isVisible',['../class_g_u_i_lib_1_1_gui_object.html#ae4246b852ad3e080a50b157d1a14984d',1,'GUILib::GuiObject']]]
+  ['ispointinrect_17',['isPointInRect',['../namespace_g_u_i_lib_1_1_reserved.html#ae22476e00e2a41563b1874fb3524de7f',1,'GUILib::Reserved']]],
+  ['isusingscale_18',['isUsingScale',['../struct_g_u_i_lib_1_1_u_i_unit.html#a06df6e9d4a42a6e6de75e6bc566151ff',1,'GUILib::UIUnit']]],
+  ['isvisible_19',['isVisible',['../class_g_u_i_lib_1_1_gui_object.html#ae4246b852ad3e080a50b157d1a14984d',1,'GUILib::GuiObject']]]
 ];

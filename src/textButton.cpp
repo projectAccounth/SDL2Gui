@@ -30,7 +30,7 @@ void GUILib::TextButton::initialize(SDL_Renderer*& renderer) {
 }
 
 void GUILib::TextButton::render() {
-    if (!isVisible() || (parent && !parent->isVisible())) {
+    if (!isVisible() || (parent && !parent->isVisible()) || !ref) {
         return;
     }
     // set the color to draw for the button and also set the settings to render the button

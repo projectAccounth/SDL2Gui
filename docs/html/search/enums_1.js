@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['verticaltextalign_0',['VerticalTextAlign',['../namespace_g_u_i_lib.html#a07fa851d523c7119b1fc42fb07abfa66',1,'GUILib']]]
+  ['horizontaltextalign_0',['HorizontalTextAlign',['../namespace_g_u_i_lib.html#a371254be864da73305a3919cae7f942c',1,'GUILib']]]
 ];
