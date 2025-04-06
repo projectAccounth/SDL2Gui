@@ -3,6 +3,7 @@
 
 SDL_Renderer* nullrnd = nullptr;
 
+/// Recursive calculation
 std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
 	const GUILib::GuiObject& obj,
 	const int& windowWidth,
@@ -54,8 +55,9 @@ std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
 
 	auto* scrollingParent = dynamic_cast<const GUILib::ScrollingFrame*>(parent); // what the fuck happened?
 	if (scrollingParent) {
-        outPos.sizeX -= (objPos.isUsingScale ? (double) scrollingParent->getScrollX() / windowWidth : scrollingParent->getScrollX());
-        outPos.sizeY -= (objPos.isUsingScale ? (double) scrollingParent->getScrollY() / windowHeight : scrollingParent->getScrollY());
+		// auto parentRect = scrollingParent->getRect();
+        outPos.sizeX -= (scrollingParent->getScrollX());
+        outPos.sizeY -= (scrollingParent->getScrollY());
     }
 
     outPos.isUsingScale = objPos.isUsingScale;
@@ -320,6 +322,7 @@ void GUILib::GuiObject::setDraggable(bool value) {
 
 void GUILib::GuiObject::render() {
 	if (!visible || !ref) return;
+	if (parent && !parent->isVisible()) return;
 
     for (auto& child : children) {
 		if (!child || !shouldRenderChildren) continue;
@@ -343,10 +346,6 @@ void GUILib::GuiObject::setChildrenRenderingState(bool value) {
 	shouldRenderChildren = value;
 }
 
-std::string GUILib::GuiObject::getClassName() const {
-	return className;
-}
-
 SDL_Point GUILib::UIUnit::getAbsoluteSize(const SDL_Point& containerSize) const {
 	if (isUsingScale) {
 		return {static_cast<int>(sizeX * containerSize.x), static_cast<int>(sizeY * containerSize.y)};
@@ -362,3 +361,38 @@ bool GUILib::Reserved::isPointInRect(const SDL_Point& point, const SDL_Rect& rec
 	return point.x >= rect.x && point.x <= rect.x + rect.w &&
 		   point.y >= rect.y && point.y <= rect.y + rect.h;
 }
+
+SDL_Texture* GUILib::Reserved::createSolidBoxTexture(
+	SDL_Renderer* r,
+	SDL_Color c,
+	int w, int h
+) {
+	if (!r) return nullptr;
+
+	SDL_Texture* t = SDL_CreateTexture(r,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		w, h
+	);
+
+	if (!t) return nullptr;
+
+	SDL_Texture* oldTarget = SDL_GetRenderTarget(r);
+
+	SDL_SetRenderTarget(r, t);
+
+	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
+	SDL_RenderClear(r);
+
+	SDL_SetRenderTarget(r, oldTarget);
+
+	return t;
+}
+
+GUILib::UIUnit GUILib::GuiObject::getPivotOffset() const {
+	return renderingPivotOffset;
+}
+
+SDL_Point GUILib::GuiObject::getPivotOffsetPoint() const {
+	return renderingPivotOffset.getAbsoluteSize({ getRect().w, getRect().h });
+} 

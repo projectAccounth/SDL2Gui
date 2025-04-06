@@ -75,8 +75,13 @@ namespace GUILib {
         /// @brief Handles all events.
         /// @param event The event.
         void handleEvent(const SDL_Event& event) override;
+
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+		inline std::string getClassName() const override { return "Slider"; };
     protected:
         /// @brief Unused function.
+        /// @deprecated Not used. Remove this.
         void updateHandlePosition();
 
         /// @brief Moves the handle by a delta.

@@ -6,11 +6,13 @@
 namespace GUILib {
 
 	namespace Reserved {
-        /// helper function, __cplusplus refused to work
-        double clamp(double val, double min, double max);
+		/// helper function, __cplusplus refused to work
+		double clamp(double val, double min, double max);
 		/// helper function to check whether the point is in the rect
 		bool isPointInRect(const SDL_Point& point, const SDL_Rect& rect);
-    }
+		/// creates box texture
+		SDL_Texture* createSolidBoxTexture(SDL_Renderer* r, SDL_Color c, int w, int h);
+	}
 
 	/// @brief A struct to represent the size of a GUI object.
 	typedef struct UIUnit {
@@ -23,8 +25,8 @@ namespace GUILib {
 		/// @param containerSize The size of the container.
 		/// @return The absolute size of the object, in pixels.
 		SDL_Point getAbsoluteSize(const SDL_Point& containerSize) const;
-    } UIUnit;
-	 
+	} UIUnit;
+	
 	/// @brief A basic GUI object.
 	/// @brief Can be used as a base for all GUI objects.
 	class GuiObject {
@@ -38,7 +40,7 @@ namespace GUILib {
 
 		/// @brief The offset of the drag.
 		int dragOffsetX,
-		    dragOffsetY;
+		dragOffsetY;
 
 		/// @brief The position of the object.
 		UIUnit position;
@@ -70,6 +72,12 @@ namespace GUILib {
 
 		/// @brief The class name.
 		static inline const std::string CLASS_NAME = "GuiObject";
+		
+		/// @brief Serves as the rotating center of the object.
+		UIUnit renderingPivotOffset;
+
+		/// @brief Rotation of the object clockwise, in degrees.
+		double degreeRotation;
 	public:
 		GuiObject();
 		GuiObject(
@@ -96,12 +104,20 @@ namespace GUILib {
 
 		/// @brief Removes a child from the object.
 		/// Fires the "onChildRemoved" event.
-		/// @param child The child to be removbed. Can be nullptr.
+		/// @param child The child to be removed. Can be nullptr.
 		void removeChild(GuiObject* child);
 
 		/// @brief Returns the rect of the object.
 		/// @return The rect of the object.
 		SDL_Rect getRect() const;
+
+		/// @brief Returns the offset from the origin of the object to the offset point.
+		/// @returns The offset pivot, in an SDL_Point.
+		SDL_Point getPivotOffsetPoint() const;
+
+		/// @brief Returns the offset from the origin of the object to the offset point.
+		/// @returns The offset pivot, in an SDL_Point.
+		UIUnit getPivotOffset() const;
 
 		/// @brief Returns the size of the object.
 		/// @return The size of the object.
@@ -215,8 +231,8 @@ namespace GUILib {
 
 		/// @brief Returns the class name of the object.
 		/// @return The class name.
-		std::string getClassName() const;
-
+		inline virtual std::string getClassName() const { return "GuiObject"; };
+		
 		/// @brief Destructor.
 		virtual ~GuiObject();
 	};

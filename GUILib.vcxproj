@@ -167,12 +167,12 @@
     <ClInclude Include="include\guiobject.h" />
     <ClInclude Include="include\image.h" />
     <ClInclude Include="include\lfmain.h" />
+    <ClInclude Include="include\slider.h" />
     <ClInclude Include="include\types.h" />
     <ClInclude Include="include\textBox.h" />
-    <ClIncludeCompile Include="src\slider.h" />
+    <ClInclude Include="src\slider.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="examples\position-test.cpp" />
     <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\buttonManager.cpp" />
     <ClCompile Include="src\checkbox.cpp" />
@@ -186,6 +186,7 @@
     <ClCompile Include="src\textButton.cpp" />
     <ClCompile Include="src\slider.cpp" />
     <ClCompile Include="src\scrollingFrame.cpp" />
+    <ClCompile Include="src\sceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

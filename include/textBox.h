@@ -95,6 +95,10 @@ namespace GUILib {
         /// @brief Changes the font of the text.
         void changeFont(TTF_Font*& font);
 
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+		inline std::string getClassName() const override { return "TextBox"; };
+
         ~TextBox();
     };
 
@@ -155,6 +159,10 @@ namespace GUILib {
 
         /// @brief Renders the text box.
         void render() override;
+
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+		std::string getClassName() const override { return "EditableTextBox"; };
 
         ~EditableTextBox();
     };

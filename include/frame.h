@@ -13,7 +13,7 @@ namespace GUILib {
         SDL_Color frameColor;
 
         /// @brief The class name.
-		static inline const std::string CLASS_NAME = "Frame";
+        static inline const std::string CLASS_NAME = "Frame";
 
     public:
         Frame();
@@ -36,6 +36,12 @@ namespace GUILib {
 
         /// @brief Renders the frame.
         void render() override;
+
+        /// @brief Returns the class name of the object.
+        /// @return The class name.
+        inline std::string getClassName() const override { return "Frame"; };
+
+        ~Frame() = default; // Nothing to clean up
     };
 
     /// @brief A scrollable frame.
@@ -81,7 +87,7 @@ namespace GUILib {
         void renderScrollbars(const SDL_Point& absContentSize, const SDL_Rect& rect);
 
         /// @brief The class name.
-		static inline const std::string CLASS_NAME = "ScrollingFrame";
+        static inline const std::string CLASS_NAME = "ScrollingFrame";
     public:
         ScrollingFrame(
             GuiObject* parent,
@@ -130,5 +136,9 @@ namespace GUILib {
         /// @brief Gets the current Y position of the handle.
         /// @return The Y position of the handle relative to the progress.
         int getScrollY() const;
+
+        /// @brief Returns the class name of the object.
+        /// @return The class name.
+        inline std::string getClassName() const override { return "ScrollingFrame"; };
     };
 }

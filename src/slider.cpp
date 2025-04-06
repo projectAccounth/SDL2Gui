@@ -48,33 +48,32 @@ void GUILib::Slider::renderHandle() {
     switch (direction) {
         case DragDirection::HORIZONTAL: {
             int maxScrollX = rect.w;
-            if (maxScrollX > 0) {
-                int scrollbarX = rect.x + (offsetX * (rect.w - handleSize)) / maxScrollX;
-                handleRect = {scrollbarX, rect.y, handleSize, rect.h};
-                SDL_SetRenderDrawColor(ref,
-                    handleColor.r,
-                    handleColor.r,
-                    handleColor.r,
-                    handleColor.a
-                );
-                SDL_RenderFillRect(ref, &handleRect);
-            }
+            if (maxScrollX <= 0) break;
+            int scrollbarX = rect.x + (offsetX * (rect.w - handleSize)) / maxScrollX;
+            handleRect = {scrollbarX, rect.y, handleSize, rect.h};
+            SDL_SetRenderDrawColor(ref,
+                handleColor.r,
+                handleColor.r,
+                handleColor.r,
+                handleColor.a
+            );
+            SDL_RenderFillRect(ref, &handleRect);
             break;
         }
 
         case DragDirection::VERTICAL: {
             int maxScrollY = rect.h;
-            if (maxScrollY > 0) {
-                int scrollbarY = rect.y + (offsetY * (rect.h - handleSize)) / maxScrollY;
-                handleRect = { rect.x, scrollbarY, rect.w, handleSize };
-                SDL_SetRenderDrawColor(ref,
-                    handleColor.r,
-                    handleColor.r,
-                    handleColor.r,
-                    handleColor.a
-                );
-                SDL_RenderFillRect(ref, &handleRect);
-            }
+            if (maxScrollY <= 0) break;
+            int scrollbarY = rect.y + (offsetY * (rect.h - handleSize)) / maxScrollY;
+            handleRect = {rect.x, scrollbarY, rect.w, handleSize};
+            SDL_SetRenderDrawColor(
+                ref,
+                handleColor.r,
+                handleColor.r,
+                handleColor.r,
+                handleColor.a
+            );
+            SDL_RenderFillRect(ref, &handleRect);
             break;
         }
     }

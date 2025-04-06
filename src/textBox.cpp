@@ -57,6 +57,9 @@ void GUILib::TextBox::render() {
 
     int totalHeight = static_cast<int>(lines.size()) * lineHeight();
     int startY = objRect.y;
+
+    // TODO: handle this
+    SDL_Texture* boxRect = Reserved::createSolidBoxTexture(ref, boxColor, objRect.w, objRect.h);
     
     SDL_SetRenderDrawColor(ref, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
     SDL_RenderFillRect(ref, &objRect);
@@ -66,7 +69,7 @@ void GUILib::TextBox::render() {
         return;
     }
     
-    lines = splitTextIntoLines(text, maxWidth); // For wrapping
+    lines = splitTextIntoLines(text, maxWidth); // For wrapping (manual handling)
 
     switch (yAlign) {
     case VerticalTextAlign::UP:

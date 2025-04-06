@@ -59,6 +59,7 @@ void GUILib::CheckBox::handleEvent(const SDL_Event& e) {
         toggleChecked();
         text = isChecked() ? std::string(1, boxSymbol) : "";
         initialize(ref);
+        trigger("onClick");
     }
 }
 

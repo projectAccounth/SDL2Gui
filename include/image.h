@@ -53,6 +53,10 @@ namespace GUILib {
 		Image(const Image&);
 		Image& operator=(const Image&);
 
+		/// @brief Returns the class name of the object.
+		/// @return The class name.
+		inline std::string getClassName() const override { return "Image"; };
+
 		~Image();
 	};
 

@@ -33,11 +33,16 @@ void GUILib::Image::initialize(SDL_Renderer*& renderer) {
 }
 
 void GUILib::Image::render() {
-	update(ref);
-
 	if (!isVisible() || (parent && !parent->isVisible()) || !imageTexture || !ref) return;
+	GuiObject::render();
 
-	SDL_RenderCopy(ref, imageTexture, NULL, &objRect);
+	update(ref); // special handling
+
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+	SDL_Point rotPivot = getPivotOffsetPoint();
+
+    SDL_RenderCopyEx(ref, imageTexture, NULL, &objRect, degreeRotation, &rotPivot, flip);
 }
 
 void GUILib::Image::updatePath(const std::string& str) {
@@ -88,9 +93,7 @@ static SDL_Texture* copyTexture(SDL_Renderer* renderer, SDL_Texture* source) {
 	if (!newTexture) return nullptr;
 
 	SDL_SetRenderTarget(renderer, newTexture);
-
 	SDL_RenderCopy(renderer, source, nullptr, nullptr);
-
 	SDL_SetRenderTarget(renderer, nullptr);
 
 	return newTexture;

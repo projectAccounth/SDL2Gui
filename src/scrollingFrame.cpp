@@ -47,23 +47,15 @@ void GUILib::ScrollingFrame::render() {
 
     SDL_Rect clipRect = getRect();
 
-    // Convert contentSize to absolute size
     SDL_Point absContentSize = contentSize.getAbsoluteSize({clipRect.w, clipRect.h});
 
     SDL_RenderSetClipRect(ref, &objRect);
-    //SDL_RenderSetViewport(ref, &objRect);
 
-    // Render children inside the scrolling region
     for (auto& child : children) {
-        SDL_Rect childRect = child->getRect();
-
-        if (SDL_HasIntersection(&clipRect, &childRect)) {
-            child->render();
-        }
+        child->render();
     }
 
     SDL_RenderSetClipRect(ref, nullptr);
-    //SDL_RenderSetViewport(ref, nullptr);
 
     updateScrollbars();
 
@@ -72,10 +64,11 @@ void GUILib::ScrollingFrame::render() {
 
 void GUILib::ScrollingFrame::renderScrollbars(const SDL_Point& absContentSize, const SDL_Rect& rect) {
     SDL_SetRenderDrawColor(ref,
-                           scrollingBarColor.r,
-                           scrollingBarColor.g,
-                           scrollingBarColor.b,
-                           scrollingBarColor.a);  // Dark gray scrollbars (by default)
+        scrollingBarColor.r,
+        scrollingBarColor.g,
+        scrollingBarColor.b,
+        scrollingBarColor.a
+    );  // Dark gray scrollbars (by default)
     if (showScrollbarX) {
         int maxScrollX = absContentSize.x - rect.w;
         if (maxScrollX > 0) {

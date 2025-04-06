@@ -55,6 +55,10 @@ namespace GUILib {
         /// @return The value.
         inline bool isHovered() const { return hovered; }
 
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+        inline std::string getClassName() const override { return "Button"; };
+
         virtual ~Button() = default;
     };
 
@@ -157,6 +161,10 @@ namespace GUILib {
             TTF_Font* font
         );
 
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+		inline std::string getClassName() const override { return "TextButton"; };
+
         ~TextButton();
     };
     
@@ -215,6 +223,10 @@ namespace GUILib {
             const char* updatedPath
         );
 
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+		inline std::string getClassName() const override { return "ImageButton"; };
+
         ~ImageButton();
     };
 
@@ -271,6 +283,10 @@ namespace GUILib {
         /// @brief Handles the event.
         /// @param event The event to be handled.
         void handleEvent(const SDL_Event& event) override;
+
+        /// @brief Returns the class name of the object.
+		/// @return The class name.
+		inline std::string getClassName() const override { return "CheckBox"; };
     };
 
 }

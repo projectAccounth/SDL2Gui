@@ -30,11 +30,14 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	SceneManager sceneManager(mainRenderer);
+
 	auto frame1 = manager.create<Frame>(mainRenderer);
 	auto box1 = manager.create<EditableTextBox>(mainRenderer);
 	auto ap = manager.create<Image>(mainRenderer);
 	auto frame2 = manager.create<ScrollingFrame>(mainRenderer);
 	auto frame3 = manager.create<ScrollingFrame>(mainRenderer);
+	auto ag = manager.create<Image>(mainRenderer);
 
 	box1->on("onKeyInput", std::function<void(char)>([](char c) {
 		std::cout << "Key " << c << " pressed!\n";
@@ -78,6 +81,11 @@ int main(int argc, char* argv[]) {
 	af.initialize(mainRenderer);
 	af.setDraggable(true);
 	af.setVisible(false);
+
+	ag->updatePath("./res/imgs/giri.webp");
+	ag->move({ .1, .1, true });
+	ag->resize({ 50, 50, false });
+	ag->initialize(mainRenderer);
 
 	imgs.push_back(Image(
 		nullptr,
@@ -127,50 +135,41 @@ int main(int argc, char* argv[]) {
 		img.initialize(mainRenderer);
 	}
 
-	frame2->addChild(ap.get());
+    frame2->addChild(ag.get());
+    frame2->addChild(ap.get());
 
-	while (isRunning) {
-		SDL_Event e;
-		while (SDL_PollEvent(&e)) {
-			switch (e.type) {
-			case SDL_WINDOWEVENT_CLOSE:
-			case SDL_QUIT:
-				isRunning = false;
-				break;
-			}
-			checkBox1.handleEvent(e);
-			checkBox2.handleEvent(e);
-			frame1->handleEvent(e);
-			box1->handleEvent(e);
-			ap->handleEvent(e);
-			frame2->handleEvent(e);
-			slider0.handleEvent(e);
-			slider1.handleEvent(e);
-			// af.handleEvent(e);
-		}
-		frame1->setDraggable(checkBox1.isChecked());
-		box1->setEditable(checkBox2.isChecked());
-		// ap->setDraggable(true);
-		frame1->setVisible(true);
-		SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
-		SDL_RenderClear(mainRenderer);
+    sceneManager.addBulk(
+        &checkBox1,
+        &checkBox2,
+        frame1.get(),
+		frame2.get(),
+        box1.get(),
+        &slider0,
+        &slider1
+	);
 
-		slider0.render();
-		frame1->render();
-		box1->render();
-		checkBox1.render();
-		checkBox2.render();
-		// ap->render();
-		// af.render();
-		frame2->render();
-		slider1.render();
+    while (isRunning) {
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            switch (e.type) {
+                case SDL_WINDOWEVENT_CLOSE:
+                case SDL_QUIT:
+                    isRunning = false;
+                    break;
+            }
+            sceneManager.handleEvent(e);
+            // af.handleEvent(e);
+        }
+        frame1->setDraggable(checkBox1.isChecked());
+        box1->setEditable(checkBox2.isChecked());
+        // ap->setDraggable(true);
+        frame1->setVisible(true);
+        SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
+        SDL_RenderClear(mainRenderer);
 
-
-		for (auto& img : imgs) {
-			// img.render();
-		}
-
-		SDL_RenderPresent(mainRenderer);
+        sceneManager.render();
+		
+        SDL_RenderPresent(mainRenderer);
 	}
 
 	SDL_DestroyRenderer(mainRenderer);
