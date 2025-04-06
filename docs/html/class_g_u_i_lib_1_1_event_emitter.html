@@ -84,7 +84,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Basic event emitter.  
+<p>Basic event emitter. This class allows you to register and deregister event listeners, as well as fire events with arguments. Note while using (Read all others before this):  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="event_8h_source.html">event.h</a>&gt;</code></p>
@@ -113,8 +113,24 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:acae192fc5f60e3bfa9a799301e3e08b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Basic event emitter. </p>
-</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<div class="textblock"><p>Basic event emitter. This class allows you to register and deregister event listeners, as well as fire events with arguments. Note while using (Read all others before this): </p>
+<div class="fragment"><div class="line"><span class="comment">// Note that the subscribers&#39; parameter lists must be the same as the dispatcher.</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// For example, if I do:</span></div>
+<div class="line"> </div>
+<div class="line">emitter.fire(<span class="stringliteral">&quot;event1&quot;</span>, 1);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Then, if I do this:</span></div>
+<div class="line"> </div>
+<div class="line">emitter.connect(<span class="stringliteral">&quot;event1&quot;</span>, []() { <span class="comment">// do something... }); // This will error!</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// You have to either do</span></div>
+<div class="line">emitter.connect&lt;<span class="keywordtype">int</span>&gt;(<span class="stringliteral">&quot;event1&quot;</span>, [](int) { <span class="comment">// do something... });</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Or</span></div>
+<div class="line"> </div>
+<div class="line">emitter.connect(<span class="stringliteral">&quot;event1&quot;</span>, std::function&lt;<span class="keywordtype">void</span>(<span class="keywordtype">int</span>)&gt;([](<span class="keywordtype">int</span>) { <span class="comment">// do something... }));</span></div>
+</div><!-- fragment --> </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a79a48e5c7e185c0f2db5f7ec1ad3f280" name="a79a48e5c7e185c0f2db5f7ec1ad3f280"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a79a48e5c7e185c0f2db5f7ec1ad3f280">&#9670;&#160;</a></span>EventId</h2>
 
@@ -167,7 +183,8 @@ template&lt;typename... Args&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An EventId that can be further used for deregistration. This function registers a new event listener, with the passed callback being triggered once <a class="el" href="#a093c865ac6f6af1f3735875c5f44fd77" title="Fires an event, invoking all registered listeners for the specified event name.">fire()</a> is called. <div class="fragment"><div class="line"><a class="code hl_class" href="class_g_u_i_lib_1_1_event_emitter.html">EventEmitter</a> emitter;</div>
+<dl class="section return"><dt>Returns</dt><dd>An EventId that can be further used for deregistration.</dd></dl>
+<p>This function registers a new event listener, with the passed callback being triggered once <a class="el" href="#a093c865ac6f6af1f3735875c5f44fd77" title="Fires an event, invoking all registered listeners for the specified event name.">fire()</a> is called. </p><div class="fragment"><div class="line"><a class="code hl_class" href="class_g_u_i_lib_1_1_event_emitter.html">EventEmitter</a> emitter;</div>
 <div class="line"> </div>
 <div class="line">emitter.<a class="code hl_function" href="#a1bdfccffdac4a845cb9ac8a6668a5b03">connect</a>&lt;int, <span class="keywordtype">int</span>&gt;(<span class="stringliteral">&quot;myEvent&quot;</span>, [](<span class="keywordtype">int</span> a, <span class="keywordtype">int</span> b) {</div>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;a + b = &quot;</span> &lt;&lt; a + b &lt;&lt; std::endl;</div>
@@ -181,11 +198,10 @@ template&lt;typename... Args&gt; </div>
 <div class="line"> </div>
 <div class="line">emitter.<a class="code hl_function" href="#a093c865ac6f6af1f3735875c5f44fd77">fire</a>(<span class="stringliteral">&quot;myEvent&quot;</span>, 1, 2); <span class="comment">// Outputs &quot;a + b = 3&quot;</span></div>
 <div class="line"><span class="comment">// Note that the first usage will trigger an IDE error as it cannot instantiate the template!</span></div>
-<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html"><div class="ttname"><a href="class_g_u_i_lib_1_1_event_emitter.html">GUILib::EventEmitter</a></div><div class="ttdoc">Basic event emitter.</div><div class="ttdef"><b>Definition</b> event.h:82</div></div>
-<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a093c865ac6f6af1f3735875c5f44fd77"><div class="ttname"><a href="#a093c865ac6f6af1f3735875c5f44fd77">GUILib::EventEmitter::fire</a></div><div class="ttdeci">void fire(const std::string &amp;eventName, Args &amp;&amp;... args)</div><div class="ttdoc">Fires an event, invoking all registered listeners for the specified event name.</div><div class="ttdef"><b>Definition</b> event.h:200</div></div>
-<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a1bdfccffdac4a845cb9ac8a6668a5b03"><div class="ttname"><a href="#a1bdfccffdac4a845cb9ac8a6668a5b03">GUILib::EventEmitter::connect</a></div><div class="ttdeci">EventId connect(const std::string &amp;eventName, std::function&lt; void(Args...)&gt; callback)</div><div class="ttdoc">Register an event listener.</div><div class="ttdef"><b>Definition</b> event.h:117</div></div>
-</div><!-- fragment --> </dd></dl>
-
+<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html"><div class="ttname"><a href="class_g_u_i_lib_1_1_event_emitter.html">GUILib::EventEmitter</a></div><div class="ttdoc">Basic event emitter. This class allows you to register and deregister event listeners,...</div><div class="ttdef"><b>Definition</b> event.h:109</div></div>
+<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a093c865ac6f6af1f3735875c5f44fd77"><div class="ttname"><a href="#a093c865ac6f6af1f3735875c5f44fd77">GUILib::EventEmitter::fire</a></div><div class="ttdeci">void fire(const std::string &amp;eventName, Args &amp;&amp;... args)</div><div class="ttdoc">Fires an event, invoking all registered listeners for the specified event name.</div><div class="ttdef"><b>Definition</b> event.h:227</div></div>
+<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a1bdfccffdac4a845cb9ac8a6668a5b03"><div class="ttname"><a href="#a1bdfccffdac4a845cb9ac8a6668a5b03">GUILib::EventEmitter::connect</a></div><div class="ttdeci">EventId connect(const std::string &amp;eventName, std::function&lt; void(Args...)&gt; callback)</div><div class="ttdoc">Register an event listener.</div><div class="ttdef"><b>Definition</b> event.h:144</div></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a558a7b38ca28ce3f35e9431a19c44216" name="a558a7b38ca28ce3f35e9431a19c44216"></a>
@@ -225,7 +241,8 @@ template&lt;typename... Args&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An EventId that can be further used for deregistration. Fires a new event, which will then trigger all listeners registered with event name of eventName. <div class="fragment"><div class="line"><a class="code hl_class" href="class_g_u_i_lib_1_1_event_emitter.html">EventEmitter</a> emitter;</div>
+<dl class="section return"><dt>Returns</dt><dd>An EventId that can be further used for deregistration.</dd></dl>
+<p>Fires a new event, which will then trigger all listeners registered with event name of eventName. </p><div class="fragment"><div class="line"><a class="code hl_class" href="class_g_u_i_lib_1_1_event_emitter.html">EventEmitter</a> emitter;</div>
 <div class="line"><a class="code hl_struct" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a> objectPosition;</div>
 <div class="line"> </div>
 <div class="line">emitter.<a class="code hl_function" href="#a558a7b38ca28ce3f35e9431a19c44216">connectOnce</a>&lt;<a class="code hl_struct" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a>&gt;(<span class="stringliteral">&quot;myEvent&quot;</span>, [](<a class="code hl_struct" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a> pos) {</div>
@@ -236,17 +253,16 @@ template&lt;typename... Args&gt; </div>
 <div class="line"> </div>
 <div class="line">emitter.<a class="code hl_function" href="#a558a7b38ca28ce3f35e9431a19c44216">connectOnce</a>(<span class="stringliteral">&quot;myEvent&quot;</span>, std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a>)&gt;([](<a class="code hl_struct" href="struct_g_u_i_lib_1_1_u_i_unit.html">UIUnit</a> pos) {</div>
 <div class="line">    <span class="comment">// do something...</span></div>
-<div class="line">});</div>
+<div class="line">}));</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// supposing that we only do that once.</span></div>
 <div class="line"> </div>
 <div class="line">emitter.<a class="code hl_function" href="#a093c865ac6f6af1f3735875c5f44fd77">fire</a>(<span class="stringliteral">&quot;myEvent&quot;</span>, objectPosition); <span class="comment">// Outputs &quot;Object position: x, y&quot;</span></div>
 <div class="line">emitter.<a class="code hl_function" href="#a093c865ac6f6af1f3735875c5f44fd77">fire</a>(<span class="stringliteral">&quot;myEvent&quot;</span>, objectPosition); <span class="comment">// Nothing prints</span></div>
 <div class="line"><span class="comment">// Note that the first usage will trigger an IDE error as it cannot instantiate the template!</span></div>
-<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a558a7b38ca28ce3f35e9431a19c44216"><div class="ttname"><a href="#a558a7b38ca28ce3f35e9431a19c44216">GUILib::EventEmitter::connectOnce</a></div><div class="ttdeci">EventId connectOnce(const std::string &amp;eventName, std::function&lt; void(Args...)&gt; callback)</div><div class="ttdoc">Register an event listener that fires only once.</div><div class="ttdef"><b>Definition</b> event.h:159</div></div>
+<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a558a7b38ca28ce3f35e9431a19c44216"><div class="ttname"><a href="#a558a7b38ca28ce3f35e9431a19c44216">GUILib::EventEmitter::connectOnce</a></div><div class="ttdeci">EventId connectOnce(const std::string &amp;eventName, std::function&lt; void(Args...)&gt; callback)</div><div class="ttdoc">Register an event listener that fires only once.</div><div class="ttdef"><b>Definition</b> event.h:186</div></div>
 <div class="ttc" id="astruct_g_u_i_lib_1_1_u_i_unit_html"><div class="ttname"><a href="struct_g_u_i_lib_1_1_u_i_unit.html">GUILib::UIUnit</a></div><div class="ttdoc">A struct to represent the size of a GUI object.</div><div class="ttdef"><b>Definition</b> guiobject.h:16</div></div>
-</div><!-- fragment --> </dd></dl>
-
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="acae192fc5f60e3bfa9a799301e3e08b3" name="acae192fc5f60e3bfa9a799301e3e08b3"></a>
@@ -272,7 +288,12 @@ template&lt;typename... Args&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">eventName</td><td>The name of the event. </td></tr>
-    <tr><td class="paramname">listenerId</td><td>The ID recieved from registering the listener. <div class="fragment"><div class="line"><a class="code hl_class" href="class_g_u_i_lib_1_1_event_emitter.html">EventEmitter</a> emitter;</div>
+    <tr><td class="paramname">listenerId</td><td>The ID recieved from registering the listener.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This function effectively removes the listener associated with the given event name and ID.</p>
+<p>Example usage: </p><div class="fragment"><div class="line"><a class="code hl_class" href="class_g_u_i_lib_1_1_event_emitter.html">EventEmitter</a> emitter;</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_typedef" href="#a79a48e5c7e185c0f2db5f7ec1ad3f280">EventId</a> listenerId = emitter.<a class="code hl_function" href="#a1bdfccffdac4a845cb9ac8a6668a5b03">connect</a>(<span class="stringliteral">&quot;myEvent&quot;</span>, []() {</div>
 <div class="line">    <span class="comment">// do something</span></div>
@@ -283,13 +304,9 @@ template&lt;typename... Args&gt; </div>
 <div class="line">emitter.<a class="code hl_function" href="#acae192fc5f60e3bfa9a799301e3e08b3">disconnect</a>(<span class="stringliteral">&quot;myEvent&quot;</span>, listenerId);</div>
 <div class="line"> </div>
 <div class="line">emitter.<a class="code hl_function" href="#a093c865ac6f6af1f3735875c5f44fd77">fire</a>(<span class="stringliteral">&quot;myEvent&quot;</span>); <span class="comment">// No callbacks will be triggered</span></div>
-<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a79a48e5c7e185c0f2db5f7ec1ad3f280"><div class="ttname"><a href="#a79a48e5c7e185c0f2db5f7ec1ad3f280">GUILib::EventEmitter::EventId</a></div><div class="ttdeci">size_t EventId</div><div class="ttdef"><b>Definition</b> event.h:91</div></div>
+<div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_a79a48e5c7e185c0f2db5f7ec1ad3f280"><div class="ttname"><a href="#a79a48e5c7e185c0f2db5f7ec1ad3f280">GUILib::EventEmitter::EventId</a></div><div class="ttdeci">size_t EventId</div><div class="ttdef"><b>Definition</b> event.h:118</div></div>
 <div class="ttc" id="aclass_g_u_i_lib_1_1_event_emitter_html_acae192fc5f60e3bfa9a799301e3e08b3"><div class="ttname"><a href="#acae192fc5f60e3bfa9a799301e3e08b3">GUILib::EventEmitter::disconnect</a></div><div class="ttdeci">void disconnect(const std::string &amp;eventName, EventId listenerId)</div><div class="ttdoc">Deregister an event listener.</div></div>
-</div><!-- fragment --> </td></tr>
-  </table>
-  </dd>
-</dl>
-
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a093c865ac6f6af1f3735875c5f44fd77" name="a093c865ac6f6af1f3735875c5f44fd77"></a>

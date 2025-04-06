@@ -4,6 +4,7 @@
 PROJECT_NAME           = "GUILib"
 PROJECT_BRIEF          = "Documentation for symbols in the library"
 OUTPUT_DIRECTORY       = ./docs
+MARKDOWN_SUPPORT       = YES
 
 # Input settings
 INPUT                  = ./include/ ./docs/docs_mainpage.dox

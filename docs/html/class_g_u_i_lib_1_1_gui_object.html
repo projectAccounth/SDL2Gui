@@ -198,9 +198,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac3fb8c1c901d7d8819ba805ccda24301" id="r_ac3fb8c1c901d7d8819ba805ccda24301"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3fb8c1c901d7d8819ba805ccda24301">operator==</a> (const <a class="el" href="class_g_u_i_lib_1_1_gui_object.html">GuiObject</a> &amp;other) const</td></tr>
 <tr class="memdesc:ac3fb8c1c901d7d8819ba805ccda24301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equality check.  <br /></td></tr>
 <tr class="separator:ac3fb8c1c901d7d8819ba805ccda24301"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e833cea07cd7c646cefcbd9d9e48294" id="r_a1e833cea07cd7c646cefcbd9d9e48294"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e833cea07cd7c646cefcbd9d9e48294">getClassName</a> () const</td></tr>
-<tr class="memdesc:a1e833cea07cd7c646cefcbd9d9e48294"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the class name of the object.  <br /></td></tr>
-<tr class="separator:a1e833cea07cd7c646cefcbd9d9e48294"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47face35e4717b7271cdede2d9434f65" id="r_a47face35e4717b7271cdede2d9434f65"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47face35e4717b7271cdede2d9434f65">getClassName</a> () const</td></tr>
+<tr class="memdesc:a47face35e4717b7271cdede2d9434f65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the class name of the object.  <br /></td></tr>
+<tr class="separator:a47face35e4717b7271cdede2d9434f65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8944bba51bbcfe2888fdac0d928586b" id="r_aa8944bba51bbcfe2888fdac0d928586b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8944bba51bbcfe2888fdac0d928586b">~GuiObject</a> ()</td></tr>
 <tr class="memdesc:aa8944bba51bbcfe2888fdac0d928586b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:aa8944bba51bbcfe2888fdac0d928586b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -398,23 +398,33 @@ Static Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a1e833cea07cd7c646cefcbd9d9e48294" name="a1e833cea07cd7c646cefcbd9d9e48294"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e833cea07cd7c646cefcbd9d9e48294">&#9670;&#160;</a></span>getClassName()</h2>
+<a id="a47face35e4717b7271cdede2d9434f65" name="a47face35e4717b7271cdede2d9434f65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47face35e4717b7271cdede2d9434f65">&#9670;&#160;</a></span>getClassName()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string GUILib::GuiObject::getClassName </td>
+          <td class="memname">virtual std::string GUILib::GuiObject::getClassName </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Returns the class name of the object. </p>
 <dl class="section return"><dt>Returns</dt><dd>The class name. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="class_g_u_i_lib_1_1_button.html#adaaae3e881f86a42016b4898246a572d">GUILib::Button</a>, <a class="el" href="class_g_u_i_lib_1_1_text_button.html#a0bd69c9dd9df86e4a83685a59fbf73e3">GUILib::TextButton</a>, <a class="el" href="class_g_u_i_lib_1_1_image_button.html#a5789d6679390499156b6dabdac94bc27">GUILib::ImageButton</a>, <a class="el" href="class_g_u_i_lib_1_1_check_box.html#a1a126355ec0621c25572d2c67879f084">GUILib::CheckBox</a>, <a class="el" href="class_g_u_i_lib_1_1_frame.html#a112c88131d11f019b52664d11fc6a5e3">GUILib::Frame</a>, <a class="el" href="class_g_u_i_lib_1_1_scrolling_frame.html#ada38a0c3c6079a4c3eb84cd0dd6505ba">GUILib::ScrollingFrame</a>, <a class="el" href="class_g_u_i_lib_1_1_image.html#aee4afa09d5f0b079144c91c26695c438">GUILib::Image</a>, <a class="el" href="class_g_u_i_lib_1_1_slider.html#a1a5a44ee630bddbacae4cbbef22fba6a">GUILib::Slider</a>, <a class="el" href="class_g_u_i_lib_1_1_text_box.html#aa5a554f6ddb0989ac590f1b8c9302f1c">GUILib::TextBox</a>, and <a class="el" href="class_g_u_i_lib_1_1_editable_text_box.html#a4d7ee7baceb4aeeaa435445ad7a785b6">GUILib::EditableTextBox</a>.</p>
 
 </div>
 </div>
@@ -1011,7 +1021,7 @@ template&lt;typename... Args&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">eventName</td><td>The name of the event. </td></tr>
-    <tr><td class="paramname">args</td><td>The arguments that will be fired with the event. See <a class="el" href="class_g_u_i_lib_1_1_event_emitter.html" title="Basic event emitter.">EventEmitter</a> for more details. </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments that will be fired with the event. See <a class="el" href="class_g_u_i_lib_1_1_event_emitter.html" title="Basic event emitter. This class allows you to register and deregister event listeners,...">EventEmitter</a> for more details. </td></tr>
   </table>
   </dd>
 </dl>
