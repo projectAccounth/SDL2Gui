@@ -26,12 +26,15 @@
 #include <optional>
 #include <any>
 #include <cmath>
+#include <algorithm>
+#include <chrono>
+#include <sstream>
 
 namespace GUILib {
 
     enum class HorizontalTextAlign {
-        LEFT,
         CENTER,
+        LEFT,
         RIGHT
     };
 

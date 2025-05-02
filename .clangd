@@ -1,0 +1,7 @@
+CompileFlags:
+  Add: [
+    -ID:/dependencies/SDL2/include,
+    -ID:/My Documents/Projects/Projects/GUILib/include,
+    -std=c++20,
+    -xc++
+  ]

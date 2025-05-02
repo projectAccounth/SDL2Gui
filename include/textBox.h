@@ -15,21 +15,21 @@ namespace GUILib {
     protected:
         /// @brief The reference to the font.
         TTF_Font* textFont;
-        /// @brief The texture of the text.
-        SDL_Texture* textTexture;
         /// @brief The alignment of the text.
         HorizontalTextAlign xAlign;
         /// @brief The alignment of the text.
         VerticalTextAlign yAlign;
 
-        /// @brief The splitted lines for rendering.
+        std::pair<int, int> textRenderLocation;
+
+        /// @brief The split lines for rendering.
         std::vector<std::string> lines;
 
         /// @brief The height of the lines based on the size of it.
-        int lineHeight() const;
+        [[nodiscard]] int lineHeight() const;
 
         /// @brief Splits the text into lines.
-        std::vector<std::string> splitTextIntoLines(std::string& text, int maxWidth);
+        [[nodiscard]] std::vector<std::string> splitTextIntoLines(const std::string& str, const int& maxWidth) const;
 
         /// @brief Renders the text box.
         std::string text;
@@ -38,22 +38,33 @@ namespace GUILib {
         /// @brief The color of the text.
         SDL_Color textColor;
 
+        /// @brief A struct that stores information about a rendered line in the text box.
+        struct RenderedLine {
+            std::string text; /// @brief The text on that line.
+            SDL_Point position; /// @brief Pixel position on screen (x, y)
+        };
+
+        std::vector<RenderedLine> renderedLines;
+
         /// @brief The class name.
 		static inline const std::string CLASS_NAME = "TextBox";
-    public:
 
-        TextBox(
-            GuiObject* parent,
-            SDL_Renderer*& renderer,
-            UIUnit size = UIUnit(),
-            UIUnit position = UIUnit(),
-            SDL_Color boxColor = SDL_Color(),
+		TextBox(
+            std::shared_ptr<GuiObject> parent,
+            SDL_Renderer* renderer,
+            const UIUnit& size = UIUnit(),
+            const UIUnit& position = UIUnit(),
+            const SDL_Color& boxColor = SDL_Color(),
             std::string text = "",
-            SDL_Color textColor = { 0, 0, 0, 255 },
+            const SDL_Color& textColor = { 0, 0, 0, 255 }, // rgba
             TTF_Font* textFont = nullptr,
-            HorizontalTextAlign alignX = HorizontalTextAlign::CENTER,
-            VerticalTextAlign alignY = VerticalTextAlign::CENTER
+            const HorizontalTextAlign& alignX = HorizontalTextAlign::CENTER,
+            const VerticalTextAlign& alignY = VerticalTextAlign::CENTER
         );
+    public:
+        TextBox();
+
+        class Builder : public GuiObject::Builder<Builder, TextBox> {};
 
         /// @brief Renders the text box.
         void render() override;
@@ -73,15 +84,15 @@ namespace GUILib {
 
         /// @brief Returns the background color.
         /// @return The background color.
-        SDL_Color getBoxColor() const;
+        [[nodiscard]] SDL_Color getBoxColor() const;
 
         /// @brief Returns the text color.
         /// @return The text color.
-        SDL_Color getTextColor() const;
+        [[nodiscard]] SDL_Color getTextColor() const;
 
         /// @brief Returns the text of the text box.
         /// @return The text of the text box.
-        std::string getText() const;
+        [[nodiscard]] std::string getText() const;
 
         /// @brief Changes the background color.
         void setBoxColor(const SDL_Color& color);
@@ -99,12 +110,12 @@ namespace GUILib {
 		/// @return The class name.
 		inline std::string getClassName() const override { return "TextBox"; };
 
-        ~TextBox();
+        ~TextBox() override;
     };
 
     /// @brief A basic text box, but editable.
-    class EditableTextBox : public TextBox {
-    private:
+    class EditableTextBox final : public TextBox {
+    protected:
         /// @brief The cursor position.
         size_t cursorPosition;
 
@@ -126,11 +137,20 @@ namespace GUILib {
         /// @brief The editable state of the text box.
         bool editable;
 
+
+        /// Blinking timer and visibility
+        bool cursorVisible = true;
+        std::chrono::time_point<std::chrono::steady_clock> lastBlinkTime;
+
+        // For future selection support
+        size_t selectionStart = std::string::npos;
+        size_t selectionEnd = std::string::npos;
+
         /// @brief The class name.
-		static inline const std::string CLASS_NAME = "EditableTextBox";
-    public:
+    	static inline const std::string CLASS_NAME = "EditableTextBox";
+
         EditableTextBox(
-            GuiObject* parent,
+            std::shared_ptr<GuiObject> parent,
             SDL_Renderer*& renderer,
             UIUnit size = UIUnit(),
             UIUnit position = UIUnit(),
@@ -141,10 +161,12 @@ namespace GUILib {
             VerticalTextAlign alignY = VerticalTextAlign::CENTER,
             bool editable = false
         );
+    public:
+        EditableTextBox();
 
         /// @brief Returns the editable state of the text box.
         /// @return True if the text box is editable, false otherwise.
-        bool isEditable() const;
+        [[nodiscard]] bool isEditable() const;
 
         /// @brief Sets the editable state of the text box.
         /// @param val The new editable state.
@@ -162,9 +184,11 @@ namespace GUILib {
 
         /// @brief Returns the class name of the object.
 		/// @return The class name.
-		std::string getClassName() const override { return "EditableTextBox"; };
+		[[nodiscard]] std::string getClassName() const override { return "EditableTextBox"; }
 
-        ~EditableTextBox();
+        ~EditableTextBox() override;
+
+        class Builder final : public GuiObject::Builder<Builder, EditableTextBox> {};
     };
 
 }

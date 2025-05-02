@@ -1,12 +1,14 @@
 #include "textBox.h"
 
-void GUILib::EditableTextBox::handleEvent(const SDL_Event& e) {
-    GuiObject::handleEvent(e); // Calling superclass function
+void GUILib::EditableTextBox::handleEvent(const SDL_Event& e)
+{
+    TextBox::handleEvent(e); // Calling superclass function
     if (!editable) return;
+    cursorPosition = std::clamp(cursorPosition, size_t(0), text.size());
     if (e.type == SDL_KEYDOWN) {
-        auto it = keyActions.find(e.key.keysym.sym);
-        if (it != keyActions.end()) {
+        if (auto it = keyActions.find(e.key.keysym.sym); it != keyActions.end()) {
             it->second(); // Call the corresponding action
+            trigger("onSpecialKeyInput");
         }
     }
     else if (e.type == SDL_TEXTINPUT) {
@@ -15,43 +17,51 @@ void GUILib::EditableTextBox::handleEvent(const SDL_Event& e) {
     }
 }
 
-void GUILib::EditableTextBox::handleBackspace() {
+void GUILib::EditableTextBox::handleBackspace()
+{
     if (cursorPosition > 0) {
-        text.erase(cursorPosition - 1, 1);
-        cursorPosition--;
+	    text.erase(cursorPosition - 1, 1);
+	    cursorPosition--;
     }
 }
 
-void GUILib::EditableTextBox::handleDelete() {
+void GUILib::EditableTextBox::handleDelete()
+{
     if (cursorPosition < text.size()) {
         text.erase(cursorPosition, 1);
     }
 }
 
-void GUILib::EditableTextBox::moveCursorLeft() {
+void GUILib::EditableTextBox::moveCursorLeft()
+{
     if (cursorPosition > 0) {
         cursorPosition--;
+        std::cout << "Moved cursor left;\n";
     }
 }
 
-void GUILib::EditableTextBox::moveCursorRight() {
+void GUILib::EditableTextBox::moveCursorRight()
+{
     if (cursorPosition < text.size()) {
         cursorPosition++;
+        std::cout << "Moved cursor right;\n";
     }
 }
 
-void GUILib::EditableTextBox::insertCharacter(char c) {
+void GUILib::EditableTextBox::insertCharacter(char c)
+{
     text.insert(cursorPosition, 1, c);
     cursorPosition++;
 }
 
-void GUILib::EditableTextBox::reset() {
+void GUILib::EditableTextBox::reset()
+{
     text.clear();
     cursorPosition = 0;
 }
 
 GUILib::EditableTextBox::EditableTextBox(
-    GuiObject* parent,
+    std::shared_ptr<GuiObject> parent,
     SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
@@ -72,49 +82,117 @@ GUILib::EditableTextBox::EditableTextBox(
         alignX, alignY
     ),
     editable(editable),
-    cursorPosition(0) {
+    cursorPosition(0)
+{
     // Define actions for specific keys
-    keyActions[SDLK_BACKSPACE] = [this]() { handleBackspace(); };
-    keyActions[SDLK_LEFT] = [this]() { moveCursorLeft(); };
-    keyActions[SDLK_RIGHT] = [this]() { moveCursorRight(); };
-    keyActions[SDLK_DELETE] = [this]() { handleDelete(); };
-    keyActions[SDLK_RETURN] = [this]() { insertCharacter('\n'); };
+    keyActions[SDLK_BACKSPACE] = [this]()
+    {
+	    handleBackspace();
+    };
+    keyActions[SDLK_LEFT] = [this]()
+    {
+	    moveCursorLeft();
+    };
+    keyActions[SDLK_RIGHT] = [this]()
+    {
+	    moveCursorRight();
+    };
+    keyActions[SDLK_DELETE] = [this]()
+    {
+	    handleDelete();
+    };
+    keyActions[SDLK_RETURN] = [this]()
+    {
+	    insertCharacter('\n');
+    };
 }
 
-GUILib::EditableTextBox::~EditableTextBox() {
-    if (textTexture)
-        SDL_DestroyTexture(textTexture);
+GUILib::EditableTextBox::EditableTextBox():
+	editable(false), cursorPosition(0)
+{
+    keyActions[SDLK_BACKSPACE] = [this]()
+    {
+    	handleBackspace();
+    };
+    keyActions[SDLK_LEFT] = [this]()
+    {
+    	moveCursorLeft();
+    };
+    keyActions[SDLK_RIGHT] = [this]()
+    {
+    	moveCursorRight();
+    };
+    keyActions[SDLK_DELETE] = [this]()
+    {
+    	handleDelete();
+    };
+    keyActions[SDLK_RETURN] = [this]()
+    {
+    	insertCharacter('\n');
+    };
 }
 
-bool GUILib::EditableTextBox::isEditable() const {
+
+GUILib::EditableTextBox::~EditableTextBox() = default;
+
+bool GUILib::EditableTextBox::isEditable() const
+{
     return editable;
 }
 
-void GUILib::EditableTextBox::setEditable(bool val) {
+void GUILib::EditableTextBox::setEditable(bool val)
+{
     editable = val;
     trigger("onEditableChange");
 }
 
-void GUILib::EditableTextBox::render() {
-    TextBox::render(); // Call superclass render function
-    /*
+void GUILib::EditableTextBox::render()
+{
+    TextBox::render();
     if (editable) {
-        // Render cursor
-        SDL_Rect cursorRect = { objRect.x, objRect.y, 2, objRect.h };
-        if (text.size() > 0) {
-            TTF_SizeText(textFont, text.substr(0, cursorPosition).c_str(), &cursorRect.w, nullptr);
+        // Cursor blinking
+        auto now = std::chrono::steady_clock::now();
+        if (now - lastBlinkTime > std::chrono::milliseconds(500)) {
+            cursorVisible = !cursorVisible;
+            lastBlinkTime = now;
         }
-        SDL_SetRenderDrawColor(ref, textColor.r, textColor.g, textColor.b, textColor.a);
-        SDL_RenderFillRect(ref, &cursorRect);
+
+        if (cursorVisible && textFont) {
+            const auto& rendered = renderedLines;
+
+            size_t charCounter = 0;
+            for (const auto& line : rendered) {
+                const size_t lineLen = line.text.size();
+
+                if (cursorPosition >= charCounter && cursorPosition <= charCounter + lineLen) {
+                    const size_t localIndex = cursorPosition - charCounter;
+                    const std::string beforeCursor = line.text.substr(0, localIndex);
+
+                    int cursorOffsetX = 0;
+                    TTF_SizeText(textFont, beforeCursor.c_str(), &cursorOffsetX, nullptr);
+
+                    int cursorX = line.position.x + cursorOffsetX;
+                    int cursorY = line.position.y;
+                    int height = TTF_FontHeight(textFont);
+
+                    SDL_SetRenderDrawColor(ref, 0, 0, 0, 255); // Black
+                    SDL_RenderDrawLine(ref, cursorX, cursorY, cursorX, cursorY + height);
+
+                    break;
+                }
+
+                charCounter += lineLen;
+            }
+        }
     }
-    */
 }
 
 void GUILib::TextBox::adjustTextAlignment(
     const HorizontalTextAlign& alignX,
     const VerticalTextAlign& alignY
-) {
+)
+{
     xAlign = alignX;
     yAlign = alignY;
-    render();
+    this->render();
 }

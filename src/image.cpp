@@ -1,28 +1,31 @@
 #include "image.h"
 
 GUILib::Image::Image(
-	GuiObject* parent,
-	SDL_Renderer*& renderer,
+	std::shared_ptr<GuiObject> parent,
+	SDL_Renderer* renderer,
 	UIUnit size,
 	UIUnit position,
 	std::string filePath
 ) :
 	GuiObject(parent, renderer, size, position),
-	imageTexture(nullptr),
+	imageTexture(),
 	filePath(filePath),
 	prevFilePath(filePath)
 {
 	initialize(renderer);
 	className = "Image";
 }
+
+GUILib::Image::Image(): imageTexture() { className = "Image"; };
 	
-void GUILib::Image::initialize(SDL_Renderer*& renderer) {
+void GUILib::Image::initialize(SDL_Renderer*& renderer) 
+{
 	if (!renderer)
 		return;
 
 	updateRenderer(renderer);
 
-	auto fPath = filePath.c_str();
+	const auto fPath = filePath.c_str();
 	SDL_Surface* imageSurface = IMG_Load(fPath);
 	if (imageSurface == nullptr) {
 		std::cout << "A problem occurred when trying to create image. Error: " << SDL_GetError() << '\n';
@@ -33,8 +36,7 @@ void GUILib::Image::initialize(SDL_Renderer*& renderer) {
 }
 
 void GUILib::Image::render() {
-	if (!isVisible() || (parent && !parent->isVisible()) || !imageTexture || !ref) return;
-	GuiObject::render();
+	if (!shouldRender()) return;
 
 	update(ref); // special handling
 
@@ -43,6 +45,8 @@ void GUILib::Image::render() {
 	SDL_Point rotPivot = getPivotOffsetPoint();
 
     SDL_RenderCopyEx(ref, imageTexture, NULL, &objRect, degreeRotation, &rotPivot, flip);
+
+	GuiObject::render();
 }
 
 void GUILib::Image::updatePath(const std::string& str) {
@@ -64,22 +68,6 @@ std::string GUILib::Image::previousFilePath() const {
 GUILib::Image::~Image() {
 	if (imageTexture)
 		SDL_DestroyTexture(imageTexture);
-}
-
-void GUILib::ImageManager::add(const Image& img) {
-	images.push_back(img);
-}
-
-void GUILib::ImageManager::initializeAll(SDL_Renderer*& renderer) {
-	for (auto& img : images) {
-		img.initialize(renderer);
-	}
-}
-
-void GUILib::ImageManager::renderAll() {
-	for (auto& img : images) {
-		img.render();
-	}
 }
 
 static SDL_Texture* copyTexture(SDL_Renderer* renderer, SDL_Texture* source) {

@@ -11,7 +11,7 @@ namespace GUILib {
 
 	/// @brief Texture wrapper, but with more features.
 	class Image : public GuiObject {
-	private:
+	protected:
 		/// @brief The texture of the image.
 		SDL_Texture* imageTexture;
 		/// @brief The file path of the image.
@@ -20,15 +20,16 @@ namespace GUILib {
 		std::string prevFilePath;
 		/// @brief The class name.
 		static inline const std::string CLASS_NAME = "Image";
-	public:
 
+		Image();
 		Image(
-			GuiObject* parent,
-			SDL_Renderer*& renderer,
+			std::shared_ptr<GuiObject> parent,
+			SDL_Renderer* renderer,
 			UIUnit size = UIUnit(),
 			UIUnit position = UIUnit(),
 			std::string filePath = ""
 		);
+	public:
 
 		/// @brief Initializes the image.
 		/// @param renderer The renderer to be used.
@@ -57,29 +58,8 @@ namespace GUILib {
 		/// @return The class name.
 		inline std::string getClassName() const override { return "Image"; };
 
-		~Image();
+		~Image() override;
 	};
-
-	/// @brief A fancy `std::vector<Image>`. Subject to removal.
-	class ImageManager {
-	public:
-		ImageManager() = default;
-		~ImageManager() = default;
-
-		/// @brief A vector of images.
-		std::vector<Image> images;
-
-		/// @brief Adds an image to the manager.
-		/// @param img The image to be added.
-		void add(const Image& img);
-
-		/// @brief Initializes all images.
-		void initializeAll(SDL_Renderer*& renderer);
-
-		/// @brief Renders all images.
-		void renderAll();
-	};
-
 }
 
 

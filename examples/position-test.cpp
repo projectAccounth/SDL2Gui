@@ -6,11 +6,11 @@ using namespace GUILib;
 SDL_Window* mainWindow = nullptr;
 SDL_Renderer* mainRenderer = nullptr;
 
-bool isRunning = true;
+static bool isRunning = true;
 
-GuiInstance manager;
+static GuiInstance manager;
 
-std::vector<Image> imgs;
+static std::vector<Image> imgs;
 
 int main(int argc, char* argv[]) {
 
@@ -18,7 +18,9 @@ int main(int argc, char* argv[]) {
 	TTF_Init();
 
 	mainWindow = SDL_CreateWindow("Program", 80, 80, 640, 480, 0);
-	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+	mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
+
+	if (!mainRenderer) return -1;
 
 	SDL_SetRenderDrawBlendMode(mainRenderer, SDL_BLENDMODE_BLEND);
 
@@ -32,14 +34,14 @@ int main(int argc, char* argv[]) {
 
 	SceneManager sceneManager(mainRenderer);
 
-	auto frame1 = manager.create<Frame>(mainRenderer);
-	auto box1 = manager.create<EditableTextBox>(mainRenderer);
-	auto ap = manager.create<Image>(mainRenderer);
-	auto frame2 = manager.create<ScrollingFrame>(mainRenderer);
-	auto frame3 = manager.create<ScrollingFrame>(mainRenderer);
-	auto ag = manager.create<Image>(mainRenderer);
+	std::shared_ptr frame1 = manager.create<Frame>(mainRenderer);
+	std::shared_ptr box1 = manager.create<EditableTextBox>(mainRenderer);
+	std::shared_ptr ap = manager.create<Image>(mainRenderer);
+	std::shared_ptr frame2 = manager.create<ScrollingFrame>(mainRenderer);
+	std::shared_ptr frame3 = manager.create<ScrollingFrame>(mainRenderer);
+	std::shared_ptr ag = manager.create<Image>(mainRenderer);
 
-	box1->on("onKeyInput", std::function<void(char)>([](char c) {
+	box1->on("onKeyInput", std::function([](char c) {
 		std::cout << "Key " << c << " pressed!\n";
 	}));
 
@@ -58,42 +60,11 @@ int main(int argc, char* argv[]) {
 	Image ac = *ap;
 	Image ae = ac;
 
-	Slider slider0 = Slider(nullptr, mainRenderer);
-	Slider slider1 = Slider(nullptr, mainRenderer);
-
-	slider0.resize({ 100, 30, false });
-	slider0.move({ .5, 0, true });
-	slider0.setFrameColor({ 188, 188, 188, 255 });
-
-	slider1.resize({ 30, 100, false });
-	slider1.move({ .7, .2, true });
-	slider1.setFrameColor({ 188, 188, 188, 255 });
-	slider1.setDirection(DragDirection::VERTICAL);
-
-	Image af = Image(
-		nullptr,
-		mainRenderer,
-		{ 0, 0, true },
-		{ 200, 200, false },
-		"./res/imgs/giri.webp"
-	);
-
-	af.initialize(mainRenderer);
-	af.setDraggable(true);
-	af.setVisible(false);
-
 	ag->updatePath("./res/imgs/giri.webp");
 	ag->move({ .1, .1, true });
 	ag->resize({ 50, 50, false });
 	ag->initialize(mainRenderer);
 
-	imgs.push_back(Image(
-		nullptr,
-		mainRenderer,
-		{ 0, 0, true },
-		{ 200, 200, false },
-		"./res/imgs/giri.webp"
-	));
 	
 	frame1->resize({ 0.25, 0.25, true });
 	frame1->move({ 0.75, 0.75, true });
@@ -102,7 +73,7 @@ int main(int argc, char* argv[]) {
 
 	box1->resize({ 0.5, 0.5, true });
 	box1->move({ 0.25, 0.25, true });
-	box1->setParent(frame1.get());
+	box1->setParent(frame1);
 	box1->setBoxColor({ 122, 122, 122, 255 });
 	box1->setTextColor({ 0, 0, 0, 255 });
 	box1->changeFont(mainFont9);
@@ -121,7 +92,7 @@ int main(int argc, char* argv[]) {
 		nullptr,
 		mainRenderer,
 		UIUnit{ 25, 25, false },
-		UIUnit({ .2, .1, true }),
+		UIUnit({ 0, 0, true }),
 		mainFont,
 		SDL_Color{ 199, 199, 199, 255 },
 		SDL_Color{ 0, 0, 0, 255 },
@@ -135,18 +106,8 @@ int main(int argc, char* argv[]) {
 		img.initialize(mainRenderer);
 	}
 
-    frame2->addChild(ag.get());
-    frame2->addChild(ap.get());
-
-    sceneManager.addBulk(
-        &checkBox1,
-        &checkBox2,
-        frame1.get(),
-		frame2.get(),
-        box1.get(),
-        &slider0,
-        &slider1
-	);
+    frame2->addChild(ag);
+    frame2->addChild(ap);
 
     while (isRunning) {
         SDL_Event e;
@@ -157,19 +118,30 @@ int main(int argc, char* argv[]) {
                     isRunning = false;
                     break;
             }
-            sceneManager.handleEvent(e);
+			box1->handleEvent(e);
+			frame1->handleEvent(e);
+			frame2->handleEvent(e);
+			frame3->handleEvent(e);
+			checkBox1.handleEvent(e);
+			checkBox2.handleEvent(e);
             // af.handleEvent(e);
         }
         frame1->setDraggable(checkBox1.isChecked());
         box1->setEditable(checkBox2.isChecked());
-        // ap->setDraggable(true);
         frame1->setVisible(true);
         SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
         SDL_RenderClear(mainRenderer);
 
-        sceneManager.render();
-		
+		box1->render();
+		checkBox1.render();
+		checkBox2.render();
+		frame1->render();
+		frame2->render();
+		frame3->render();
+
         SDL_RenderPresent(mainRenderer);
+
+		SDL_Delay(16);
 	}
 
 	SDL_DestroyRenderer(mainRenderer);

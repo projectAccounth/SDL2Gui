@@ -35,9 +35,7 @@ void GUILib::ImageButton::initialize(SDL_Renderer*& renderer) {
 }
 
 void GUILib::ImageButton::render() {
-    if (!isVisible() || (parent && !parent->isVisible())) {
-        return;
-    }
+    if (!shouldRender()) return;
 
     SDL_Texture* finalTexture = hovered ? hoverTexture : buttonTexture;
 
@@ -63,7 +61,7 @@ int GUILib::ImageButton::getId() const {
 }
 
 GUILib::ImageButton::ImageButton(
-    GuiObject* parent,
+    std::shared_ptr<GuiObject> parent,
     SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
@@ -82,7 +80,6 @@ GUILib::ImageButton::ImageButton(
 }
 
 GUILib::ImageButton::ImageButton():
-    Button(),
     buttonTexture(nullptr),
     hoverTexture(nullptr),
     defaultImgPath(""),

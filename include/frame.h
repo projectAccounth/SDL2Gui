@@ -7,24 +7,32 @@ namespace GUILib {
     /// @brief A basic frame.
     /// @brief Can be used as a base for all frames.
     class Frame : public GuiObject {
-    private:
+    protected:
 
         /// @brief The color of the frame.
         SDL_Color frameColor;
 
         /// @brief The class name.
         static inline const std::string CLASS_NAME = "Frame";
-
-    public:
-        Frame();
+        
         Frame(
-            GuiObject* parent,
-            SDL_Renderer*& renderer,
-            UIUnit size = UIUnit(),
-            UIUnit position = UIUnit(),
-            SDL_Color frameColor = SDL_Color(),
-            bool isVisible = true,
-            bool isActive = true);
+            std::shared_ptr<GuiObject> parent,
+            SDL_Renderer* renderer,
+            const UIUnit& size = UIUnit(),
+            const UIUnit& position = UIUnit(),
+            const SDL_Color& frameColor = SDL_Color(),
+            const bool& isVisible = true,
+            const bool& isActive = true);
+    public:
+		Frame();
+
+        class Builder : public GuiObject::Builder<Builder, Frame> {};
+        
+        Frame(const Frame& other) noexcept;
+        Frame(Frame&& other) noexcept;
+
+        Frame& operator=(Frame&&) noexcept;
+        Frame& operator=(const Frame&) noexcept;
 
         /// @brief Changes the frame color.
         /// @param color The color to be applied.
@@ -32,21 +40,21 @@ namespace GUILib {
 
         /// @brief Gets the current frame color.
         /// @return The current color.
-        SDL_Color getFrameColor() const;
+        [[nodiscard]] SDL_Color getFrameColor() const;
 
         /// @brief Renders the frame.
         void render() override;
 
         /// @brief Returns the class name of the object.
         /// @return The class name.
-        inline std::string getClassName() const override { return "Frame"; };
+        inline std::string getClassName() const override { return "Frame"; }
 
-        ~Frame() = default; // Nothing to clean up
+        ~Frame() override = default; // Nothing to clean up
     };
 
     /// @brief A scrollable frame.
     /// Shouldn't be used for now, as the implementation is still buggy.
-    class ScrollingFrame : public Frame {
+    class ScrollingFrame final : public Frame {
     private:
 
         /// @brief Full size of the scrollable content.
@@ -87,11 +95,12 @@ namespace GUILib {
         void renderScrollbars(const SDL_Point& absContentSize, const SDL_Rect& rect);
 
         /// @brief The class name.
-        static inline const std::string CLASS_NAME = "ScrollingFrame";
-    public:
+    	static inline const std::string CLASS_NAME = "ScrollingFrame";
+
+        
         ScrollingFrame(
-            GuiObject* parent,
-            SDL_Renderer*& renderer,
+            std::shared_ptr<GuiObject> parent,
+            SDL_Renderer* renderer,
             UIUnit size = UIUnit(),
             UIUnit position = UIUnit(),
             UIUnit contentSize = UIUnit(),
@@ -99,6 +108,10 @@ namespace GUILib {
             bool isVisible = true,
             bool isActive = true
         );
+    public:
+		ScrollingFrame();
+
+        class Builder : public GuiObject::Builder<Builder, ScrollingFrame> {};
 
         /// @brief Gets the color of the scrollbar.
         SDL_Color getScrollbarColor() const;
@@ -139,6 +152,11 @@ namespace GUILib {
 
         /// @brief Returns the class name of the object.
         /// @return The class name.
-        inline std::string getClassName() const override { return "ScrollingFrame"; };
+        inline std::string getClassName() const override { return "ScrollingFrame"; }
+
+        ScrollingFrame& operator=(const ScrollingFrame&);
+        ScrollingFrame(const ScrollingFrame& other);
+        ScrollingFrame(ScrollingFrame&&) noexcept;
+        ScrollingFrame& operator=(ScrollingFrame&&) noexcept;
     };
 }

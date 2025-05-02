@@ -5,7 +5,6 @@
 
 #include "types.h"
 #include "guiobject.h"
-#include "textBox.h"
 
 namespace GUILib {
 
@@ -19,7 +18,7 @@ namespace GUILib {
                               hoverAction;
 
         /// @brief Checks if the button is clicked.
-        bool isClicked(int x, int y);
+        [[nodiscard]] bool isClicked(int x, int y) const;
         /// @brief Checks if the button is hovered.
         void checkHover(int mouseX, int mouseY);
 
@@ -27,25 +26,22 @@ namespace GUILib {
         bool hovered;
         /// @brief The class name.
 		static inline const std::string CLASS_NAME = "Button";
-    public:
-        Button();
+		
         Button(
-            GuiObject* parent,
-            SDL_Renderer*& renderer,
+            std::shared_ptr<GuiObject> parent,
+            SDL_Renderer* renderer,
             UIUnit size = UIUnit(),
             UIUnit position = UIUnit()
         );
+    public:
+        Button();
 
         /// @deprecated Migrate to the event system.
         /// @brief Setting the function responsible for clicking.
-        inline void setAction(const std::function<void()>& actionFunction) {
-            buttonAction = actionFunction;
-        }
+        [[deprecated]] void setAction(const std::function<void()>& actionFunction);
         /// @deprecated Migrate to the event system.
         /// @brief Setting the function responsible for hovering.
-        inline void setHoverAction(const std::function<void()>& actionFunction) {
-            buttonAction = actionFunction;
-        }
+        [[deprecated]] void setHoverAction(const std::function<void()>& actionFunction);
 
         /// @brief Handles all event for the button.
         /// @param e The event to be handled.
@@ -53,13 +49,24 @@ namespace GUILib {
 
         /// @brief Checks if the button is hovered.
         /// @return The value.
-        inline bool isHovered() const { return hovered; }
+        [[nodiscard]] bool isHovered() const;
+
+        template <typename T, typename V>
+        class Builder : public GuiObject::Builder<T, V>
+        {
+        };
 
         /// @brief Returns the class name of the object.
 		/// @return The class name.
-        inline std::string getClassName() const override { return "Button"; };
+        inline std::string getClassName() const override { return "Button"; }
 
-        virtual ~Button() = default;
+        Button& operator=(const Button& other);
+        Button& operator=(Button&& other) noexcept;
+
+        Button(const Button&) = default;
+        Button(Button&&) noexcept = default;
+
+        ~Button() override = default;
     };
 
     /// @brief A basic text button for anything.
@@ -89,10 +96,10 @@ namespace GUILib {
 
         /// @brief The class name.
 		static inline const std::string CLASS_NAME = "TextButton";
-    public:
-        TextButton();
+
+        
         TextButton(
-            GuiObject* parent,
+            std::shared_ptr<GuiObject> parent,
             SDL_Renderer*& renderer,
             UIUnit size = UIUnit(),
             UIUnit position = UIUnit(),
@@ -104,8 +111,13 @@ namespace GUILib {
             HorizontalTextAlign alignX = HorizontalTextAlign::CENTER,
             VerticalTextAlign alignY = VerticalTextAlign::CENTER
         );
+    public:
+		TextButton();
 
-        /// @brief Preloading text (must be called before rendering)
+        class Builder final : public Button::Builder<Builder, TextButton> {};
+
+        /// @brief Initializes the buttons' component.
+        /// @param renderer The renderer that the button would be on.
         void initialize(SDL_Renderer*& renderer);
 
         /// @brief Renders the button.
@@ -163,9 +175,9 @@ namespace GUILib {
 
         /// @brief Returns the class name of the object.
 		/// @return The class name.
-		inline std::string getClassName() const override { return "TextButton"; };
+		inline std::string getClassName() const override { return "TextButton"; }
 
-        ~TextButton();
+        ~TextButton() override;
     };
     
     /// @brief A basic image button wrapper.
@@ -187,22 +199,24 @@ namespace GUILib {
 
         /// @brief The class name.
 		static inline const std::string CLASS_NAME = "ImageButton";
-    public:
 
-        ImageButton();
+        
         ImageButton(
-            GuiObject* parent,
+            std::shared_ptr<GuiObject> parent,
             SDL_Renderer*& renderer,
             UIUnit size = UIUnit(),
             UIUnit position = UIUnit(),
             std::string defaultImageFilePath = "",
             std::string hoverImageFilePath = ""
         );
+    public:
+		ImageButton();
 
-        /// @brief Initializes the button's components.
-        void initialize(
-            SDL_Renderer*& renderer
-        );
+        class Builder final : public Button::Builder<Builder, ImageButton> {};
+
+        /// @brief Initializes the buttons' component.
+        /// @param renderer The renderer that the button would be on.
+        void initialize(SDL_Renderer*& renderer);
 
         /// @brief Renders the button.
         void render() override;
@@ -227,7 +241,7 @@ namespace GUILib {
 		/// @return The class name.
 		inline std::string getClassName() const override { return "ImageButton"; };
 
-        ~ImageButton();
+        ~ImageButton()  override;
     };
 
     /// @brief A basic check box.
@@ -241,10 +255,9 @@ namespace GUILib {
 
         /// @brief The class name.
 		static inline const std::string CLASS_NAME = "CheckBox";
-    public:
-        CheckBox();
+
         CheckBox(
-            GuiObject* parent,
+            std::shared_ptr<GuiObject> parent,
             SDL_Renderer*& renderer,
             UIUnit size = UIUnit(),
             UIUnit position = UIUnit(),
@@ -253,6 +266,10 @@ namespace GUILib {
             SDL_Color textColor = SDL_Color(),
             char symbol = 'X'
         );
+    public:
+        CheckBox();
+
+        class Builder final : public Button::Builder<Builder, CheckBox> {};
 
         /// @brief Toggles the checked state.
         void toggleChecked();
@@ -286,7 +303,10 @@ namespace GUILib {
 
         /// @brief Returns the class name of the object.
 		/// @return The class name.
-		inline std::string getClassName() const override { return "CheckBox"; };
+		inline std::string getClassName() const override { return "CheckBox"; }
+
+        CheckBox(const CheckBox&);
+        CheckBox& operator=(const CheckBox&);
     };
 
 }

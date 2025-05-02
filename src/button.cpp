@@ -3,12 +3,11 @@
 using namespace GUILib;
 
 Button::Button():
-    GuiObject(),
     hovered(false)
 {}
 Button::Button(
-    GuiObject* parent,
-    SDL_Renderer*& renderer,
+    std::shared_ptr<GuiObject> parent,
+    SDL_Renderer* renderer,
     UIUnit size,
     UIUnit position
 ):
@@ -17,24 +16,27 @@ Button::Button(
 {
 }
 
-bool Button::isClicked(int x, int y) {
+bool Button::isClicked(int x, int y) const
+{
     return (x > objRect.x &&
         x < (objRect.x + objRect.w) &&
         y > objRect.y &&
         y < (objRect.y + objRect.h));
 }
 
-void Button::checkHover(int mouseX, int mouseY) {
+void Button::checkHover(int mouseX, int mouseY)
+{
     hovered = isClicked(mouseX, mouseY);
 }
 
-void Button::handleEvent(const SDL_Event& e) {
+void Button::handleEvent(const SDL_Event& e)
+{
+    if (!active || !visible) return;
+
     GuiObject::handleEvent(e);
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
-
-    handleEvent(e);
 
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && active && visible)) {
         return;
@@ -53,4 +55,33 @@ void Button::handleEvent(const SDL_Event& e) {
         if (buttonAction) buttonAction();
         trigger("onClick", x, y);
     }
+}
+
+void Button::setHoverAction(const std::function<void()>& actionFunction)
+{
+    buttonAction = actionFunction;
+}
+
+void Button::setAction(const std::function<void()>& actionFunction)
+{
+    buttonAction = actionFunction;
+}
+
+bool Button::isHovered() const
+{
+    return hovered;
+}
+
+Button& Button::operator=(const Button& other)
+{
+    // Seriously, nothing is worth copying
+    GuiObject::operator=(other);
+
+    return *this;
+}
+
+Button& Button::operator=(Button&& other) noexcept
+{
+    GuiObject::operator=(other);
+    return *this;
 }

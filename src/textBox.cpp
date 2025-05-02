@@ -1,19 +1,26 @@
 #include "textBox.h"
 
-int GUILib::TextBox::lineHeight() const {
-    int fontHeight = TTF_FontHeight(textFont);
-    return fontHeight;
+int GUILib::TextBox::lineHeight() const
+{
+    if (!textFont) return 0;
+    return TTF_FontHeight(textFont);
 }
 
-std::vector<std::string> GUILib::TextBox::splitTextIntoLines(std::string& str, int maxWidth) {
+std::vector<std::string> GUILib::TextBox::splitTextIntoLines(
+    const std::string& str,
+    const int& maxWidth) const
+{
     std::vector<std::string> outLines;
     std::string currentLine;
     std::string word;
 
-    for (char c : str) {
+    for (const char& c : str) {
+        // cut the line
         if (c == ' ' || c == '\n') {
             // line measurement
             int wordWidth = 0, wordHeight = 0;
+
+            // possible dangling pointer
             TTF_SizeText(textFont, (currentLine + word).c_str(), &wordWidth, &wordHeight);
 
             if (wordWidth > maxWidth) {
@@ -39,38 +46,40 @@ std::vector<std::string> GUILib::TextBox::splitTextIntoLines(std::string& str, i
         }
     }
 
-    // last line!!
+    // last line
     if (!currentLine.empty() || !word.empty()) {
         outLines.push_back(currentLine + word);
     }
     return outLines;
 }
 
-void GUILib::TextBox::render() {
-    if (!ref) return;
-    if (!isVisible() || (parent && !parent->isVisible())) {
-        return;
-    }
+void GUILib::TextBox::render()
+{
+    if (!shouldRender()) return;
 
-    int padding = 5;
-    int maxWidth = objRect.w - padding * 2;
+    constexpr int padding = 5;
+    const int maxWidth = objRect.w - padding * 2;
 
-    int totalHeight = static_cast<int>(lines.size()) * lineHeight();
-    int startY = objRect.y;
+    // Shouldn't cause a problem
+    const int totalHeight = static_cast<int>(lines.size()) * lineHeight();
 
-    // TODO: handle this
-    SDL_Texture* boxRect = Reserved::createSolidBoxTexture(ref, boxColor, objRect.w, objRect.h);
-    
-    SDL_SetRenderDrawColor(ref, boxColor.r, boxColor.g, boxColor.b, boxColor.a);
-    SDL_RenderFillRect(ref, &objRect);
+    // takes ref (the renderer)
+    const Reserved::TextureType boxTexture = Reserved::createSolidBoxTexture(ref, boxColor, objRect.w, objRect.h);
+
+    const SDL_Point offsetPoint = getPivotOffsetPoint();
+
+    // Rotated box? maybe later, rotation should be hidden in the meantime
+    SDL_RenderCopyEx(ref, boxTexture.get(), nullptr, &objRect, degreeRotation, &offsetPoint, SDL_FLIP_NONE);
 
     // checking whether the text is empty or not to prevent problematic stuff
     if (text.empty() || !textFont) {
+        GuiObject::render();
         return;
     }
     
     lines = splitTextIntoLines(text, maxWidth); // For wrapping (manual handling)
 
+	int startY = objRect.y;
     switch (yAlign) {
     case VerticalTextAlign::UP:
         startY = objRect.y + padding;
@@ -84,7 +93,8 @@ void GUILib::TextBox::render() {
     }
 
     int offsetY = 0;
-    SDL_Surface* textSurface = nullptr;
+    // properly implement rotated text rendering (later)
+    renderedLines.clear(); // <- a member variable in TextBox
 
     for (const auto& line : lines) {
         int textWidth = 0, textHeight = 0;
@@ -102,75 +112,86 @@ void GUILib::TextBox::render() {
             startX = objRect.x + maxWidth - textWidth - padding;
             break;
         }
-        textSurface = TTF_RenderUTF8_Blended(textFont, line.c_str(), textColor);
+
+        const SDL_Point linePos = { startX, startY + offsetY };
+        renderedLines.push_back({ line, linePos });
+
+        // Text rendering (unchanged)
+        SDL_Surface* textSurface = TTF_RenderUTF8_Blended(textFont, line.c_str(), textColor);
         if (!textSurface) continue;
 
-        textTexture = SDL_CreateTextureFromSurface(ref, textSurface);
+        SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ref, textSurface);
         SDL_Rect destRect = { startX, startY + offsetY, textWidth, textHeight };
+
         SDL_RenderCopy(ref, textTexture, nullptr, &destRect);
 
         offsetY += textHeight;
         SDL_FreeSurface(textSurface);
         SDL_DestroyTexture(textTexture);
     }
+    GuiObject::render();
 }
 
-void GUILib::TextBox::updateText(const char* textToUpdate) {
+void GUILib::TextBox::updateText(const char* textToUpdate)
+{
     text = textToUpdate;
     render();
 }
 
-void GUILib::TextBox::changeFont(TTF_Font*& font) {
+void GUILib::TextBox::changeFont(TTF_Font*& font)
+{
     textFont = font;
 }
 
 GUILib::TextBox::TextBox(
-    GuiObject* parent,
-    SDL_Renderer*& renderer,
-    UIUnit size,
-    UIUnit position,
-    SDL_Color boxColor,
+    std::shared_ptr<GuiObject> parent,
+    SDL_Renderer* renderer,
+    const UIUnit& size,
+    const UIUnit& position,
+    const SDL_Color& boxColor,
     std::string text,
-    SDL_Color textColor,
+    const SDL_Color& textColor,
     TTF_Font* textFont,
-    HorizontalTextAlign alignX,
-    VerticalTextAlign alignY
-) :
-    GuiObject(parent, renderer, size, position),
-    textTexture(nullptr),
-    boxColor(boxColor),
-    text(std::move(text)),
-    textColor(textColor),
-    textFont(textFont),
-    xAlign(alignX),
-    yAlign(alignY) 
+    const HorizontalTextAlign& alignX,
+    const VerticalTextAlign& alignY) : GuiObject(parent, renderer, size, position),
+                                       boxColor(boxColor),
+                                       text(std::move(text)),
+                                       textColor(textColor),
+                                       textFont(textFont),
+                                       xAlign(alignX),
+                                       yAlign(alignY) {
+}
+
+GUILib::TextBox::TextBox() = default;
+
+GUILib::TextBox::~TextBox() = default;
+
+SDL_Color GUILib::TextBox::getBoxColor() const
 {
-}
-
-GUILib::TextBox::~TextBox() {
-    if (textTexture) SDL_DestroyTexture(textTexture);
-}
-
-SDL_Color GUILib::TextBox::getBoxColor() const {
     return boxColor;
 }
 
-SDL_Color GUILib::TextBox::getTextColor() const {
+SDL_Color GUILib::TextBox::getTextColor() const
+{
     return textColor;
 }
 
-std::string GUILib::TextBox::getText() const {
+std::string GUILib::TextBox::getText() const
+{
     return text;
 }
 
-void GUILib::TextBox::setBoxColor(const SDL_Color& color) {
+void GUILib::TextBox::setBoxColor(const SDL_Color& color)
+{
     boxColor = color;
 }
 
-void GUILib::TextBox::setTextColor(const SDL_Color& color) {
+void GUILib::TextBox::setTextColor(const SDL_Color& color)
+{
     textColor = color;
 }
 
-void GUILib::TextBox::setText(const std::string& str) {
+void GUILib::TextBox::setText(const std::string& str)
+{
     text = str;
 }

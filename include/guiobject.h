@@ -6,13 +6,24 @@
 namespace GUILib {
 
 	namespace Reserved {
+		using TextureType = std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>;
 		/// helper function, __cplusplus refused to work
 		double clamp(double val, double min, double max);
 		/// helper function to check whether the point is in the rect
 		bool isPointInRect(const SDL_Point& point, const SDL_Rect& rect);
 		/// creates box texture
-		SDL_Texture* createSolidBoxTexture(SDL_Renderer* r, SDL_Color c, int w, int h);
-	}
+		[[nodiscard]]
+		TextureType createSolidBoxTexture(SDL_Renderer* r, SDL_Color c, int w, int h);
+
+		/// helper function to rotate a point based on a origin point
+		/// @param px X position of the point
+		/// @param py Y position of the point
+		/// @param ox X position of the origin
+		/// @param oy Y position of the origin
+		/// @returns A pair of rotated positions
+		[[nodiscard]]
+        std::pair<float, float> rotatePoint(float px, float py, float ox, float oy, float angle_rad);
+    }
 
 	/// @brief A struct to represent the size of a GUI object.
 	typedef struct UIUnit {
@@ -24,23 +35,27 @@ namespace GUILib {
 		/// @brief Gets the absolute size of the object.
 		/// @param containerSize The size of the container.
 		/// @return The absolute size of the object, in pixels.
-		SDL_Point getAbsoluteSize(const SDL_Point& containerSize) const;
+		[[nodiscard]] SDL_Point getAbsoluteSize(const SDL_Point& containerSize) const;
+
+
+		[[nodiscard]] bool operator==(const UIUnit& other) const;
+
 	} UIUnit;
 	
 	/// @brief A basic GUI object.
 	/// @brief Can be used as a base for all GUI objects.
-	class GuiObject {
+	class GuiObject : public std::enable_shared_from_this<GuiObject> {
 	protected:
 		/// @brief The rect of the object.
 		SDL_Rect objRect;
-		/// @brief The renderer of the object.
-		SDL_Renderer*& ref;
+		/// @brief The reference to the renderer of the object. Stored internally.
+		SDL_Renderer* ref;
 		/// @brief The parent of the object.
-		GuiObject* parent;
+		std::weak_ptr<GuiObject> parent;
 
 		/// @brief The offset of the drag.
 		int dragOffsetX,
-		dragOffsetY;
+			dragOffsetY;
 
 		/// @brief The position of the object.
 		UIUnit position;
@@ -61,7 +76,7 @@ namespace GUILib {
 		void update(SDL_Renderer* renderer);
 
 		/// @brief The children of the object.
-		std::vector<GuiObject*> children;
+		std::vector<std::shared_ptr<GuiObject>> children;
 
 		/// @brief The children's rendering state.
 		bool shouldRenderChildren;
@@ -78,18 +93,98 @@ namespace GUILib {
 
 		/// @brief Rotation of the object clockwise, in degrees.
 		double degreeRotation;
-	public:
-		GuiObject();
+
+		/// @brief The name of the object.
+		std::string name;
+
+		
 		GuiObject(
-			GuiObject* parent,
+			std::shared_ptr<GuiObject> parent, //!< what
 			SDL_Renderer*& renderer,
 			UIUnit size = UIUnit(),
 			UIUnit position = UIUnit(),
 			bool isVisible = true,
 			bool isActive = true
 		);
+	public:
+		GuiObject();
+		GuiObject(const GuiObject&) noexcept;
+		GuiObject(GuiObject&&) noexcept;
 
-		/// @brief Returns the children's rendering state.
+		template<typename DerivedBuilder, typename ProductType>
+		class Builder {
+		protected:
+			std::shared_ptr<ProductType> obj;
+		public:
+			Builder() : obj(std::make_shared<ProductType>()) {}
+
+			virtual DerivedBuilder& setParent(std::shared_ptr<GuiObject> p)
+			{
+				obj->setParent(p);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& setRenderer(SDL_Renderer* r)
+			{
+				obj->updateRenderer(r);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& setPosition(UIUnit p)
+			{
+				obj->move(p);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& setSize(UIUnit s)
+			{
+				obj->resize(s);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& setRotation(double r)
+			{
+				obj->setRotation(r);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& addChild(std::shared_ptr<GuiObject> c)
+			{
+				obj->addChild(std::move(c));
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& setVisible(bool val)
+			{
+				obj->setVisible(val);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			virtual DerivedBuilder& setActive(bool val)
+			{
+				obj->setActive(val);
+				return static_cast<DerivedBuilder&>(*this);
+			}
+
+			[[nodiscard]] virtual std::shared_ptr<ProductType> build() const
+			{
+				return std::static_pointer_cast<ProductType>(obj);
+			}
+
+			virtual ~Builder() = default;
+		};
+
+        /// @brief Checks whether the passed object is an ascendant of this.
+        /// @param other The object to check.
+        /// @returns Whether the object `other` is the ascendant of this. Does not need to be the next.
+        bool isAscendantOf(const std::shared_ptr<const GuiObject>& other) const;
+
+		/// @brief Checks whether the passed object is a descendant of this.
+		/// @param other The object to check.
+		/// @returns Whether the object `other` is the descendant of this. Does not need to be the next.
+        bool isDescendantOf(const std::shared_ptr<const GuiObject>& other) const;
+
+        /// @brief Returns the children's rendering state.
 		/// @return The boolean that indicates whether the children should be rendered.
 		bool getChildrenRenderingState() const;
 
@@ -100,16 +195,21 @@ namespace GUILib {
 		/// @brief Adds a child to the object.
 		/// Fires the "onChildAdded" event.
 		/// @param child The child to be added.
-		void addChild(GuiObject* child);
+		bool addChild(std::shared_ptr<GuiObject> child);
 
 		/// @brief Removes a child from the object.
-		/// Fires the "onChildRemoved" event.
+		/// Fires the "onChildRemoved" event.oi
 		/// @param child The child to be removed. Can be nullptr.
-		void removeChild(GuiObject* child);
+		bool removeChild(const std::shared_ptr<GuiObject>& child);
 
 		/// @brief Returns the rect of the object.
 		/// @return The rect of the object.
 		SDL_Rect getRect() const;
+
+		/// @brief Changes the pivot offset of the object.
+		/// Fires the "onPivotOffsetChange" event.
+		/// @param offset The new offset.
+		void setPivotOffset(const UIUnit& offset);
 
 		/// @brief Returns the offset from the origin of the object to the offset point.
 		/// @returns The offset pivot, in an SDL_Point.
@@ -167,19 +267,19 @@ namespace GUILib {
 
 		/// @brief Returns the parent of the object.
 		/// @return The parent of the object.
-		const GuiObject* getParent() const;
+		const std::weak_ptr<GuiObject>& getParent() const;
 
 		/// @brief Sets the parent of the object.
 		/// @param newParent The new parent of the object.
-		void setParent(GuiObject* newParent);
+		bool setParent(const std::shared_ptr<GuiObject>& newParent);
 
 		/// @brief Checks if the object has a parent.
 		/// @return True if the object has a parent, false otherwise.
-		bool hasParent() const;
+		bool hasParent() const noexcept;
 
 		/// @brief Checks if the object is draggable.
 		/// @return True if the object is draggable, false otherwise.
-		bool isDraggable() const;
+		bool isDraggable() const noexcept;
 
 		/// @brief Sets the draggable state of the object.
 		/// Fires the "onDraggableChange" event.
@@ -187,7 +287,7 @@ namespace GUILib {
 		void setDraggable(bool val);
 
 		/// @brief Renders the object, and all its children, if it has.
-		virtual void render();
+		virtual void render() = 0;
 
 		/// @brief Connects a callback to an event.
 		/// @param eventName The name of the event.
@@ -209,7 +309,7 @@ namespace GUILib {
 			const std::string& eventName,
 			Args&&... args
 		) {
-			events.fire(eventName, std::forward<Args>(args)...); // Extra O(n)
+			events.fire(eventName, std::forward<Args>(args)...);
 		}
 
 		/// @brief Updates the reference to the renderer of the object.
@@ -219,11 +319,13 @@ namespace GUILib {
 
 		/// @brief Gets the current renderer.
 		/// @return The current renderer.
-		SDL_Renderer*& getCurrentRenderer() const;
+		[[nodiscard]] SDL_Renderer* getCurrentRenderer() const;
 		
 		/// @brief Assignment operator.
 		/// @param other The right-hand-side.
 		GuiObject& operator=(const GuiObject& other);
+
+		GuiObject& operator=(GuiObject&& other) noexcept;
 
 		/// @brief Equality check.
 		/// @param other The right-hand-side.
@@ -232,6 +334,23 @@ namespace GUILib {
 		/// @brief Returns the class name of the object.
 		/// @return The class name.
 		inline virtual std::string getClassName() const { return "GuiObject"; };
+
+		/// @brief Returns the rotation of the object, in the unit of degrees.
+		/// @return The rotation of the object.
+		[[nodiscard]] double getRotation() const;
+
+		/// @brief Sets the rotation of the object.
+		/// Fires the "onRotationChange" event.
+		/// @param rotation The new rotation of the object.
+		void setRotation(const double& rotation);
+
+		/// @brief Indicates whether the object should be rendered, based on the visibility, renderer and parent.
+		/// @returns The value.
+		bool shouldRender() const;
+
+		/// @brief Returns some of the information (is draggable, size, position, etc.)
+		/// @returns The string that contains the specified information.
+		std::string getEssentialInformation() const;
 		
 		/// @brief Destructor.
 		virtual ~GuiObject();

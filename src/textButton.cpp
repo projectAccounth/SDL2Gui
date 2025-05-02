@@ -3,9 +3,12 @@
 
 int GUILib::TextButton::nextId = 0;
 
-void GUILib::TextButton::initialize(SDL_Renderer*& renderer) {
+void GUILib::TextButton::initialize(SDL_Renderer*& renderer)
+{
     if (!renderer)
         return;
+
+    if (renderer != ref) updateRenderer(renderer);
 
     if ((text.empty() || !textFont) && !textTexture) {
         textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -29,10 +32,10 @@ void GUILib::TextButton::initialize(SDL_Renderer*& renderer) {
     }
 }
 
-void GUILib::TextButton::render() {
-    if (!isVisible() || (parent && !parent->isVisible()) || !ref) {
-        return;
-    }
+void GUILib::TextButton::render()
+{
+    if (!shouldRender()) return;
+
     // set the color to draw for the button and also set the settings to render the button
     SDL_Color drawColor = hovered ? hoverColor : buttonColor;
     // the color of the button will be the color of the hovered button when disabled (by default)
@@ -41,7 +44,10 @@ void GUILib::TextButton::render() {
     }
     SDL_SetRenderDrawColor(ref, drawColor.r, drawColor.g, drawColor.b, drawColor.a);
     SDL_RenderFillRect(ref, &objRect);
-    if (textTexture && textFont) {
+
+    if (!textTexture) initialize(ref);
+
+    if (textFont) {
         int textWidth = 0, textHeight = 0;
 
         SDL_QueryTexture(textTexture, nullptr, nullptr, &textWidth, &textHeight);
@@ -77,13 +83,16 @@ void GUILib::TextButton::render() {
 
         SDL_RenderCopy(ref, textTexture, nullptr, &textRect);
     }
+    GuiObject::render();
 }
 
-int GUILib::TextButton::getId() const {
+int GUILib::TextButton::getId() const
+{
     return id;
 }
 
-void GUILib::TextButton::changeTextColor(const SDL_Color& color) {
+void GUILib::TextButton::changeTextColor(const SDL_Color& color)
+{
     if (
         textColor.r == color.r &&
         textColor.g == color.g &&
@@ -95,7 +104,8 @@ void GUILib::TextButton::changeTextColor(const SDL_Color& color) {
     initialize(ref);
 }
 
-void GUILib::TextButton::changeHoverColor(const SDL_Color& color) {
+void GUILib::TextButton::changeHoverColor(const SDL_Color& color)
+{
     if (
         hoverColor.r == color.r &&
         hoverColor.g == color.g &&
@@ -107,7 +117,8 @@ void GUILib::TextButton::changeHoverColor(const SDL_Color& color) {
     initialize(ref);
 }
 
-void GUILib::TextButton::changeButtonColor(const SDL_Color& color) {
+void GUILib::TextButton::changeButtonColor(const SDL_Color& color)
+{
     if (
         buttonColor.r == color.r &&
         buttonColor.g == color.g &&
@@ -119,14 +130,15 @@ void GUILib::TextButton::changeButtonColor(const SDL_Color& color) {
     initialize(ref);
 }
 
-void GUILib::TextButton::changeFont(TTF_Font* font) {
+void GUILib::TextButton::changeFont(TTF_Font* font)
+{
     if (this->textFont == font) return;
     textFont = font;
     initialize(ref);
 }
 
 GUILib::TextButton::TextButton(
-    GuiObject* parent,
+    std::shared_ptr<GuiObject> parent,
     SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
@@ -152,12 +164,10 @@ GUILib::TextButton::TextButton(
     initialize(ref);
 }
 
-GUILib::TextButton::TextButton():
-    Button(),
+GUILib::TextButton::TextButton() :
     buttonColor(SDL_Color()),
     textColor(SDL_Color()),
     textFont(nullptr),
-    text(""),
     xAlign(HorizontalTextAlign::CENTER),
     yAlign(VerticalTextAlign::CENTER),
     textTexture(nullptr),
@@ -165,28 +175,34 @@ GUILib::TextButton::TextButton():
     id(nextId++)
 {}
 
-GUILib::TextButton::~TextButton() {
+GUILib::TextButton::~TextButton()
+{
     if (textTexture)
         SDL_DestroyTexture(textTexture);
 }
 
-SDL_Color GUILib::TextButton::getTextColor() const {
+SDL_Color GUILib::TextButton::getTextColor() const
+{
     return textColor;
 }
 
-SDL_Color GUILib::TextButton::getHoverColor() const {
+SDL_Color GUILib::TextButton::getHoverColor() const
+{
     return hoverColor;
 }
 
-SDL_Color GUILib::TextButton::getButtonColor() const {
+SDL_Color GUILib::TextButton::getButtonColor() const
+{
     return buttonColor;
 }
 
-void GUILib::TextButton::setText(const std::string& str) {
+void GUILib::TextButton::setText(const std::string& str)
+{
     text = str;
     trigger("onTextChange", str);
 }
 
-std::string GUILib::TextButton::getText() const {
+std::string GUILib::TextButton::getText() const
+{
     return text;
 }

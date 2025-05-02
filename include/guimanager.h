@@ -11,11 +11,11 @@ namespace GUILib {
         /// @brief Creates a GUI object of type T, must be derived from GuiObject.
         /// @param ref The renderer to use for the object.
         template <class T>
-        std::unique_ptr<T> create(
+        std::shared_ptr<T> create(
             SDL_Renderer*& ref
         ) {
             static_assert(std::is_base_of_v<GuiObject, T>, "T must inherit from GuiObject");
-            return std::make_unique<T>(T(nullptr, ref));
+            return T::Builder().setRenderer(ref).build();
         }
     };
 
@@ -24,13 +24,13 @@ namespace GUILib {
     class SceneManager {
     private:
         /// @brief The renderer to use for the scene.
-        SDL_Renderer*& ref;
+        SDL_Renderer* ref;
         /// @brief The list of objects to render. (Only the references).
         std::vector<GuiObject*> objects;
     public:
         /// @brief Creates a scene manager.
         /// @param ref The renderer to use for the scene.
-        SceneManager(SDL_Renderer*& ref) : ref(ref) {}
+        SceneManager(SDL_Renderer* ref) : ref(ref) {}
 
         /// @brief Adds an object to the scene.
         /// @param obj The object to add.

@@ -1,12 +1,11 @@
 #include "button.h"
 
-GUILib::CheckBox::CheckBox() :
-    TextButton(),
+GUILib::CheckBox::CheckBox():
     boxSymbol('X'),
     checked(false)
 {}
 GUILib::CheckBox::CheckBox(
-    GuiObject* parent,
+    std::shared_ptr<GuiObject> parent,
     SDL_Renderer*& renderer,
     UIUnit size,
     UIUnit position,
@@ -20,15 +19,15 @@ GUILib::CheckBox::CheckBox(
         size, position,
         boxColor,
         SDL_Color{
-            (unsigned char)(boxColor.r - 122),
-            (unsigned char)(boxColor.g - 122),
-            (unsigned char)(boxColor.b - 122), 255
+            static_cast<uint8_t>(boxColor.r - 122),
+            static_cast<uint8_t>(boxColor.g - 122),
+            static_cast<uint8_t>(boxColor.b - 122), 255
         },
         textColor,
         "",
         textFont
     ),
-    boxSymbol(std::move(symbol)),
+    boxSymbol(symbol),
     checked(false)
 {}
 
@@ -43,6 +42,7 @@ void GUILib::CheckBox::handleEvent(const SDL_Event& e) {
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);
 
+    // Suppress this warning please, I didn't mean to call the direct superclass
     GuiObject::handleEvent(e);
 
     if (!((e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) && (active && visible))) {
@@ -67,3 +67,19 @@ void GUILib::CheckBox::toggleChecked() { checked = !checked; }
 void GUILib::CheckBox::toggleChecked(bool val) { checked = val; }
 bool GUILib::CheckBox::isChecked() const { return checked; }
 char GUILib::CheckBox::getSymbol() const { return boxSymbol; }
+
+GUILib::CheckBox::CheckBox(const CheckBox& other):
+	boxSymbol(other.boxSymbol), checked(other.checked)
+{
+	
+}
+
+GUILib::CheckBox& GUILib::CheckBox::operator=(const CheckBox& other)
+{
+    if (this == &other) return *this;
+
+    boxSymbol = other.boxSymbol;
+    checked = other.checked;
+
+    return *this;
+}

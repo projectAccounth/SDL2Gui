@@ -3,53 +3,58 @@
 
 using namespace GUILib::Reserved;
 
-void GUILib::Slider::moveHandle(int delta) {
-    SDL_Rect rect = getRect();
+void GUILib::Slider::moveHandle(int delta)
+{
+    const SDL_Rect rect = getRect();
 
     switch (direction) {
         case DragDirection::HORIZONTAL:
-            offsetX = (int) clamp(offsetX + delta, 0, rect.w);
+            offsetX = static_cast<int>(clamp(offsetX + delta, 0, rect.w));
             break;
         case DragDirection::VERTICAL:
-            offsetY = (int) clamp(offsetY + delta, 0, rect.h);
+            offsetY = static_cast<int>(clamp(offsetY + delta, 0, rect.h));
             break;
     }
 }
 
-void GUILib::Slider::updateHandlePosition()  {
-    
-}
-
 GUILib::Slider::Slider(
-    GuiObject* parent,
-    SDL_Renderer*& renderer,
-    UIUnit size,
-    UIUnit position,
-    SDL_Color frameColor,
-    SDL_Color handleColor) 
-    : Frame(parent, renderer, size, position, frameColor),
+    std::shared_ptr<GuiObject> parent,
+    SDL_Renderer* renderer,
+    const UIUnit& size,
+    const UIUnit& position,
+    const SDL_Color& frameColor,
+    const SDL_Color& handleColor
+) :
+	Frame(parent, renderer, size, position, frameColor),
     direction(DragDirection::HORIZONTAL),
     handleColor(handleColor),
     handleRect(),
-    handleSize(15)
-{
-}
+    handleSize(15),
+	offsetX(), offsetY(),
+	lastMouseX(), lastMouseY(),
+	draggingX(), draggingY()
+{}
 
-void GUILib::Slider::render() {
-    shouldRenderChildren = false; // Doesn't render children
-    if (!(isVisible() && isActive()) || !ref || (parent && !parent->isActive())) return;
+GUILib::Slider::Slider() = default;
+
+void GUILib::Slider::render()
+{
+    shouldRenderChildren = false; // Doesn't render children (who would for a slider?)
+    if (!shouldRender()) return;
+
     Frame::render();
     renderHandle();
 }
 
-void GUILib::Slider::renderHandle() {
-    SDL_Rect rect = getRect();
+void GUILib::Slider::renderHandle()
+{
+    const SDL_Rect rect = getRect();
     SDL_SetRenderDrawColor(ref, handleColor.r, handleColor.g, handleColor.b, handleColor.a);
     switch (direction) {
         case DragDirection::HORIZONTAL: {
-            int maxScrollX = rect.w;
+            const int maxScrollX = rect.w;
             if (maxScrollX <= 0) break;
-            int scrollbarX = rect.x + (offsetX * (rect.w - handleSize)) / maxScrollX;
+            const int scrollbarX = rect.x + (offsetX * (rect.w - handleSize)) / maxScrollX;
             handleRect = {scrollbarX, rect.y, handleSize, rect.h};
             SDL_SetRenderDrawColor(ref,
                 handleColor.r,
@@ -62,9 +67,9 @@ void GUILib::Slider::renderHandle() {
         }
 
         case DragDirection::VERTICAL: {
-            int maxScrollY = rect.h;
+            const int maxScrollY = rect.h;
             if (maxScrollY <= 0) break;
-            int scrollbarY = rect.y + (offsetY * (rect.h - handleSize)) / maxScrollY;
+            const int scrollbarY = rect.y + (offsetY * (rect.h - handleSize)) / maxScrollY;
             handleRect = {rect.x, scrollbarY, rect.w, handleSize};
             SDL_SetRenderDrawColor(
                 ref,
@@ -79,14 +84,13 @@ void GUILib::Slider::renderHandle() {
     }
 }
 
-void GUILib::Slider::handleEvent(const SDL_Event& event) {
+void GUILib::Slider::handleEvent(const SDL_Event& event)
+{
     GuiObject::handleEvent(event);
-    SDL_Rect rect = getRect();
-    SDL_Point absContentSize = size.getAbsoluteSize({rect.w, rect.h});
-
+    if (!isActive()) return;
     if (event.type == SDL_MOUSEBUTTONDOWN) {
-        int mouseX = event.button.x;
-        int mouseY = event.button.y;
+        const int mouseX = event.button.x;
+        const int mouseY = event.button.y;
 
         if (direction == DragDirection::HORIZONTAL &&
             isPointInRect({ mouseX, mouseY }, handleRect)) {
@@ -94,7 +98,7 @@ void GUILib::Slider::handleEvent(const SDL_Event& event) {
             lastMouseX = mouseX;
         }
         if (direction == DragDirection::VERTICAL &&
-            isPointInRect({mouseX, mouseY}, handleRect)) {
+            isPointInRect({ mouseX, mouseY }, handleRect)) {
             draggingY = true;
             lastMouseY = mouseY;
         }
@@ -102,38 +106,44 @@ void GUILib::Slider::handleEvent(const SDL_Event& event) {
         draggingX = draggingY = false;
     } else if (event.type == SDL_MOUSEMOTION) {
         if (draggingX) {
-            int deltaX = event.motion.x - lastMouseX;
+            const int deltaX = event.motion.x - lastMouseX;
             moveHandle(deltaX);
             lastMouseX = event.motion.x;
         }
         if (draggingY) {
-            int deltaY = event.motion.y - lastMouseY;
+            const int deltaY = event.motion.y - lastMouseY;
             moveHandle(deltaY);
             lastMouseY = event.motion.y;
         }
     }
 }
 
-int GUILib::Slider::getHandleSize() const {
+int GUILib::Slider::getHandleSize() const
+{
     return handleSize;
 }
 
-void GUILib::Slider::setHandleSize(int s) {
+void GUILib::Slider::setHandleSize(int s)
+{
     handleSize = s;
 }
 
-SDL_Color GUILib::Slider::getHandleColor() const {
+SDL_Color GUILib::Slider::getHandleColor() const
+{
     return handleColor;
 }
 
-void GUILib::Slider::setHandleColor(SDL_Color color) {
+void GUILib::Slider::setHandleColor(SDL_Color color)
+{
     handleColor = color;
 }
 
-GUILib::DragDirection GUILib::Slider::getDirection() const {
+GUILib::DragDirection GUILib::Slider::getDirection() const
+{
     return direction;
 }
 
-void GUILib::Slider::setDirection(DragDirection dir) {
+void GUILib::Slider::setDirection(DragDirection dir)
+{
     direction = dir;
 }
