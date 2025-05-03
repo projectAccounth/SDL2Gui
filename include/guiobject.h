@@ -111,61 +111,92 @@ namespace GUILib {
 		GuiObject(const GuiObject&) noexcept;
 		GuiObject(GuiObject&&) noexcept;
 
+		/// @brief A builder class for objects.
+		/// @tparam DerivedBuilder The derived (overridden) builder class.
+		/// @tparam ProductType The final type of the object.
 		template<typename DerivedBuilder, typename ProductType>
 		class Builder {
 		protected:
+			/// @brief The internal type.
 			std::shared_ptr<ProductType> obj;
 		public:
+
 			Builder() : obj(std::make_shared<ProductType>()) {}
 
+			/// @brief Sets the parent.
+			/// @param p The parent.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setParent(std::shared_ptr<GuiObject> p)
 			{
 				obj->setParent(p);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Sets the renderer.
+			/// @param r The renderer.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setRenderer(SDL_Renderer* r)
 			{
 				obj->updateRenderer(r);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Sets the position.
+			/// @param p The position.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setPosition(UIUnit p)
 			{
 				obj->move(p);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Sets the size.
+			/// @param s The size.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setSize(UIUnit s)
 			{
 				obj->resize(s);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Sets the rotation.
+			/// @param r The degree rotation.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setRotation(double r)
 			{
 				obj->setRotation(r);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Adds an existing child to an object..
+			/// @param c The child.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& addChild(std::shared_ptr<GuiObject> c)
 			{
 				obj->addChild(std::move(c));
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Sets the visibility. Will be default to false if not set.
+			/// @param val The value.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setVisible(bool val)
 			{
 				obj->setVisible(val);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Sets the activity of the object. Will be default to false if not set.
+			/// @param val The value.
+			/// @returns The current modified builder.
 			virtual DerivedBuilder& setActive(bool val)
 			{
 				obj->setActive(val);
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
+			/// @brief Finalizes the object.
+			/// @returns The final created object.
 			[[nodiscard]] virtual std::shared_ptr<ProductType> build() const
 			{
 				return std::static_pointer_cast<ProductType>(obj);

@@ -46,6 +46,9 @@ namespace GUILib {
         );
     public:
 		Slider();
+
+        class Builder final : public GuiObject::Builder<Builder, Slider> {};
+
         /// @brief Sets the direction of the slider.
         /// @param dir The direction of the slider.
         void setDirection(DragDirection dir);

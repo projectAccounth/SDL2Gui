@@ -1,3 +1,4 @@
+#include "guimanager.h"
 #include <lfmain.h>
 
 class Item {
@@ -138,6 +139,25 @@ public:
 			.setActive(true)
 			.setRenderer(this->ref).build();
 
+		closeButton->setText("X");
+		closeButton->changeButtonColor({ 155, 155, 155 ,255 });
+		closeButton->changeHoverColor({ 133, 133, 133 , 255 });
+		closeButton->changeTextColor({ 0, 0, 0, 255 });
+		closeButton->changeFont(buttonTextFont);
+
+		const auto label = GUILib::TextBox::Builder()
+			.setSize({ 0.3, 0.2, true })
+			.setPosition({ 0, 0, true })
+			.setParent(shared_from_this())
+			.setVisible(true)
+			.setActive(true)
+			.setRenderer(this->ref).build();
+
+		label->changeFont(buttonTextFont);
+		label->setBoxColor({ 0, 0, 0, 0 });
+		label->setTextColor({ 0, 0, 0, 255 });
+		label->setText("Inventory");
+
 		closeButton->on("onClick", std::function([&](int, int)
 		{
 			setVisible(false);
@@ -166,21 +186,19 @@ public:
 		constexpr double cellWidth = 1.0 / totalCols;
 		constexpr  double cellHeight = 1.0 / totalRows;
 
-		// Center the items
-		const int startIndex = (totalCells - numItems) / 2;
 
 		for (int i = 0; i < numItems; ++i) {
-			const int cellIndex = i + startIndex;
+			const int cellIndex = i;
 			const int col = cellIndex % totalCols;
 			const int row = cellIndex / totalCols;
 
 			// Center item inside its cell
 			const double posX = col * cellWidth + (cellWidth - 0.1) / 2.0;
-			const double posY = row * cellHeight + (cellHeight - 0.1) / 2.0;
+			const double posY = row * cellHeight + (cellHeight - 0.2) / 2.0;
 
 			const auto button = GUILib::TextButton::Builder()
 				.setPosition({ posX, posY, true })
-				.setSize({ 0.1, 0.1, true })
+				.setSize({ 0.1, 0.2, true })
 				.setRenderer(this->ref)
 				.setParent(mainContentFrame)
 				.setVisible(true)
@@ -213,11 +231,19 @@ int main(int argc, char* argv[])
 	TTF_Init();
 
 	Inventory exampleInventory;
+	GUILib::SceneManager sceneManager(renderer);
 
-	exampleInventory.addItem(Item("Who", 0));
-	exampleInventory.addItem(Item("Is", 1));
-	exampleInventory.addItem(Item("The", 2));
-	exampleInventory.addItem(Item("One", 3));
+	exampleInventory.addItem(Item("The", 0));
+	exampleInventory.addItem(Item("Monaco", 1));
+	exampleInventory.addItem(Item("based", 2));
+	exampleInventory.addItem(Item("Youtuber", 3));
+
+	const std::vector<std::string> str = { "who", "beat", "7-time", "world", "champion", "in", "equal", "machinery" };
+
+	for (int i = 0; i < str.size(); ++i)
+	{
+		exampleInventory.addItem(Item(str[i], i));
+	}
 
 	int status = SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer);
 
@@ -227,6 +253,8 @@ int main(int argc, char* argv[])
 		return status;
 	}
 
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
 	TTF_Font* font = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 15);
 
 	if (!font)
@@ -235,6 +263,8 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	sceneManager.updateRenderer(renderer);
+	
 	const auto invGui = InventoryGui::Builder()
 		.setPosition({ 0.1, 0.1, true })
 		.setSize({ 0.8, 0.8, true })
@@ -243,7 +273,7 @@ int main(int argc, char* argv[])
 		.setVisible(true)
 		.build();
 
-	invGui->setFrameColor({ 132, 132, 132, 255 });
+	invGui->setFrameColor({ 177, 177, 177, 255 });
 	invGui->changeFont(font);
 	invGui->updateRenderer(renderer);
 	invGui->init();
@@ -274,6 +304,19 @@ int main(int argc, char* argv[])
 		invGui->setVisible(!invGui->isVisible());
 	}));
 
+	const auto toggleDragInv = std::make_shared<GUILib::TextButton>(*openInvButton);
+
+	toggleDragInv->setParent(openInvButton);
+	toggleDragInv->resize({ 0.5, 1, true });
+	toggleDragInv->move({ 1, 0, true });
+
+	toggleDragInv->on("onClick", std::function([&](int, int)
+	{
+		invGui->setDraggable(!invGui->isDraggable());
+	}));
+
+	sceneManager.addBulk(openInvButton, invGui);
+
 	bool isRunning = true;
 
 	while (isRunning)
@@ -289,14 +332,12 @@ int main(int argc, char* argv[])
 				break;
 			default: break;
 			}
-			openInvButton->handleEvent(e);
-			invGui->handleEvent(e);
+			sceneManager.handleEvent(e);
 		}
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
 
-		openInvButton->render();
-		invGui->render();
+		sceneManager.render();
 
 		SDL_RenderPresent(renderer);
 

@@ -21,7 +21,7 @@ namespace GUILib {
 		/// @brief The class name.
 		static inline const std::string CLASS_NAME = "Image";
 
-		Image();
+		
 		Image(
 			std::shared_ptr<GuiObject> parent,
 			SDL_Renderer* renderer,
@@ -30,6 +30,9 @@ namespace GUILib {
 			std::string filePath = ""
 		);
 	public:
+		Image();
+
+		class Builder final : public GuiObject::Builder<Builder, Image> {};
 
 		/// @brief Initializes the image.
 		/// @param renderer The renderer to be used.

@@ -471,6 +471,8 @@ GUILib::Reserved::TextureType GUILib::Reserved::createSolidBoxTexture(
 
 	SDL_Texture* oldTarget = SDL_GetRenderTarget(r);
 
+	SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+
 	SDL_SetRenderTarget(r, t);
 
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);

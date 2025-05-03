@@ -139,14 +139,15 @@ void GUILib::ScrollingFrame::handleEvent(const SDL_Event& event)
     if (!isActive()) return;
 
     const SDL_Rect rect = getRect();
-    SDL_Point absContentSize = contentSize.getAbsoluteSize({rect.w, rect.h});
+	SDL_Point absContentSize = contentSize.getAbsoluteSize({rect.w, rect.h});
+
+	const int mouseX = event.button.x;
+    const int mouseY = event.button.y;
 
     if (event.type == SDL_MOUSEWHEEL) {
-        scroll(0, -event.wheel.y * scrollingSpeed);
+        if (isPointInRect({ mouseX, mouseY }, rect))
+			scroll(0, -event.wheel.y * scrollingSpeed);
     } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-        const int mouseX = event.button.x;
-        const int mouseY = event.button.y;
-
         if (showScrollbarX &&
             isPointInRect({mouseX, mouseY}, handleRectX)) 
         {

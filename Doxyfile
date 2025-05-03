@@ -7,15 +7,23 @@ OUTPUT_DIRECTORY       = ./docs
 MARKDOWN_SUPPORT       = YES
 
 # Input settings
-INPUT                  = ./include/ ./docs/docs_mainpage.dox
+INPUT                  = ./include/ ./src/ ./docs/docs_mainpage.dox   # <-- Added ./src/ for .cpp files
+FILE_PATTERNS          = *.h *.hpp *.cpp                              # <-- Ensures .cpp files are parsed
 RECURSIVE              = YES
 
 # Build settings
 EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES                                          # <-- To extract private members (optional)
+EXTRACT_STATIC         = YES                                          # <-- To extract static functions
+EXTRACT_LOCAL_METHODS  = YES                                          # <-- To extract local class methods (in .cpp)
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 GENERATE_MAN           = NO
 GENERATE_XML           = NO
+
+# Source browsing (optional but useful for seeing implementations)
+SOURCE_BROWSER         = YES                                          # <-- Enables code browsing view
+INLINE_SOURCES         = YES                                          # <-- Embeds code in docs
 
 # Other default options
 QUIET                  = NO

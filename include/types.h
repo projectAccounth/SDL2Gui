@@ -40,8 +40,8 @@ namespace GUILib {
 
 
     enum class VerticalTextAlign {
-        UP,
         CENTER,
+        UP,
         BOTTOM
     };
 

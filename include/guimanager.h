@@ -19,6 +19,14 @@ namespace GUILib {
         }
     };
 
+    template<typename _Pt, typename _Bt>
+    void check_shared_ptr_subclass() {
+        static_assert(
+            std::is_base_of_v<_Bt, typename _Pt::element_type>,
+            "The shared_ptr does not point to a subclass of the expected base type.");
+    }
+
+
     /// @brief A class to facilitate the scene rendering.
     /// @brief Might be useful for bulk rendering, and I don't recommend using this now.
     class SceneManager {
@@ -26,7 +34,8 @@ namespace GUILib {
         /// @brief The renderer to use for the scene.
         SDL_Renderer* ref;
         /// @brief The list of objects to render. (Only the references).
-        std::vector<GuiObject*> objects;
+        std::vector<std::shared_ptr<GuiObject>> objects;
+
     public:
         /// @brief Creates a scene manager.
         /// @param ref The renderer to use for the scene.
@@ -34,15 +43,11 @@ namespace GUILib {
 
         /// @brief Adds an object to the scene.
         /// @param obj The object to add.
-        void add(GuiObject* obj);
+        void add(std::shared_ptr<GuiObject> obj);
 
         template <typename... GuiObjects>
         void addBulk(GuiObjects... args) {
-            static_assert((std::is_base_of_v<
-                               std::remove_pointer_t<GuiObject*>,
-                               std::remove_pointer_t<GuiObjects>> &&
-                           ...),
-                          "All arguments must be pointers to subclasses of GuiObject");
+            (check_shared_ptr_subclass<GuiObjects, GuiObject>(), ...);
 
             (objects.push_back(args), ...);
         }
@@ -52,15 +57,19 @@ namespace GUILib {
 
         /// @brief Handles all event for objects.
         /// @param e The event to be handled.
-        void handleEvent(const SDL_Event& e);
+        void handleEvent(const SDL_Event& e) const;
 
         /// @brief Clears the scene.
         /// @param obj The object to clear.
-        void clear(GuiObject* obj);
+        void clear(std::shared_ptr<GuiObject> obj);
 
         /// @brief Clears all objects in the scene.
         void clearAll();
 
-        ~SceneManager();
+        /// @brief Updates the renderer.
+        /// @param r The renderer.
+        void updateRenderer(SDL_Renderer* r);
+
+    	~SceneManager();
     };
 }

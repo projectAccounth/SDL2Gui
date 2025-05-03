@@ -13,10 +13,9 @@ GUILib::Image::Image(
 	prevFilePath(filePath)
 {
 	initialize(renderer);
-	className = "Image";
 }
 
-GUILib::Image::Image(): imageTexture() { className = "Image"; };
+GUILib::Image::Image(): imageTexture() {};
 	
 void GUILib::Image::initialize(SDL_Renderer*& renderer) 
 {
