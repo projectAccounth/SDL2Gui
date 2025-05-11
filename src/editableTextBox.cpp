@@ -149,41 +149,42 @@ void GUILib::EditableTextBox::setEditable(bool val)
 void GUILib::EditableTextBox::render()
 {
     TextBox::render();
-    if (editable) {
-        // Cursor blinking
-        auto now = std::chrono::steady_clock::now();
-        if (now - lastBlinkTime > std::chrono::milliseconds(500)) {
-            cursorVisible = !cursorVisible;
-            lastBlinkTime = now;
+    if (!editable) return;
+
+    // Update cursor blinking timer
+    auto now = std::chrono::steady_clock::now();
+    if (now - lastBlinkTime > std::chrono::milliseconds(500)) {
+        cursorVisible = !cursorVisible;
+        lastBlinkTime = now;
+    }
+
+    if (!cursorVisible || !textFont) return;
+
+    // Handling for cursor blink
+    const auto& rendered = renderedLines;
+
+    size_t charCounter = 0;
+    for (const auto& [text, position] : rendered) {
+        const size_t lineLen = text.size();
+
+        if (cursorPosition >= charCounter && cursorPosition <= charCounter + lineLen) {
+            const size_t localIndex = cursorPosition - charCounter;
+            const std::string beforeCursor = text.substr(0, localIndex);
+
+            int cursorOffsetX = 0;
+            TTF_SizeText(textFont, beforeCursor.c_str(), &cursorOffsetX, nullptr);
+
+            const int cursorX = position.x + cursorOffsetX;
+            const int cursorY = position.y;
+            const int height = TTF_FontHeight(textFont);
+
+            SDL_SetRenderDrawColor(ref, textColor.r, textColor.r, textColor.b, textColor.a); // Black 
+            SDL_RenderDrawLine(ref, cursorX, cursorY, cursorX, cursorY + height);
+
+            break;
         }
 
-        if (cursorVisible && textFont) {
-            const auto& rendered = renderedLines;
-
-            size_t charCounter = 0;
-            for (const auto& line : rendered) {
-                const size_t lineLen = line.text.size();
-
-                if (cursorPosition >= charCounter && cursorPosition <= charCounter + lineLen) {
-                    const size_t localIndex = cursorPosition - charCounter;
-                    const std::string beforeCursor = line.text.substr(0, localIndex);
-
-                    int cursorOffsetX = 0;
-                    TTF_SizeText(textFont, beforeCursor.c_str(), &cursorOffsetX, nullptr);
-
-                    int cursorX = line.position.x + cursorOffsetX;
-                    int cursorY = line.position.y;
-                    int height = TTF_FontHeight(textFont);
-
-                    SDL_SetRenderDrawColor(ref, 0, 0, 0, 255); // Black
-                    SDL_RenderDrawLine(ref, cursorX, cursorY, cursorX, cursorY + height);
-
-                    break;
-                }
-
-                charCounter += lineLen;
-            }
-        }
+        charCounter += lineLen;
     }
 }
 

@@ -5,10 +5,9 @@ int GUILib::TextButton::nextId = 0;
 
 void GUILib::TextButton::initialize(SDL_Renderer*& renderer)
 {
+    GuiObject::initialize(renderer);
     if (!renderer)
         return;
-
-    if (renderer != ref) updateRenderer(renderer);
 
     if ((text.empty() || !textFont) && !textTexture) {
         textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             

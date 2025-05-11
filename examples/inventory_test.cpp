@@ -312,7 +312,6 @@ int main(int argc, char* argv[])
 	openInvButton->changeTextColor({ 0, 0, 0, 255 });
 	openInvButton->changeFont(font);
 	openInvButton->setText("Whar");
-	openInvButton->initialize(renderer);
 
 	openInvButton->on("onClick", std::function([&](int, int)
 	{
@@ -322,6 +321,7 @@ int main(int argc, char* argv[])
 
 	const auto toggleDragInv = std::make_shared<GUILib::TextButton>(*openInvButton);
 
+	toggleDragInv->resetListeners("onClick");
 	toggleDragInv->on("onClick", std::function([&](int, int)
 	{
 		invGui->setDraggable(!invGui->isDraggable());
@@ -331,9 +331,9 @@ int main(int argc, char* argv[])
 	toggleDragInv->setText("Whart");
 	toggleDragInv->resize({ 0.5, 1, true });
 	toggleDragInv->move({ 1, 0, true });
-	toggleDragInv->initialize(renderer);
 
 	sceneManager.addBulk(openInvButton, invGui);
+	sceneManager.initialize(renderer);
 
 	bool isRunning = true;
 

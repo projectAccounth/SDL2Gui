@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <chrono>
 #include <sstream>
+#include <stack>
 #include <cstdint>
 
 namespace GUILib {

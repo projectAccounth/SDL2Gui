@@ -92,6 +92,8 @@ namespace GUILib {
      *
      * // For example, if I do:
      *
+     * EventEmitter emitter;
+     *
      * emitter.fire("event1", 1);
      *
      * // Then, if I do this:
@@ -103,7 +105,7 @@ namespace GUILib {
      *
      * // Or
      *
-     * emitter.connect("event1", std::function<void(int)>([](int) { // do something... }));
+     * emitter.connect("event1", std::function<void(int)>([](int) { // do something... })); // or let the compiler automatically deduce the types for std::function
      * ```
      */
     class EventEmitter {
@@ -215,7 +217,7 @@ namespace GUILib {
          * 
          * // or
          * 
-         * emitter.connect("myEvent", std::function<void(int, int)>([](int a, int b) {
+         * emitter.connect("myEvent", std::function([](int a, int b) {
          *     // do something
          * });
          * 
@@ -242,21 +244,53 @@ namespace GUILib {
          * ```
          * EventEmitter emitter;
          * 
-         * EventId listenerId = emitter.connect("myEvent", []() {
-         *     // do something
-         * });
+         * EventId listenerId0 = emitter.connect("myEvent", std::function([]() {
+         *     std::cout << "The lazy dragon jumps over a quick fish\n";
+         * }));
+         *
+         * EventId listenerId1 = emitter.connect("myEvent, std::function([]() {
+         *     std::cout << "Foo\n";
+         * }));
+         * 
          * 
          * // later...
          * 
-         * emitter.disconnect("myEvent", listenerId);
+         * emitter.disconnect("myEvent", listenerId0);
          * 
-         * emitter.fire("myEvent"); // No callbacks will be triggered
+         * emitter.fire("myEvent"); // Prints "Foo" from the second listener, as the first have been disconnected
          * ```
          */
         void disconnect(
             const std::string& eventName,
             EventId listenerId
         );
+
+        /** @brief Deregister all listeners from this event. Useful for cleaning up.
+         * @param eventName The name of the event.
+         *
+         * This function effectively removes all listeners associated with the given event name.
+         *
+         * Example usage:
+         * ```
+         * EventEmitter emitter;
+         *
+         * EventId listenerId0 = emitter.connect("myEvent", std::function([]() {
+         *     std::cout << "The lazy dragon jumps over a quick fish\n";
+         * }));
+         *
+         * EventId listenerId1 = emitter.connect("myEvent, std::function([]() {
+         *     std::cout << "Foo\n";
+         * }));
+         *
+         *
+         * // later...
+         *
+         * emitter.reset("myEvent");
+         *
+         * emitter.fire("myEvent"); // Nothing prints!
+         * ```
+         */
+        void reset(const std::string& eventName);
 
     private:
         template <typename... Args, std::size_t... I>

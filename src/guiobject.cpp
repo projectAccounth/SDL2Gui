@@ -346,7 +346,7 @@ bool GUILib::GuiObject::setParent(const std::shared_ptr<GuiObject>& newParent)
 	return success;
 }
 
-bool GUILib::GuiObject::addChild(std::shared_ptr<GuiObject> child)
+bool GUILib::GuiObject::addChild(const std::shared_ptr<GuiObject>& child)
 {
 	if (!child) return false;
 
@@ -617,3 +617,17 @@ std::string GUILib::GuiObject::getEssentialInformation() const {
 
 	return oss.str();
 }
+
+void GUILib::GuiObject::initialize(SDL_Renderer* r)
+{
+	if (!r) return;
+	if (r != ref) updateRenderer(r);
+	if (const auto p = parent.lock()) {
+		p->initialize(r);
+	}
+}
+void GUILib::GuiObject::resetListeners(const std::string& eventName)
+{
+	events.reset(eventName);
+}
+

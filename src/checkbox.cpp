@@ -38,6 +38,8 @@ void GUILib::CheckBox::changeSymbol(const char& symbol) {
 }
 
 void GUILib::CheckBox::handleEvent(const SDL_Event& e) {
+    if (!active || !visible) return;
+
     int x, y;
     SDL_PumpEvents();
     SDL_GetMouseState(&x, &y);

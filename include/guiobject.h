@@ -117,9 +117,6 @@ namespace GUILib {
 		/// @tparam ProductType The final type of the object.
 		template<typename DerivedBuilder, typename ProductType>
 		class Builder {
-			static_assert(
-				std::is_base_of_v<Builder, DerivedBuilder> &&
-				std::is_base_of_v<GuiObject, ProductType>);
 		protected:
 			/// @brief The internal type.
 			std::shared_ptr<ProductType> obj;
@@ -172,12 +169,12 @@ namespace GUILib {
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
-			/// @brief Adds an existing child to an object..
-			/// @param c The child.
+			/// @brief Adds an existing child to an object.
+			/// @param child The child.
 			/// @returns The current modified builder.
-			virtual DerivedBuilder& addChild(std::shared_ptr<GuiObject> c)
+			virtual DerivedBuilder& addChild(const std::shared_ptr<GuiObject>& child)
 			{
-				obj->addChild(std::move(c));
+				obj->addChild(std::move(child));
 				return static_cast<DerivedBuilder&>(*this);
 			}
 
@@ -230,7 +227,7 @@ namespace GUILib {
 		/// @brief Adds a child to the object.
 		/// Fires the "onChildAdded" event.
 		/// @param child The child to be added.
-		bool addChild(std::shared_ptr<GuiObject> child);
+		bool addChild(const std::shared_ptr<GuiObject>& child);
 
 		/// @brief Removes a child from the object.
 		/// Fires the "onChildRemoved" event.oi
@@ -347,6 +344,8 @@ namespace GUILib {
 			events.fire(eventName, std::forward<Args>(args)...);
 		}
 
+		void resetListeners(const std::string& eventName);
+
 		/// @brief Updates the reference to the renderer of the object.
 		/// Fires the "onRendererChange" event.
 		/// @param renderer The new renderer.
@@ -386,6 +385,10 @@ namespace GUILib {
 		/// @brief Returns some of the information (is draggable, size, position, etc.)
 		/// @returns The string that contains the specified information.
 		std::string getEssentialInformation() const;
+
+		/// @brief Dummy function for initializing the object.
+		/// @param r The renderer.
+		virtual void initialize(SDL_Renderer* r);
 		
 		/// @brief Destructor.
 		virtual ~GuiObject();

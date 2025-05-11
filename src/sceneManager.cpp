@@ -21,16 +21,23 @@ void GUILib::SceneManager::clear(std::shared_ptr<GuiObject> obj) {
     }
 }
 
-void GUILib::SceneManager::clearAll() {
+void GUILib::SceneManager::clearAll()
+{
     objects.clear();
 }
 
-void GUILib::SceneManager::handleEvent(const SDL_Event& e) const {
-    for (auto& obj : objects) {
-        if (!obj) continue;
-        obj->handleEvent(e);
-    }
+void GUILib::SceneManager::handleEvent(const SDL_Event& e)  
+{ 
+   objects.erase(std::remove_if(objects.begin(), objects.end(),
+       [](const std::shared_ptr<GuiObject>& p) { return p == nullptr; }),
+       objects.end());
+   for (auto& obj : objects) {  
+       if (!obj) continue;  
+       obj->handleEvent(e);  
+   }  
 }
+
+
 
 GUILib::SceneManager::~SceneManager() {
     objects.clear();
@@ -39,4 +46,13 @@ GUILib::SceneManager::~SceneManager() {
 void GUILib::SceneManager::updateRenderer(SDL_Renderer* r)
 {
     ref = r;
+}
+
+void GUILib::SceneManager::initialize(SDL_Renderer* r) const
+{
+	for (const auto& object : objects)
+	{
+        if (!object) continue;
+        object->initialize(r);
+	}
 }

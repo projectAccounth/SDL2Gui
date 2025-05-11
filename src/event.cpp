@@ -27,3 +27,8 @@ void EventEmitter::disconnect(const std::string& eventName, EventId listenerId) 
         }
     }
 }
+
+void EventEmitter::reset(const std::string& eventName)
+{
+    listeners[eventName].clear();
+}

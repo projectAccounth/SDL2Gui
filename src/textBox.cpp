@@ -195,40 +195,8 @@ void GUILib::TextBox::setText(const std::string& str)
     text = str;
 }
 
-GUILib::TextBox& GUILib::TextBox::operator=(const TextBox& other)
-{
-    if (&other == this) return *this;
-
-    GuiObject::operator=(other);
-
-    ref = other.ref;
-    xAlign = other.xAlign;
-    yAlign = other.yAlign;
-    text = other.text;
-    boxColor = other.boxColor;
-    textColor = other.textColor;
-    renderedLines = other.renderedLines;
-
-    return *this;
-}
-
-GUILib::TextBox& GUILib::TextBox::operator=(TextBox&& other) noexcept
-{
-    if (&other == this) return *this;
-
-    GuiObject::operator=(other);
-
-    ref = other.ref;
-    xAlign = other.xAlign;
-    yAlign = other.yAlign;
-    text = other.text;
-    boxColor = other.boxColor;
-    textColor = other.textColor;
-    renderedLines = other.renderedLines;
-
-    return *this;
-}
-
+GUILib::TextBox& GUILib::TextBox::operator=(const TextBox& other) = default;
+GUILib::TextBox& GUILib::TextBox::operator=(TextBox&& other) noexcept = default;
 GUILib::TextBox::TextBox(TextBox&&) noexcept = default;
 GUILib::TextBox::TextBox(const TextBox&) = default;
 

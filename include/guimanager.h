@@ -58,7 +58,7 @@ namespace GUILib {
 
         /// @brief Handles all event for objects.
         /// @param e The event to be handled.
-        void handleEvent(const SDL_Event& e) const;
+        void handleEvent(const SDL_Event& e);
 
         /// @brief Clears the scene.
         /// @param obj The object to clear.
@@ -70,6 +70,10 @@ namespace GUILib {
         /// @brief Updates the renderer.
         /// @param r The renderer.
         void updateRenderer(SDL_Renderer* r);
+
+        /// @brief Initializes all objects.
+        /// @param r The renderer.
+        void initialize(SDL_Renderer* r) const;
 
     	~SceneManager();
     };
