@@ -107,15 +107,19 @@ namespace GUILib {
 			bool isActive = true
 		);
 	public:
+		// Default constructor. Not recommended to use.
 		GuiObject();
 		GuiObject(const GuiObject&) noexcept;
 		GuiObject(GuiObject&&) noexcept;
 
-		/// @brief A builder class for objects.
+		/// @brief A builder class for objects. Is the recommended way to create objects dependant of the factory.
 		/// @tparam DerivedBuilder The derived (overridden) builder class.
 		/// @tparam ProductType The final type of the object.
 		template<typename DerivedBuilder, typename ProductType>
 		class Builder {
+			static_assert(
+				std::is_base_of_v<Builder, DerivedBuilder> &&
+				std::is_base_of_v<GuiObject, ProductType>);
 		protected:
 			/// @brief The internal type.
 			std::shared_ptr<ProductType> obj;

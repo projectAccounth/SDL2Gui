@@ -4,10 +4,6 @@
 #error "This library requires C++17 or above."
 #endif
 
-// Include guard
-#ifndef TYPES_H
-#define TYPES_H
-
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -29,21 +25,21 @@
 #include <algorithm>
 #include <chrono>
 #include <sstream>
+#include <cstdint>
 
 namespace GUILib {
 
-    enum class HorizontalTextAlign {
+    enum class HorizontalTextAlign : uint8_t {
         CENTER,
         LEFT,
         RIGHT
     };
 
 
-    enum class VerticalTextAlign {
+    enum class VerticalTextAlign : uint8_t {
         CENTER,
         UP,
         BOTTOM
     };
 
 }
-#endif /* TYPES_H */

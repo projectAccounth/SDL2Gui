@@ -225,7 +225,7 @@ namespace GUILib {
          */
         template <typename... Args>
         void fire(const std::string& eventName, Args&&... args) {
-            if (!listeners.count(eventName)) return;
+            if (!listeners.count(eventName) || listeners[eventName].empty()) return;
             std::vector<std::any> packedArgs = { std::forward<Args>(args)... };
             for (const auto& callback : listeners[eventName]) {
                 callback.second(packedArgs);

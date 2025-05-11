@@ -18,9 +18,6 @@ namespace GUILib {
 		std::string filePath;
 		/// @brief The previous file path of the image.
 		std::string prevFilePath;
-		/// @brief The class name.
-		static inline const std::string CLASS_NAME = "Image";
-
 		
 		Image(
 			std::shared_ptr<GuiObject> parent,

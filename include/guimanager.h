@@ -5,7 +5,8 @@
 namespace GUILib {
 
     /// @brief A class to facilitate the creation of GUI objects.
-    /// @brief Might be useful for creating GUI objects in a more organized manner, and dynamically.
+    /// @brief Useful for creating GUI objects in a more organized manner, and dynamically.
+    /// Might be deprecated in the near future in favor of object builders.
     class GuiInstance {
     public:
         /// @brief Creates a GUI object of type T, must be derived from GuiObject.
@@ -39,7 +40,7 @@ namespace GUILib {
     public:
         /// @brief Creates a scene manager.
         /// @param ref The renderer to use for the scene.
-        SceneManager(SDL_Renderer* ref) : ref(ref) {}
+        explicit SceneManager(SDL_Renderer* ref) : ref(ref) {}
 
         /// @brief Adds an object to the scene.
         /// @param obj The object to add.

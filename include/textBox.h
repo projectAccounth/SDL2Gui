@@ -40,14 +40,14 @@ namespace GUILib {
 
         /// @brief A struct that stores information about a rendered line in the text box.
         struct RenderedLine {
-            std::string text; /// @brief The text on that line.
-            SDL_Point position; /// @brief Pixel position on screen (x, y)
+            /// @brief The text on that line.
+            std::string text; 
+            /// @brief Pixel position on screen (x, y)
+            SDL_Point position; 
         };
 
+        /// @brief The lines that will be rendered.
         std::vector<RenderedLine> renderedLines;
-
-        /// @brief The class name.
-		static inline const std::string CLASS_NAME = "TextBox";
 
 		TextBox(
             std::shared_ptr<GuiObject> parent,
@@ -109,6 +109,11 @@ namespace GUILib {
         /// @brief Returns the class name of the object.
 		/// @return The class name.
 		inline std::string getClassName() const override { return "TextBox"; };
+
+        TextBox& operator=(const TextBox&);
+        TextBox& operator=(TextBox&&) noexcept;
+        TextBox(const TextBox&);
+        TextBox(TextBox&&) noexcept;
 
         ~TextBox() override;
     };
@@ -184,9 +189,14 @@ namespace GUILib {
 
         /// @brief Returns the class name of the object.
 		/// @return The class name.
-		[[nodiscard]] std::string getClassName() const override { return "EditableTextBox"; }
+		[[nodiscard]] inline std::string getClassName() const override { return "EditableTextBox"; }
 
         ~EditableTextBox() override;
+
+        EditableTextBox& operator=(const EditableTextBox&) = default;
+        EditableTextBox& operator=(EditableTextBox&&) noexcept = default;
+        EditableTextBox(const EditableTextBox&) = default;
+        EditableTextBox(EditableTextBox&&) noexcept = default;
 
         class Builder final : public GuiObject::Builder<Builder, EditableTextBox> {};
     };

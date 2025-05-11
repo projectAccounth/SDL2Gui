@@ -21,6 +21,8 @@ protected:
 	std::vector<Item> items;
 
 	GUILib::EventEmitter events; // this thing has a lot of uses
+
+	Item activeItem;
 public:
 	Inventory() = default;
 
@@ -76,6 +78,10 @@ public:
 		}), items.end());
 		if (cachedItems.size() != items.size()) trigger("onChanged");
 	}
+
+	void setActiveItem(Item item) {
+		activeItem = item;
+	}
 };
 
 // Implement those yourself LMAO
@@ -129,8 +135,6 @@ public:
 		p->setVisible(true);
 		p->setActive(true);
 
-		std::cout << p->getEssentialInformation() << '\n';
-
 		const auto closeButton = GUILib::TextButton::Builder()
 			.setSize({ 0.05, 0.1, true })
 			.setPosition({ 0.9, 0.05, true })
@@ -171,6 +175,11 @@ public:
 
 	void updateInventoryRender()
 	{
+		if (!mainContentFrame) {
+			std::cout << "Initialize the frame first!\n";
+			return;
+		}
+
 		for (const auto& button : invButtons)
 		{
 			button->setParent(nullptr);
@@ -205,10 +214,17 @@ public:
 				.setActive(true)
 				.build();
 
+			const Item activeItem = inventory.getItems()[i];
+
 			button->changeFont(buttonTextFont);
 			button->changeButtonColor(this->frameColor);
 			button->changeTextColor({ 0, 0, 0, 255 });
-			button->setText(inventory.getItems()[i].getName());
+			button->setText(activeItem.getName());
+
+			button->on("onClick", std::function([this, activeItem](int x, int y) 
+			{
+				inventory.setActiveItem(activeItem);
+			}));
 
 			invButtons.push_back(button);
 		}
@@ -240,7 +256,7 @@ int main(int argc, char* argv[])
 
 	const std::vector<std::string> str = { "who", "beat", "7-time", "world", "champion", "in", "equal", "machinery" };
 
-	for (int i = 0; i < str.size(); ++i)
+	for (size_t i = 0; i < str.size(); ++i)
 	{
 		exampleInventory.addItem(Item(str[i], i));
 	}
@@ -306,14 +322,16 @@ int main(int argc, char* argv[])
 
 	const auto toggleDragInv = std::make_shared<GUILib::TextButton>(*openInvButton);
 
-	toggleDragInv->setParent(openInvButton);
-	toggleDragInv->resize({ 0.5, 1, true });
-	toggleDragInv->move({ 1, 0, true });
-
 	toggleDragInv->on("onClick", std::function([&](int, int)
 	{
 		invGui->setDraggable(!invGui->isDraggable());
 	}));
+	
+	toggleDragInv->setParent(openInvButton);
+	toggleDragInv->setText("Whart");
+	toggleDragInv->resize({ 0.5, 1, true });
+	toggleDragInv->move({ 1, 0, true });
+	toggleDragInv->initialize(renderer);
 
 	sceneManager.addBulk(openInvButton, invGui);
 

@@ -26,7 +26,7 @@ namespace GUILib {
     public:
 		Frame();
 
-        class Builder : public GuiObject::Builder<Builder, Frame> {};
+        class Builder final : public GuiObject::Builder<Builder, Frame> {};
         
         Frame(const Frame& other) noexcept;
         Frame(Frame&& other) noexcept;
@@ -52,8 +52,7 @@ namespace GUILib {
         ~Frame() override = default; // Nothing to clean up
     };
 
-    /// @brief A scrollable frame.
-    /// Shouldn't be used for now, as the implementation is still buggy.
+    /// @brief A scrollable frame with handle support.
     class ScrollingFrame final : public Frame {
     private:
 
@@ -111,7 +110,7 @@ namespace GUILib {
     public:
 		ScrollingFrame();
 
-        class Builder : public GuiObject::Builder<Builder, ScrollingFrame> {};
+        class Builder final : public GuiObject::Builder<Builder, ScrollingFrame> {};
 
         /// @brief Gets the color of the scrollbar.
         SDL_Color getScrollbarColor() const;

@@ -20,7 +20,6 @@ std::vector<std::string> GUILib::TextBox::splitTextIntoLines(
             // line measurement
             int wordWidth = 0, wordHeight = 0;
 
-            // possible dangling pointer
             TTF_SizeText(textFont, (currentLine + word).c_str(), &wordWidth, &wordHeight);
 
             if (wordWidth > maxWidth) {
@@ -195,3 +194,42 @@ void GUILib::TextBox::setText(const std::string& str)
 {
     text = str;
 }
+
+GUILib::TextBox& GUILib::TextBox::operator=(const TextBox& other)
+{
+    if (&other == this) return *this;
+
+    GuiObject::operator=(other);
+
+    ref = other.ref;
+    xAlign = other.xAlign;
+    yAlign = other.yAlign;
+    text = other.text;
+    boxColor = other.boxColor;
+    textColor = other.textColor;
+    renderedLines = other.renderedLines;
+
+    return *this;
+}
+
+GUILib::TextBox& GUILib::TextBox::operator=(TextBox&& other) noexcept
+{
+    if (&other == this) return *this;
+
+    GuiObject::operator=(other);
+
+    ref = other.ref;
+    xAlign = other.xAlign;
+    yAlign = other.yAlign;
+    text = other.text;
+    boxColor = other.boxColor;
+    textColor = other.textColor;
+    renderedLines = other.renderedLines;
+
+    return *this;
+}
+
+GUILib::TextBox::TextBox(TextBox&&) noexcept = default;
+GUILib::TextBox::TextBox(const TextBox&) = default;
+
+

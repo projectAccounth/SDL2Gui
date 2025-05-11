@@ -134,12 +134,11 @@ void GUILib::ScrollingFrame::scroll(int deltaX, int deltaY) {
 
 void GUILib::ScrollingFrame::handleEvent(const SDL_Event& event)
 {
-    GuiObject::handleEvent(event);
-
     if (!isActive()) return;
 
+	GuiObject::handleEvent(event);
+
     const SDL_Rect rect = getRect();
-	SDL_Point absContentSize = contentSize.getAbsoluteSize({rect.w, rect.h});
 
 	const int mouseX = event.button.x;
     const int mouseY = event.button.y;

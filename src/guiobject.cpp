@@ -17,8 +17,9 @@ static std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
 ) {
 	// Base case: If no parent exists, calculate relative to the window
 	const auto [objSize, objPos] = std::pair { obj.getSize(), obj.getPosition() };
+	GUILib::UIUnit outPos{}, outSize{};
+
 	if (!obj.hasParent()) {
-		GUILib::UIUnit outPos{}, outSize{};
 
 		outSize.sizeX = static_cast<int>(
 			objSize.isUsingScale ? windowWidth * objSize.sizeX : objSize.sizeX);
@@ -41,14 +42,14 @@ static std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
 	auto [parentPos, parentSize] = calculateChild(*parent.lock(), windowWidth, windowHeight);
 
 	// Calculate this object's position and size relative to the parent's
-	GUILib::UIUnit outPos {
+	outPos = {
 		parentPos.sizeX +
 		(objPos.isUsingScale ? parentSize.sizeX * objPos.sizeX : objPos.sizeX),
 		parentPos.sizeY +
 		(objPos.isUsingScale ? parentSize.sizeY * objPos.sizeY : objPos.sizeY),
 		objPos.isUsingScale
 	};
-	GUILib::UIUnit outSize {
+	outSize = {
 		objSize.isUsingScale ? parentSize.sizeX * objSize.sizeX : objSize.sizeX,
 		objSize.isUsingScale ? parentSize.sizeY * objSize.sizeY : objSize.sizeY,
 		objSize.isUsingScale
@@ -240,6 +241,7 @@ GUILib::GuiObject& GUILib::GuiObject::operator=(const GUILib::GuiObject& other)
 	position = other.position;
 
 	parent = other.parent;
+	children = other.children;
 
 	canBeDragged = other.canBeDragged;
 	dragOffsetX = other.dragOffsetX;
@@ -558,6 +560,7 @@ GUILib::GuiObject& GUILib::GuiObject::operator=(GuiObject&& other) noexcept
 	other.size = other.position = UIUnit();
 
 	parent = std::move(other.parent);
+	children = std::move(other.children);
 
 	canBeDragged = other.canBeDragged;
 
@@ -585,26 +588,9 @@ GUILib::GuiObject& GUILib::GuiObject::operator=(GuiObject&& other) noexcept
 	return *this;
 }
 
-GUILib::GuiObject::GuiObject(GuiObject&& other) noexcept:
-	ref(other.ref), size(other.size), position(other.position), canBeDragged(other.canBeDragged),
-	parent(std::move(other.parent)), objRect(other.objRect), visible(other.visible),
-	active(other.active), dragOffsetX(other.dragOffsetX), dragOffsetY(other.dragOffsetY),
-	renderingPivotOffset(other.renderingPivotOffset), degreeRotation(other.degreeRotation)
-{
-	other.ref = nullptr;
-	update(ref);
-}
+GUILib::GuiObject::GuiObject(GuiObject&& other) noexcept = default;
 
-GUILib::GuiObject::GuiObject(const GuiObject& other) noexcept:
-	enable_shared_from_this(other),
-	ref(other.ref), size(other.size), position(other.position), canBeDragged(other.canBeDragged),
-	parent(other.parent), objRect(other.objRect), visible(other.visible),
-	active(other.active), dragOffsetX(other.dragOffsetX), dragOffsetY(other.dragOffsetY),
-	shouldRenderChildren(other.shouldRenderChildren), renderingPivotOffset(other.renderingPivotOffset), degreeRotation(other.degreeRotation),
-	isDragging(false)
-{
-	
-}
+GUILib::GuiObject::GuiObject(const GuiObject& other) noexcept = default;
 
 std::string GUILib::GuiObject::getEssentialInformation() const {
 	std::ostringstream oss;
@@ -622,7 +608,7 @@ std::string GUILib::GuiObject::getEssentialInformation() const {
 	oss << "  Can Be Dragged: " << (canBeDragged ? "true" : "false") << "\n";
 	oss << "  Render Children: " << (shouldRenderChildren ? "true" : "false") << "\n";
 	oss << "  Children count: " << children.size() << "\n";
-	if (auto p = parent.lock()) {
+	if (parent.lock()) {
 		oss << "  Has Parent: true\n";
 	}
 	else {
