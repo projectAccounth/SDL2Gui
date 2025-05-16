@@ -33,7 +33,7 @@ namespace GUILib {
 
 		/// @brief Initializes the image.
 		/// @param renderer The renderer to be used.
-		void initialize(SDL_Renderer*& renderer);
+		void initialize(SDL_Renderer* renderer) override;
 
 		/// @brief Renders the image.
 		void render() override;

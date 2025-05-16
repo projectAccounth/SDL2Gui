@@ -3,9 +3,18 @@
 
 int GUILib::ImageButton::nextId = 0;
 
-void GUILib::ImageButton::initialize(SDL_Renderer*& renderer) {
+void GUILib::ImageButton::initialize(SDL_Renderer* renderer) {
     if (!renderer)
         return;
+
+    if (defaultImgPath.empty()) {
+        std::cout << "The default image path is empty. Please set it before using. Button ID: " << getId() << '\n';
+        return;
+    }
+    else if (hoverImgPath.empty()) {
+        std::cout << "The hover image path is empty. Consider setting it to something, could be the default image path. Button ID: " << getId() << '\n';
+        return;
+    }
 
     ref = renderer;
 
@@ -42,6 +51,8 @@ void GUILib::ImageButton::render() {
     SDL_RenderCopy(ref, finalTexture, nullptr, &objRect);
 
     SDL_DestroyTexture(finalTexture);
+
+    GuiObject::render();
 }
 
 void GUILib::ImageButton::updateDefaultImgPath(const char* path) {

@@ -93,11 +93,18 @@ void GUILib::TextBox::render()
 
     int offsetY = 0;
     // properly implement rotated text rendering (later)
-    renderedLines.clear(); // <- a member variable in TextBox
+    renderedLines.clear();
 
     for (const auto& line : lines) {
         int textWidth = 0, textHeight = 0;
-        TTF_SizeText(textFont, line.c_str(), &textWidth, &textHeight);
+        if (!line.empty()) {
+            TTF_SizeText(textFont, line.c_str(), &textWidth, &textHeight);
+        }
+        else {
+            // For blank lines, use a minimal width and the font's height
+            textWidth = 1;
+            textHeight = lineHeight();
+        }
 
         int startX = objRect.x;
         switch (xAlign) {
@@ -115,8 +122,15 @@ void GUILib::TextBox::render()
         const SDL_Point linePos = { startX, startY + offsetY };
         renderedLines.push_back({ line, linePos });
 
-        // Text rendering (unchanged)
-        SDL_Surface* textSurface = TTF_RenderUTF8_Blended(textFont, line.c_str(), textColor);
+        SDL_Surface* textSurface = nullptr;
+        if (!line.empty()) {
+            textSurface = TTF_RenderUTF8_Blended(textFont, line.c_str(), textColor);
+        }
+        else {
+            // Create a blank (transparent) surface for empty lines
+            textSurface = SDL_CreateRGBSurfaceWithFormat(0, textWidth, textHeight, 32, SDL_PIXELFORMAT_RGBA32);
+            SDL_FillRect(textSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
+        }
         if (!textSurface) continue;
 
         SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ref, textSurface);
@@ -199,5 +213,15 @@ GUILib::TextBox& GUILib::TextBox::operator=(const TextBox& other) = default;
 GUILib::TextBox& GUILib::TextBox::operator=(TextBox&& other) noexcept = default;
 GUILib::TextBox::TextBox(TextBox&&) noexcept = default;
 GUILib::TextBox::TextBox(const TextBox&) = default;
+
+
+void GUILib::TextBox::setTextAlignment(
+    const HorizontalTextAlign& alignX,
+    const VerticalTextAlign& alignY
+) {
+    xAlign = alignX;
+    yAlign = alignY;
+    this->render();
+}
 
 

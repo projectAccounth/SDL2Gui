@@ -77,7 +77,7 @@ namespace GUILib {
         /// @brief Adjusts the text alignment.
         /// @param alignX The horizontal alignment.
         /// @param alignY The vertical alignment.
-        void adjustTextAlignment(
+        void setTextAlignment(
             const HorizontalTextAlign& alignX,
             const VerticalTextAlign& alignY
         );
@@ -130,6 +130,10 @@ namespace GUILib {
         void moveCursorLeft();
         /// @brief Handles the right arrow key.
         void moveCursorRight();
+        /// @brief Handles the up arrow key.
+        void moveCursorUp();
+        /// @brief Handles the down arrow key.
+        void moveCursorDown();
         /// @brief Handles the delete key.
         void handleDelete();
 
@@ -151,8 +155,17 @@ namespace GUILib {
         size_t selectionStart = std::string::npos;
         size_t selectionEnd = std::string::npos;
 
+        // For moving up/down
+        size_t preferredColumn = 0;
+
         /// @brief The class name.
     	static inline const std::string CLASS_NAME = "EditableTextBox";
+
+        /// @brief The size of the indentation.
+        int indentationSize;
+
+        /// @brief Whether the automatic indentation be enabled.
+        bool shouldIndent;
 
         EditableTextBox(
             std::shared_ptr<GuiObject> parent,
@@ -168,6 +181,22 @@ namespace GUILib {
         );
     public:
         EditableTextBox();
+
+        /// @brief Gets whether the box should indent automatically.
+        /// @returns The value.
+        [[nodiscard]] bool getShouldIndent() const;
+
+        /// @brief Gets the automatic indentation size.
+        /// @returns The value.
+        [[nodiscard]] int getIndentationSize() const;
+
+        /// @brief Sets whether the box should indent automatically.
+        /// @param val The value.
+        void setShouldIndent(const bool& val);
+
+        /// @brief Sets the automatic indent size of the box.
+        /// @param val The value.
+        void setIndentationSize(const int& val);
 
         /// @brief Returns the editable state of the text box.
         /// @return True if the text box is editable, false otherwise.

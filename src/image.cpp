@@ -1,5 +1,7 @@
 #include "image.h"
 
+#include <complex>
+
 GUILib::Image::Image(
 	std::shared_ptr<GuiObject> parent,
 	SDL_Renderer* renderer,
@@ -17,11 +19,17 @@ GUILib::Image::Image(
 
 GUILib::Image::Image(): imageTexture() {};
 	
-void GUILib::Image::initialize(SDL_Renderer*& renderer) 
+void GUILib::Image::initialize(SDL_Renderer* renderer) 
 {
 	GuiObject::initialize(renderer);
 	if (!renderer)
 		return;
+
+	if (filePath.empty()) {
+		std::cout << "The file path is empty. Set it to something before using.\n";
+	}
+
+	if (imageTexture) SDL_DestroyTexture(imageTexture);
 
 	const auto fPath = filePath.c_str();
 	SDL_Surface* imageSurface = IMG_Load(fPath);
@@ -42,7 +50,9 @@ void GUILib::Image::render() {
 
 	SDL_Point rotPivot = getPivotOffsetPoint();
 
-    SDL_RenderCopyEx(ref, imageTexture, NULL, &objRect, degreeRotation, &rotPivot, flip);
+	if (!imageTexture) initialize(ref);
+
+    SDL_RenderCopyEx(ref, imageTexture, nullptr, &objRect, degreeRotation, &rotPivot, flip);
 
 	GuiObject::render();
 }
