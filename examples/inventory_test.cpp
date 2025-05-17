@@ -51,7 +51,7 @@ public:
 
 	void removeItems(int id)
 	{
-		const auto cachedItems = items;
+		const auto& cachedItems = items;
 		items.erase(std::remove_if(items.begin(), items.end(), [id](const Item& item)
 		{
 			return item.getId() == id;
@@ -61,7 +61,7 @@ public:
 
 	void removeItems(const std::string& name)
 	{
-		const auto cachedItems = items;
+		const auto& cachedItems = items;
 		items.erase(std::remove_if(items.begin(), items.end(), [name](const Item& item)
 		{
 			return item.getName() == name;
@@ -71,7 +71,7 @@ public:
 
 	void removeItems(const std::string& name, int id)
 	{
-		const auto cachedItems = items;
+		const auto& cachedItems = items;
 		items.erase(std::remove_if(items.begin(), items.end(), [name, id](const Item& item)
 		{
 			return item.getName() == name && item.getId() == id;
@@ -114,10 +114,12 @@ public:
 			.setParent(shared_from_this())
 			.setRenderer(this->ref).build();
 
-		const auto p = mainContentFrame;
+		const auto& p = mainContentFrame;
 
 		if (!p) std::terminate(); // crash if the GUI breaks
 
+		p->setChildrenRenderingState(true);
+		std::cout << p->getEssentialInformation() << '\n';
 		p->setFrameColor({
 			static_cast<Uint8>(frameColor.r + 15),
 			static_cast<Uint8>(frameColor.g + 15),
@@ -160,6 +162,7 @@ public:
 		label->changeFont(buttonTextFont);
 		label->setBoxColor({ 0, 0, 0, 0 });
 		label->setTextColor({ 0, 0, 0, 255 });
+		label->setTextAlignment(GUILib::HorizontalTextAlign::CENTER, GUILib::VerticalTextAlign::CENTER);
 		label->setText("Inventory");
 
 		closeButton->on("onClick", std::function([&](int, int)
@@ -273,8 +276,7 @@ int main(int argc, char* argv[])
 
 	TTF_Font* font = TTF_OpenFont("./res/fonts/mssan-serif.ttf", 15);
 
-	if (!font)
-	{
+	if (!font) {
 		std::cout << TTF_GetError() << '\n';
 		return 1;
 	}

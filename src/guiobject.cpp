@@ -1,5 +1,6 @@
 #include "guiobject.h"
 #include "frame.h"
+#include "button.h"
 
 SDL_Renderer* nullrnd = nullptr;
 
@@ -57,7 +58,6 @@ static std::pair<GUILib::UIUnit, GUILib::UIUnit> calculateChild(
 
 	if (const auto scrollingParent = parent.lock()) {
 		if (const auto sp = std::dynamic_pointer_cast<GUILib::ScrollingFrame>(scrollingParent)) {
-			// auto parentRect = scrollingParent->getRect();
         	outPos.sizeX -= sp->getScrollX();
 			outPos.sizeY -= sp->getScrollY();
 		}
@@ -125,10 +125,10 @@ GUILib::UIUnit GUILib::GuiObject::getPosition() const
 
 void GUILib::GuiObject::handleEvent(const SDL_Event& event)
 {
-	update(ref);
 	if (!active || !visible) {
 		return;
 	}
+	children.erase(std::remove_if(children.begin(), children.end(), [](const auto& ptr) { return ptr.get() == nullptr; }), children.end());
 	for (const auto& child : children) {
 		if (!child) continue;
 		child->handleEvent(event);
@@ -263,7 +263,7 @@ GUILib::GuiObject& GUILib::GuiObject::operator=(const GUILib::GuiObject& other)
 }
 
 
-void GUILib::GuiObject::updateRenderer(SDL_Renderer*& renderer)
+void GUILib::GuiObject::updateRenderer(SDL_Renderer* renderer)
 {
 	if (renderer == ref) return;
 	ref = renderer;
@@ -282,8 +282,7 @@ void GUILib::GuiObject::updateRenderer(SDL_Renderer*& renderer)
 
 GUILib::GuiObject::~GuiObject()
 {
-	if (auto p = parent.lock())
-		p->removeChild(shared_from_this());
+	
 }
 
 void GUILib::GuiObject::setVisible(bool value)
@@ -408,6 +407,7 @@ void GUILib::GuiObject::setDraggable(bool value)
 
 void GUILib::GuiObject::render()
 {
+	update(ref);
 	if (!shouldRender()) return;
 	if (!shouldRenderChildren) return;
 
@@ -622,8 +622,8 @@ void GUILib::GuiObject::initialize(SDL_Renderer* r)
 {
 	if (!r) return;
 	if (r != ref) updateRenderer(r);
-	if (const auto p = parent.lock()) {
-		p->initialize(r);
+	for (const auto& child : children) {
+		if (child) child->initialize(r);
 	}
 }
 void GUILib::GuiObject::resetListeners(const std::string& eventName)

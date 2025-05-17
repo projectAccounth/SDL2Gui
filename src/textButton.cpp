@@ -3,11 +3,12 @@
 
 int GUILib::TextButton::nextId = 0;
 
-void GUILib::TextButton::initialize(SDL_Renderer*& renderer)
+void GUILib::TextButton::initialize(SDL_Renderer* renderer)
 {
     GuiObject::initialize(renderer);
-    if (!renderer)
+    if (!renderer) {
         return;
+    }
 
     if ((text.empty() || !textFont) && !textTexture) {
         textTexture = nullptr;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -46,7 +47,7 @@ void GUILib::TextButton::render()
 
     if (!textTexture) initialize(ref);
 
-    if (textFont) {
+    if (textTexture) {
         int textWidth = 0, textHeight = 0;
 
         SDL_QueryTexture(textTexture, nullptr, nullptr, &textWidth, &textHeight);
@@ -197,7 +198,10 @@ SDL_Color GUILib::TextButton::getButtonColor() const
 
 void GUILib::TextButton::setText(const std::string& str)
 {
+    if (text == str) return;
+
     text = str;
+    initialize(ref);
     trigger("onTextChange", str);
 }
 

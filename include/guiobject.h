@@ -349,7 +349,7 @@ namespace GUILib {
 		/// @brief Updates the reference to the renderer of the object.
 		/// Fires the "onRendererChange" event.
 		/// @param renderer The new renderer.
-		void updateRenderer(SDL_Renderer*& renderer);
+		void updateRenderer(SDL_Renderer* renderer);
 
 		/// @brief Gets the current renderer.
 		/// @return The current renderer.

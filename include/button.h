@@ -118,7 +118,7 @@ namespace GUILib {
 
         /// @brief Initializes the buttons' component.
         /// @param renderer The renderer that the button would be on.
-        void initialize(SDL_Renderer*& renderer);
+        void initialize(SDL_Renderer* renderer) override;
 
         /// @brief Renders the button.
         void render() override;

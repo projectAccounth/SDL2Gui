@@ -15,78 +15,87 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\button.h">
+    <ClInclude Include="include\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\image.h">
+    <ClInclude Include="include\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\types.h">
+    <ClInclude Include="include\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\textBox.h">
+    <ClInclude Include="include\TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\lfmain.h">
+    <ClInclude Include="include\lfmain">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\guiobject.h">
+    <ClInclude Include="include\GuiObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\guimanager.h">
+    <ClInclude Include="include\GuiManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\event.h">
+    <ClInclude Include="include\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\frame.h">
+    <ClInclude Include="include\Frame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\slider.h">
+    <ClInclude Include="include\Slider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\slider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\TweenService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ComboBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\editableTextBox.cpp">
+    <ClCompile Include="src\EditableTextBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\image.cpp">
+    <ClCompile Include="src\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\imageButton.cpp">
+    <ClCompile Include="src\ImageButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\textBox.cpp">
+    <ClCompile Include="src\TextBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\textButton.cpp">
+    <ClCompile Include="src\TextButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\guiobject.cpp">
+    <ClCompile Include="src\GuiObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\checkbox.cpp">
+    <ClCompile Include="src\CheckBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\button.cpp">
+    <ClCompile Include="src\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\event.cpp">
+    <ClCompile Include="src\Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\slider.cpp">
+    <ClCompile Include="src\Slider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scrollingFrame.cpp">
+    <ClCompile Include="src\ScrollingFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\frame.cpp">
+    <ClCompile Include="src\Frame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\sceneManager.cpp">
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComboBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

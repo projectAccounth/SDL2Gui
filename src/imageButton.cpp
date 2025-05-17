@@ -27,7 +27,7 @@ void GUILib::ImageButton::initialize(SDL_Renderer* renderer) {
         std::cout << "A problem occurred when creating one or more surface for image button, ID: "
             << id << ". Error: "
             << SDL_GetError() << '\n';
-        exit(1);
+        return;
     }
     hoverTexture = SDL_CreateTextureFromSurface(renderer, hoverSurf);
     buttonTexture = SDL_CreateTextureFromSurface(renderer, imgSurf);
@@ -36,7 +36,7 @@ void GUILib::ImageButton::initialize(SDL_Renderer* renderer) {
         std::cout << "A problem occurred when creating one or more texture for image button, ID: "
             << id << ". Error: "
             << SDL_GetError() << '\n';
-        exit(1);
+        return;
     }
 
     SDL_FreeSurface(hoverSurf);

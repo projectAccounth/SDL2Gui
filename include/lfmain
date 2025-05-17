@@ -1,0 +1,29 @@
+#pragma once
+
+/* /
+* / Main include file \
+*/
+
+#include "Button.h"
+#include "Image.h"
+#include "TextBox.h"
+#include "Types.h"
+#include "GuiObject.h"
+#include "GuiManager.h"
+#include "Frame.h"
+#include "Slider.h"
+#include "TweenService.h"
+#include "ComboBox.h"
+
+namespace GUILib {
+	typedef std::shared_ptr<GuiObject> PGuiObject;
+	typedef std::shared_ptr<Button> PButton;
+	typedef std::shared_ptr<TextButton> PTextButton;
+	typedef std::shared_ptr<ImageButton> PImageButton;
+	typedef std::shared_ptr<Frame> PFrame;
+	typedef std::shared_ptr<ScrollingFrame> PScrollingFrame;
+	typedef std::shared_ptr<Slider> PSlider;
+	typedef std::shared_ptr<TextBox> PTextBox;
+	typedef std::shared_ptr<EditableTextBox> PEditableTextBox;
+	typedef std::shared_ptr<Image> PImage;
+}

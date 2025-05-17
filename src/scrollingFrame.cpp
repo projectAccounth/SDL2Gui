@@ -23,7 +23,8 @@ GUILib::ScrollingFrame::ScrollingFrame(
 {
 }
 
-GUILib::ScrollingFrame::ScrollingFrame() = default;
+GUILib::ScrollingFrame::ScrollingFrame() :
+    scrollingSpeed(10), scrollX(0), scrollY(0), scrollingBarColor() {};
 
 
 void GUILib::ScrollingFrame::setContentSize(const UIUnit& newSize)
@@ -59,6 +60,8 @@ void GUILib::ScrollingFrame::render()
 
     for (const auto& child : children) {
         child->render();
+        auto childRect = child->getRect();
+        child->setActive(SDL_HasIntersection(&objRect, &childRect));
     }
 
     SDL_RenderSetClipRect(ref, nullptr);
@@ -78,7 +81,6 @@ void GUILib::ScrollingFrame::renderScrollbars(const SDL_Point& absContentSize, c
     );  // Dark gray scrollbars (by default)
     if (showScrollbarX) {
         if (const int maxScrollX = absContentSize.x - rect.w; maxScrollX > 0) {
-            const int scrollbarWidth = std::max(20, (rect.w * rect.w) / absContentSize.x);
             const int scrollbarX = rect.x + (scrollX * (rect.w - scrollbarWidth)) / maxScrollX;
 
             handleRectX = {scrollbarX, rect.y + rect.h - 8, scrollbarWidth, 8};
@@ -140,8 +142,10 @@ void GUILib::ScrollingFrame::handleEvent(const SDL_Event& event)
 
     const SDL_Rect rect = getRect();
 
-	const int mouseX = event.button.x;
-    const int mouseY = event.button.y;
+	int mouseX,
+        mouseY;
+
+    SDL_GetMouseState(&mouseX, &mouseY);
 
     if (event.type == SDL_MOUSEWHEEL) {
         if (isPointInRect({ mouseX, mouseY }, rect))
@@ -194,47 +198,16 @@ int GUILib::ScrollingFrame::getScrollingSpeed() const {
 	return scrollingSpeed;
 }
 
-GUILib::ScrollingFrame& GUILib::ScrollingFrame::operator=(ScrollingFrame&& other) noexcept
-{
-    if (&other == this) return *this;
-
-    Frame::operator=(other);
-
-    handleRectX = other.handleRectX;
-    handleRectY = other.handleRectY;
-    scrollingBarColor = other.scrollingBarColor;
-    showScrollbarX = other.showScrollbarX;
-    showScrollbarY = other.showScrollbarY;
-    contentSize = other.contentSize;
-    scrollX = other.scrollX;
-    scrollY = other.scrollY;
-    lastMouseX = other.lastMouseX;
-    lastMouseY = other.lastMouseY;
-    draggingX = other.draggingX;
-
-    return *this;
-}
-
-GUILib::ScrollingFrame& GUILib::ScrollingFrame::operator=(const ScrollingFrame& other)
-{
-    if (&other == this) return *this;
-
-    Frame::operator=(other);
-
-    handleRectX = other.handleRectX;
-    handleRectY = other.handleRectY;
-    scrollingBarColor = other.scrollingBarColor;
-    showScrollbarX = other.showScrollbarX;
-    showScrollbarY = other.showScrollbarY;
-    contentSize = other.contentSize;
-    scrollX = other.scrollX;
-    scrollY = other.scrollY;
-    lastMouseX = other.lastMouseX;
-    lastMouseY = other.lastMouseY;
-    draggingX = other.draggingX;
-
-    return *this;
-}
+GUILib::ScrollingFrame& GUILib::ScrollingFrame::operator=(ScrollingFrame&& other) noexcept = default;
+GUILib::ScrollingFrame& GUILib::ScrollingFrame::operator=(const ScrollingFrame& other) = default;
 
 GUILib::ScrollingFrame::ScrollingFrame(const ScrollingFrame&) = default;
 GUILib::ScrollingFrame::ScrollingFrame(ScrollingFrame&&) noexcept = default;
+
+int GUILib::ScrollingFrame::getScrollbarWidth() const {
+    return scrollbarWidth;
+}
+
+void GUILib::ScrollingFrame::setScrollbarWidth(const int& val) {
+    scrollbarWidth = val;
+}

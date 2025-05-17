@@ -1,4 +1,4 @@
-#include "textBox.h"
+#include "TextBox.h"
 
 namespace {
     std::pair<size_t, size_t> getCursorPos(
@@ -54,7 +54,7 @@ namespace {
 
 void GUILib::EditableTextBox::handleEvent(const SDL_Event& e)
 {
-    TextBox::handleEvent(e); // Calling superclass function
+    TextBox::handleEvent(e);
     if (!editable) return;
     cursorPosition = std::clamp(cursorPosition, size_t(0), text.size());
     if (e.type == SDL_KEYDOWN) {

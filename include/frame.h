@@ -57,21 +57,21 @@ namespace GUILib {
     private:
 
         /// @brief Full size of the scrollable content.
-        UIUnit contentSize;               
+        UIUnit contentSize = UIUnit();               
 
         /// @brief Current scroll position.
-        int scrollX,
-            scrollY;
+        int scrollX = 0,
+            scrollY = 0;
 
         /// @brief Whether the scrollbars are visible. Automatically adjusted.
-        bool showScrollbarX,
-             showScrollbarY;
+        bool showScrollbarX = true,
+             showScrollbarY = true;
 
         /// @brief The color of the scrollbar.
         SDL_Color scrollingBarColor;
 
         /// @brief The scrolling speed.
-        int scrollingSpeed;
+        int scrollingSpeed = 10;
 
         /// @brief The last mouse position.
         int lastMouseX, lastMouseY;
@@ -96,7 +96,8 @@ namespace GUILib {
         /// @brief The class name.
     	static inline const std::string CLASS_NAME = "ScrollingFrame";
 
-        
+        int scrollbarWidth = 20;
+
         ScrollingFrame(
             std::shared_ptr<GuiObject> parent,
             SDL_Renderer* renderer,
@@ -113,7 +114,16 @@ namespace GUILib {
         class Builder final : public GuiObject::Builder<Builder, ScrollingFrame> {};
 
         /// @brief Gets the color of the scrollbar.
+        /// @returns The scrollbar color.
         SDL_Color getScrollbarColor() const;
+
+        /// @brief Gets the width of the scrollbar, in pixels.
+        /// @returns The width.
+        [[nodiscard]] int getScrollbarWidth() const;
+
+        /// @brief Sets the width of the scrollbar, in pixels.
+        /// @param val The value.
+        void setScrollbarWidth(const int& val);
 
         /// @brief Sets the color of the scrollbar.
         /// @param color The new color of the scrollbar.

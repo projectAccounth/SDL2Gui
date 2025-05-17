@@ -1,4 +1,4 @@
-#include "image.h"
+#include "Image.h"
 
 #include <complex>
 
@@ -43,8 +43,6 @@ void GUILib::Image::initialize(SDL_Renderer* renderer)
 
 void GUILib::Image::render() {
 	if (!shouldRender()) return;
-
-	update(ref); // special handling
 
     SDL_RendererFlip flip = SDL_FLIP_NONE;
 
